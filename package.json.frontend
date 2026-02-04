@@ -1,0 +1,27 @@
+{
+  "name": "cms-dashboard",
+  "version": "1.0.0",
+  "description": "Modern Blogging CMS Dashboard with Atomic Design",
+  "scripts": {
+    "build:sass": "sass scss/main.scss dist/css/compiled.css --style=expanded --no-source-map",
+    "build:postcss": "postcss dist/css/compiled.css -o dist/css/main.css",
+    "build": "npm run build:sass && npm run build:postcss",
+    "watch:sass": "sass scss/main.scss dist/css/compiled.css --watch --style=expanded",
+    "watch:postcss": "postcss dist/css/compiled.css -o dist/css/main.css --watch",
+    "dev": "npm run build && concurrently \"npm run watch:sass\" \"npm run watch:postcss\" \"npx live-server --port=3000\"",
+    "preview": "npx live-server --port=3000"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "concurrently": "^9.2.1",
+    "postcss": "^8.4.32",
+    "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1",
+    "sass": "^1.69.5",
+    "tailwindcss": "^3.4.0"
+  },
+  "dependencies": {
+    "lucide": "^0.294.0",
+    "preline": "^2.0.3"
+  }
+}
