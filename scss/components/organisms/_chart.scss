@@ -54,7 +54,11 @@
     @apply text-grey-600 dark:text-grey-400;
     @apply hover:text-grey-600 dark:hover:text-white transition-colors;
 
-    // Active state - Preline JS will add .active class
+    // Preline active state classes (functionality + styling)
+    // NOTE: These classes must be used in HTML templates, not in @apply
+    // Usage: <button class="chart-range__btn hs-tab-active:bg-white">
+
+    // Fallback active class (when not using Preline JS)
     &--active,
     &.active {
       @apply bg-blue-600 text-white shadow-sm;

@@ -12,6 +12,14 @@ module.exports = {
     'hs-tab-active:shadow-sm',
     'dark:hs-tab-active:bg-white',
     'dark:hs-tab-active:text-grey-900',
+    // Preline dropdown states
+    'hs-dropdown-open:opacity-100',
+    'hs-dropdown-open:visible',
+    'hs-dropdown-open:scale-100',
+    // Preline accordion states
+    'hs-accordion-active:bg-blue-50',
+    'hs-accordion-active:text-blue-600',
+    // Add more as needed
   ],
   darkMode: 'class',
   theme: {
