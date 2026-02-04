@@ -1,20 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './*.html',
-    './pages/**/*.html',
-    './components/**/*.html',
+    './src/templates/**/*.html',
+    './src/templates/**/*.js',
     './scss/**/*.scss',
-    './js/**/*.js',
-    './node_modules/preline/dist/*.js',
   ],
   safelist: [
-    'hs-tab-active:bg-blue-600',
-    'hs-tab-active:bg-blue-500',
-    'hs-tab-active:text-white',
+    // Preline tab active states
+    'hs-tab-active:bg-white',
+    'hs-tab-active:text-black',
     'hs-tab-active:shadow-sm',
-    'dark:hs-tab-active:bg-blue-500',
-    'dark:hs-tab-active:text-white',
+    'dark:hs-tab-active:bg-white',
+    'dark:hs-tab-active:text-grey-900',
   ],
   darkMode: 'class',
   theme: {
@@ -124,7 +121,7 @@ module.exports = {
     // Breakpoints use Tailwind defaults (industry standard)
   },
   plugins: [
-    require('preline/plugin'),
+    // Preline plugin removed - Preline v2.x doesn't require Tailwind plugin
     // Custom plugin for additional utilities
     function ({ addUtilities, addComponents, theme }) {
       // Scrollbar utilities

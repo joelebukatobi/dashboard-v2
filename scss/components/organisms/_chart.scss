@@ -54,11 +54,7 @@
     @apply text-grey-600 dark:text-grey-400;
     @apply hover:text-grey-600 dark:hover:text-white transition-colors;
 
-    // Active state using Preline modifier
-    @apply hs-tab-active:bg-white hs-tab-active:text-black hs-tab-active:shadow-sm;
-    @apply dark:hs-tab-active:bg-white dark:hs-tab-active:text-grey-900;
-
-    // Fallback active class
+    // Active state - Preline JS will add .active class
     &--active,
     &.active {
       @apply bg-blue-600 text-white shadow-sm;
