@@ -1,13 +1,13 @@
 // ============================================================================
-// Main SCSS Entry Point
-// Modern Blogging CMS Dashboard - Tailwind-First Approach
+// SCSS Components Entry Point
+// Modern Blogging CMS Dashboard
+// These are pure SCSS components without Tailwind directives
 // ============================================================================
 
 // ============================================================================
 // BASE - Variables, typography, and minimal base styles
 // ============================================================================
 @use 'base/variables' as *;
-
 @use 'base/typography' as *;
 @use 'base/base' as *;
 
@@ -54,10 +54,3 @@
 @use 'pages/categories' as *;
 @use 'pages/tags' as *;
 @use 'pages/media' as *;
-
-// ============================================================================
-// Tailwind CSS (processed by PostCSS after Sass compilation)
-// ============================================================================
-@tailwind base;
-@tailwind components;
-@tailwind utilities;

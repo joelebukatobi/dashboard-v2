@@ -1,0 +1,13 @@
+/*
+ * Main CSS Entry Point
+ * Combines Tailwind CSS v4 with compiled SCSS components
+ */
+
+/* Tailwind CSS v4 base, components, and utilities */
+@import "tailwindcss";
+
+/* Custom theme tokens (grey palette, shadows, animations, custom utilities) */
+@import "./theme.css";
+
+/* Compiled SCSS components (BEM classes with @apply) */
+@import "../.build/components.css";
