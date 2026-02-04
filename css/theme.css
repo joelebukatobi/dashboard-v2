@@ -1,0 +1,153 @@
+/*
+ * Tailwind CSS v4 Configuration
+ * This file contains Tailwind v4-specific directives
+ * Processed separately from SCSS
+ */
+
+/* Import Tailwind CSS */
+@import "tailwindcss";
+
+/* Import Preline UI variants for Tailwind v4 */
+@import "preline/variants.css";
+
+/* ============================================================================
+ * Theme Configuration
+ * ============================================================================ */
+
+@theme {
+  /* Custom font family */
+  --font-family-sans: 'Schibsted Grotesk', system-ui, sans-serif;
+  
+  /* Grey color palette */
+  --color-grey-50: #e9e9e9;
+  --color-grey-100: #d3d3d3;
+  --color-grey-200: #bcbcbc;
+  --color-grey-300: #a6a6a6;
+  --color-grey-400: #909090;
+  --color-grey-500: #7a7a7a;
+  --color-grey-600: #646464;
+  --color-grey-700: #4d4d4d;
+  --color-grey-800: #373737;
+  --color-grey-900: #212121;
+  
+  /* Border radius (8-point scale) */
+  --radius-1: 0.8rem;
+  --radius-2: 1.6rem;
+  --radius-3: 2.4rem;
+  --radius-4: 3.2rem;
+  
+  /* Max width */
+  --max-width-8xl: 88rem;
+  
+  /* Box shadows */
+  --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 0 20px 0 rgba(76, 87, 125, 0.02);
+  --shadow-dropdown: 0 10px 40px 10px rgba(140, 152, 164, 0.175);
+  --shadow-sidebar: 4px 0 10px rgba(0, 0, 0, 0.05);
+  
+  /* Transition durations */
+  --duration-250: 250ms;
+  --duration-350: 350ms;
+  
+  /* Z-index scale */
+  --z-index-60: 60;
+  --z-index-70: 70;
+  --z-index-80: 80;
+  --z-index-90: 90;
+  --z-index-100: 100;
+}
+
+/* ============================================================================
+ * Custom Utilities
+ * ============================================================================ */
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-300) var(--color-grey-100);
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@utility scrollbar-hide-webkit {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ============================================================================
+ * Animations
+ * ============================================================================ */
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slide-in-left {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes slide-in-up {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes slide-in-down {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@utility animate-fade-out {
+  animation: fade-out 0.3s ease-out;
+}
+
+@utility animate-slide-in-left {
+  animation: slide-in-left 0.3s ease-out;
+}
+
+@utility animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+@utility animate-slide-in-up {
+  animation: slide-in-up 0.3s ease-out;
+}
+
+@utility animate-slide-in-down {
+  animation: slide-in-down 0.3s ease-out;
+}
+
+@utility animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================================================
+ * Dark Mode
+ * ============================================================================ */
+
+.dark {
+  color-scheme: dark;
+}

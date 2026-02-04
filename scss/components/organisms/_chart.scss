@@ -40,7 +40,7 @@
   }
 
   &__chart {
-    @apply w-full min-h-[30rem] h-[280px] bg-gradient-to-b from-blue-600/10 dark:bg-gradient-to-b dark:from-grey-800/10 to-transparent rounded-xl flex items-center justify-center text-muted;
+    @apply w-full min-h-[30rem] h-[280px] bg-gradient-to-b from-blue-600/10 dark:bg-gradient-to-b dark:from-grey-800/10 to-transparent rounded-xl flex items-center justify-center text-grey-500 dark:text-grey-400;
   }
 }
 
