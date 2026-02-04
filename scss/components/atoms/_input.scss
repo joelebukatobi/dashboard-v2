@@ -1,0 +1,268 @@
+// ============================================================================
+// Universal Input Component - Antigravity UI Kit
+// BEM-compliant, accessible, with Tailwind @apply directives
+// Root: 10px | Touch target: 44px minimum | Units: rem
+// ============================================================================
+
+// ============================================================================
+// Form Field Container
+// ============================================================================
+.form-field {
+  @apply flex flex-col gap-[0.8rem];
+
+  // Label
+  &__label {
+    @apply text-[1.04rem] font-medium leading-[1.4] capitalize;
+    @apply text-grey-700;
+
+    .dark & {
+      @apply text-grey-200;
+    }
+
+    // Required indicator
+    &--required::after {
+      content: ' *';
+      @apply text-red-500;
+    }
+  }
+
+  // Input wrapper (for icons, addons)
+  &__wrapper {
+    @apply relative flex items-center;
+  }
+
+  // Base Input
+  &__input {
+    @apply w-full;
+    @apply text-[1.04rem] placeholder:text-[1.04rem];
+    @apply bg-white text-grey-900 placeholder-grey-400;
+    @apply border border-grey-200 rounded-[0.6rem];
+    @apply outline-none;
+    @apply transition-all duration-200;
+
+    @apply h-[3.2rem] px-[1.6rem];
+
+    // States
+    &:hover:not(:disabled):not(:focus) {
+      @apply border-grey-300;
+    }
+
+    &:focus {
+      @apply border-blue-600 ring-2 ring-blue-600/20;
+    }
+
+    &:disabled {
+      @apply bg-grey-100 text-grey-400 cursor-not-allowed;
+    }
+
+    &:read-only {
+      @apply bg-grey-50;
+    }
+
+    // Dark mode
+    .dark & {
+      @apply bg-[#1e1e1e] text-white placeholder-grey-500;
+      @apply border-grey-700;
+
+      &:hover:not(:disabled):not(:focus) {
+        @apply border-grey-600;
+      }
+
+      &:focus {
+        @apply border-blue-500 ring-blue-500/20;
+      }
+
+      &:disabled {
+        @apply bg-[#181818] text-grey-600;
+      }
+
+      &:read-only {
+        @apply bg-[#212121];
+      }
+    }
+  }
+
+  // Size variants
+  &__input--sm {
+    @apply h-[2.4rem] px-[.8rem] text-[.8rem] placeholder:text-[.8rem];
+  }
+
+  &__input--lg {
+    @apply h-[4rem] px-[1.6rem] text-[1.28rem] placeholder:text-[1.28rem];
+  }
+
+  // Input with left icon
+  &__input--icon-left {
+    @apply pl-[4.4rem];
+  }
+
+  // Input with right icon (password toggle, etc.)
+  &__input--icon-right {
+    @apply pr-[4.4rem];
+  }
+
+  // Icons - Default size (2rem)
+  &__icon {
+    @apply absolute top-1/2 -translate-y-1/2;
+    @apply w-[2rem] h-[2rem];
+    @apply text-grey-400 pointer-events-none;
+
+    .dark & {
+      @apply text-grey-500;
+    }
+
+    &--left {
+      @apply left-[1.2rem];
+    }
+
+    &--right {
+      @apply right-[1.2rem];
+    }
+
+    // Small icon (1.6rem) - use with input--sm
+    &--sm {
+      @apply w-[1.6rem] h-[1.6rem];
+    }
+
+    // Large icon (2.4rem) - use with input--lg
+    &--lg {
+      @apply w-[2.4rem] h-[2.4rem];
+    }
+  }
+
+  // Addon button (password toggle, clear, etc.)
+  &__addon {
+    @apply absolute right-[0.8rem] top-1/2 -translate-y-1/2;
+    @apply flex items-center justify-center;
+    @apply w-[3.2rem] h-[3.2rem] rounded-[0.4rem];
+    @apply text-grey-400 cursor-pointer;
+    @apply transition-colors duration-200;
+
+    &:hover {
+      @apply text-grey-600 bg-grey-100;
+    }
+
+    .dark & {
+      @apply text-grey-500;
+
+      &:hover {
+        @apply text-grey-300 bg-grey-800;
+      }
+    }
+
+    svg {
+      @apply w-[2rem] h-[2rem];
+    }
+  }
+
+  // Helper text
+  &__helper {
+    @apply text-[1.2rem] leading-[1.4];
+    @apply text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  // Error message
+  &__error {
+    @apply text-[1.2rem] leading-[1.4];
+    @apply text-red-500;
+    @apply flex items-center gap-[0.4rem];
+
+    // Entrance animation
+    animation: slideIn 0.2s ease-out;
+
+    svg {
+      @apply w-[1.4rem] h-[1.4rem] flex-shrink-0;
+    }
+  }
+
+  // ========================================
+  // Error State Modifier
+  // ========================================
+  &--error {
+    .form-field__input {
+      @apply border-red-500 bg-red-50;
+
+      &:focus {
+        @apply ring-red-500/20;
+      }
+
+      .dark & {
+        @apply border-red-500 bg-red-900/10;
+      }
+    }
+  }
+
+  // ========================================
+  // Search Variant (header search)
+  // ========================================
+  &--search {
+    // Desktop: hidden by default, shown on sm+
+    @apply hidden sm:flex;
+
+    // Mobile variant (full-width)
+    &--mobile {
+      @apply flex w-full;
+    }
+  }
+
+  // ========================================
+  // Textarea Variant
+  // ========================================
+  &__textarea {
+    @extend .form-field__input;
+    @apply h-auto min-h-[12rem] py-[1.2rem];
+    @apply resize-y;
+  }
+}
+
+// ============================================================================
+// Input Group (Label + Input + Helper/Error)
+// ============================================================================
+.input-group {
+  @apply flex flex-col gap-[0.8rem];
+
+  &__label {
+    @apply text-[1.4rem] font-medium leading-[1.4];
+    @apply text-grey-700;
+
+    .dark & {
+      @apply text-grey-200;
+    }
+  }
+
+  &__helper {
+    @apply text-[1.2rem] text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__error {
+    @apply text-[1.2rem] text-red-500;
+    @apply flex items-center gap-[0.4rem];
+    animation: slideIn 0.2s ease-out;
+
+    svg {
+      @apply w-[1.4rem] h-[1.4rem];
+    }
+  }
+}
+
+// ============================================================================
+// Keyframes
+// ============================================================================
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

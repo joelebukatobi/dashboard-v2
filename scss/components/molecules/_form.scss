@@ -1,0 +1,313 @@
+// ============================================================================
+// Form Component - Refactored (DRY/KISS/SOLID)
+// Using maximum Tailwind utilities
+// ============================================================================
+
+.form {
+  &__group {
+    @apply mb-[1.6rem];
+  }
+
+  &__label {
+    @apply block text-sm font-medium mb-[0.8rem];
+    @apply text-grey-900;
+
+    .dark & {
+      @apply text-white;
+    }
+
+    &--required::after {
+      @apply content-['*'] ml-[0.4rem] text-red-500;
+    }
+  }
+
+  &__input,
+  &__select {
+    @apply w-full px-[1.2rem] py-[0.8rem] rounded-lg;
+    @apply text-sm;
+    @apply border border-grey-100/50;
+    @apply transition-colors duration-200;
+    @apply bg-white;
+
+    .dark & {
+      @apply border-[#333333] bg-[#1e1e1e];
+    }
+
+    &:focus {
+      @apply outline-none ring-2 ring-blue-500/20;
+      @apply border-blue-500;
+    }
+
+    &::placeholder {
+      @apply text-grey-400;
+
+      .dark & {
+        @apply text-grey-500;
+      }
+    }
+
+    &:disabled {
+      @apply bg-grey-100 cursor-not-allowed opacity-60;
+
+      .dark & {
+        @apply bg-grey-800;
+      }
+    }
+
+    &--readonly {
+      @apply bg-grey-50 text-grey-600 cursor-default;
+      .dark & {
+        @apply bg-grey-900/50 text-grey-400;
+      }
+    }
+
+    &--error {
+      @apply border-red-500 ring-red-500/20;
+    }
+  }
+
+  &__textarea {
+    @apply w-full px-[1.2rem] py-[0.8rem] rounded-lg;
+    @apply text-sm;
+    @apply border border-grey-100/50;
+    @apply transition-colors duration-200;
+    @apply bg-white;
+    @apply min-h-[100px] resize-y;
+
+    .dark & {
+      @apply border-[#333333] bg-[#1e1e1e];
+    }
+
+    &:focus {
+      @apply outline-none ring-2 ring-blue-500/20;
+      @apply border-blue-500;
+    }
+
+    &::placeholder {
+      @apply text-grey-400;
+
+      .dark & {
+        @apply text-grey-500;
+      }
+    }
+  }
+
+  &__select {
+    @apply appearance-none bg-no-repeat pr-[3.2rem];
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.8rem center;
+    background-size: 1.6rem 1.6rem;
+  }
+
+  &__checkbox,
+  &__radio {
+    @apply w-[0.96rem] h-[0.96rem] cursor-pointer; // Compact size
+    @apply rounded-[.8rem];
+    @apply border-grey-300 text-blue-600;
+    @apply transition-colors duration-200;
+    @apply focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-0;
+
+    .dark & {
+      @apply border-grey-600 bg-grey-800;
+    }
+
+    &--lg {
+      @apply w-[1.2rem] h-[1.2rem]; // Larger variant
+    }
+  }
+
+  &__control-group {
+    @apply flex items-center gap-[1.2rem] cursor-pointer; // Generic wrapper for checkbox/radio + label
+  }
+
+  &__check-group {
+    @apply flex items-center gap-[1.2rem] cursor-pointer; // Backward compatibility
+  }
+
+  &__check-label {
+    @apply text-sm text-grey-700;
+    .dark & {
+      @apply text-grey-300;
+    }
+  }
+
+  &__radio {
+    @apply rounded-full;
+  }
+
+  &__help {
+    @apply block text-xs mt-[0.4rem] text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__hint {
+    @apply block text-xs mt-[0.4rem] text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__error {
+    @apply block text-xs mt-[0.4rem] text-red-600;
+
+    .dark & {
+      @apply text-red-400;
+    }
+  }
+
+  // ========================================
+  // Form Row Layouts (grid variants)
+  // ========================================
+  &__row {
+    @apply grid gap-[1.6rem];
+
+    &--2col {
+      @apply grid-cols-1 md:grid-cols-2;
+    }
+
+    &--3col {
+      @apply grid-cols-1 md:grid-cols-3;
+    }
+  }
+
+  &__stack {
+    @apply flex flex-col gap-[1.2rem]; // Equivalent to space-y-3
+  }
+
+  &__divider {
+    @apply w-full border-t border-grey-50 my-[2.4rem]; // Matches "border-grey-50 my-6"
+    .dark & {
+      @apply border-grey-700;
+    }
+
+    &--sm {
+      @apply my-[1.6rem];
+    }
+  }
+
+  &__info-box {
+    @apply rounded-lg p-[1.6rem] bg-blue-600/5 mb-[1.6rem];
+    .dark & {
+      @apply bg-blue-500/20;
+    }
+
+    &-title {
+      @apply text-sm font-semibold text-grey-900 pb-[1.2rem] mb-0 border-b border-grey-100;
+      .dark & {
+        @apply text-white border-grey-500;
+      }
+    }
+
+    & .card__title {
+      @apply text-sm lg:text-base;
+    }
+  }
+
+  &__list-divided {
+    @apply divide-y divide-grey-100;
+    .dark & {
+      @apply divide-grey-500;
+    }
+
+    & > * {
+      @apply py-[0.8rem];
+      &:first-child {
+        @apply pt-[1.2rem];
+      }
+      &:last-child {
+        @apply pb-0;
+      }
+    }
+  }
+
+  &__details-list {
+    @apply flex flex-col gap-[0.8rem] text-sm;
+  }
+
+  &__details-item {
+    @apply flex justify-between;
+
+    &-label {
+      @apply text-grey-500;
+      .dark & {
+        @apply text-grey-400;
+      }
+    }
+
+    &-value {
+      @apply font-medium text-grey-900;
+      .dark & {
+        @apply text-white;
+      }
+    }
+  }
+
+  &__field-group {
+    @apply flex items-center gap-[1.6rem]; // Generic horizontal group for inputs/controls
+  }
+
+  &__avatar-group {
+    @apply flex items-center gap-[1.6rem]; // Specialized group for avatars + buttons
+  }
+
+  &__item-group {
+    @apply flex items-center gap-[1.2rem]; // Specialized group for icons/badges + text
+  }
+
+  // ========================================
+  // Select Dropdown Trigger (for Preline dropdowns)
+  // ========================================
+  &__select {
+    @apply w-full flex items-center justify-between;
+  }
+
+  // ========================================
+  // Account Info Box
+  // ========================================
+  &__account-info {
+    @apply bg-blue-600/5 rounded-lg p-4;
+
+    .dark & {
+      @apply bg-blue-50/5;
+    }
+
+    &-title {
+      @apply text-sm font-semibold text-grey-900 mb-3;
+
+      .dark & {
+        @apply text-white;
+      }
+    }
+
+    &-grid {
+      @apply grid grid-cols-1 md:grid-cols-3 gap-4 text-sm;
+    }
+
+    &-label {
+      @apply text-grey-500;
+    }
+
+    &-value {
+      @apply font-medium text-grey-900;
+
+      .dark & {
+        @apply text-white;
+      }
+    }
+  }
+
+  // ========================================
+  // Form Horizontal Divider
+  // ========================================
+  &__hr {
+    @apply border-grey-50 my-6;
+
+    .dark & {
+      @apply border-grey-700;
+    }
+  }
+}

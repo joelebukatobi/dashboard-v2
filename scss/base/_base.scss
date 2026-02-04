@@ -1,0 +1,71 @@
+// ============================================================================
+// Base Styles - Minimal resets that Tailwind preflight doesn't cover
+// ============================================================================
+
+// Focus visible for accessibility
+:focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2;
+}
+
+:focus:not(:focus-visible) {
+  @apply outline-none ring-0;
+}
+
+// Selection
+::selection {
+  @apply bg-blue-200 text-blue-900;
+}
+
+.dark ::selection {
+  @apply bg-blue-700 text-blue-100;
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-grey-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-grey-300 rounded-full hover:bg-grey-400;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-grey-800;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-grey-600 hover:bg-grey-500;
+}
+
+// Hide scrollbars on mobile for cleaner UI
+@media (max-width: 1023px) {
+  ::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  * {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+html {
+  // box-sizing: border-box; // Handled by Tailwind preflight
+  font-size: 62.5%; // 1rem = 10px (Default for < 1536px)
+  @apply overflow-hidden h-full;
+
+  // Large screens (Standard Laptops/Desktops)
+  @screen 2xl {
+    font-size: 100%;
+  }
+}
+
+body {
+  @apply overflow-hidden h-full max-w-[100vw];
+}

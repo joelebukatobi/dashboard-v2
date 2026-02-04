@@ -1,0 +1,89 @@
+// ============================================================================
+// Tags Page Styles
+// ============================================================================
+
+.tag-table {
+  // Mobile Label
+  &__label {
+    @apply lg:hidden;
+    @apply text-[1rem] font-medium text-grey-500 min-w-[8rem];
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  // Name
+  &__name {
+    @apply font-medium text-sm text-grey-900;
+
+    .dark & {
+      @apply text-white;
+    }
+
+    a {
+      @apply hover:text-blue-600;
+      @apply transition-colors duration-200;
+
+      .dark & {
+        @apply hover:text-blue-400;
+      }
+    }
+  }
+
+  // Slug
+  &__slug {
+    @apply text-sm text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  // Actions Container
+  &__actions {
+    @apply flex items-center justify-end space-x-[1.6rem] lg:space-x-[.4rem];
+  }
+
+  // Action Button
+  &__action {
+    @apply flex items-center justify-center gap-[.4rem];
+    @apply px-0 py-[.4rem] lg:p-[.4rem] rounded-md;
+    @apply text-[1.1rem] font-medium;
+    @apply cursor-pointer;
+    @apply transition-all duration-200 lg:bg-blue-600/10;
+
+    // Mobile: Flex grow
+    @apply flex-1 lg:flex-initial;
+
+    // Default style
+    @apply text-grey-500;
+    .dark & {
+      @apply text-grey-400 lg:bg-grey-50/10;
+    }
+
+    // Icon sizing
+    i,
+    svg {
+      @apply w-[1.4rem] h-[1.4rem];
+    }
+
+    // Edit action
+    &--edit {
+      @apply hover:text-amber-600;
+
+      .dark & {
+        @apply hover:text-amber-400;
+      }
+    }
+
+    // Delete action
+    &--delete {
+      @apply hover:text-red-600 hover:bg-red-50;
+
+      .dark & {
+        @apply hover:text-red-400 hover:bg-red-900/20;
+      }
+    }
+  }
+}

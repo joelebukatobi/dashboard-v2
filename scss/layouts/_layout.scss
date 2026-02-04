@@ -1,0 +1,127 @@
+// ============================================================================
+// Dashboard Layout
+// Using maximum Tailwind utilities
+// ============================================================================
+
+.layout {
+  @apply h-full bg-white dark:bg-grey-900;
+
+  & .main {
+    @apply relative h-full flex flex-col transition-all duration-300;
+    margin-left: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width));
+
+    // Ensure direct children (page wrappers like .posts, .users) fill the space
+    > div:not(.header):not(.mobile-search) {
+      @apply flex-1 w-full flex flex-col min-h-0;
+    }
+
+    @media (max-width: 1023px) {
+      @apply ml-0 w-full;
+    }
+  }
+
+  // Collapsed sidebar state - AFTER main rule for proper specificity
+  &--sidebar-collapsed .main {
+    margin-left: var(--sidebar-width-collapsed);
+    width: calc(100% - var(--sidebar-width-collapsed));
+  }
+
+  & .content {
+    @apply flex-1 w-full overflow-y-auto overflow-x-hidden;
+    @apply p-[1.6rem] sm:p-[2.4rem] flex flex-col;
+
+    table {
+      & tbody {
+        & tr {
+          & td {
+            @apply text-base;
+          }
+        }
+      }
+    }
+  }
+
+  // Page header
+  & .page-header {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[1.6rem] mb-[2.4rem];
+
+    &__left {
+      @apply min-w-0;
+    }
+
+    &__title {
+      @apply text-3xl lg:text-xl font-bold text-grey-900 dark:text-white;
+    }
+
+    &__subtitle {
+      @apply text-xl lg:text-base text-grey-500 dark:text-grey-400 mt-[0.4rem];
+    }
+
+    &__actions {
+      @apply flex items-center gap-[0.8rem] sm:gap-[1.2rem];
+      // Stack buttons on mobile
+      @apply flex-wrap;
+    }
+  }
+
+  // Page Footer (Pagination) - pushes to bottom of content
+  & .page-footer {
+    @apply w-full pt-[2.4rem] lg:pt-[1.6rem] px-0 bg-white border-t border-grey-100;
+    @apply mt-[2.4rem] lg:mt-auto; // Push to bottom of flex container
+
+    .dark & {
+      @apply bg-grey-900 border-grey-800;
+    }
+  }
+
+  // Content wrapper
+  & .wrapper {
+    @apply max-w-8xl mx-auto w-full flex-1 flex flex-col;
+  }
+
+  &__stack {
+    @apply flex flex-col gap-[2.4rem]; // Matches space-y-6
+  }
+
+  // Grid layouts
+  & .dashboard-grid {
+    @apply grid gap-[1.6rem] sm:gap-[2.4rem] mt-[1.6rem] sm:mt-[2.4rem];
+
+    &:first-child {
+      @apply mt-0;
+    }
+
+    &--stats {
+      @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+    }
+
+    &--charts {
+      @apply grid-cols-1 lg:grid-cols-2;
+    }
+
+    &--mixed {
+      @apply grid-cols-1 lg:grid-cols-3;
+
+      &-main {
+        @apply lg:col-span-2;
+      }
+    }
+
+    // Main content area (2/3 width on large screens)
+    &--main {
+      @apply grid-cols-1 lg:grid-cols-3;
+
+      > :first-child {
+        @media (min-width: theme('screens.lg')) {
+          grid-column: span 2 / span 2;
+        }
+      }
+    }
+
+    // Equal width columns
+    &--equal {
+      @apply grid-cols-1 lg:grid-cols-2;
+    }
+  }
+}

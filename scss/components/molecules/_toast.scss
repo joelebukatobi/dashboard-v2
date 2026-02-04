@@ -1,0 +1,183 @@
+// ============================================================================
+// Toast Notification Component
+// Lightweight feedback for success, error, warning, and info states
+// ============================================================================
+
+.toast {
+  @apply fixed z-[100] pointer-events-auto;
+  @apply flex items-center gap-3 px-4 py-3;
+  @apply bg-white dark:bg-grey-800 rounded-lg shadow-lg;
+  @apply border border-grey-200 dark:border-grey-700;
+  @apply text-sm font-medium;
+  @apply transform transition-all duration-300;
+
+  // Default positioning (bottom-right)
+  bottom: 2.4rem;
+  right: 2.4rem;
+
+  // Start visible by default
+  opacity: 1;
+
+  // Animation states
+  &--hidden {
+    opacity: 0 !important;
+    transform: translateY(1rem);
+    pointer-events: none;
+  }
+
+  &--visible {
+    opacity: 1 !important;
+    transform: translateY(0);
+  }
+
+  // ========================================
+  // Toast Icon
+  // ========================================
+  &__icon {
+    @apply flex-shrink-0 flex items-center justify-center;
+    @apply size-8 rounded-full;
+
+    i,
+    svg {
+      @apply size-4;
+    }
+  }
+
+  // ========================================
+  // Toast Content
+  // ========================================
+  &__content {
+    @apply flex-1;
+  }
+
+  &__title {
+    @apply font-semibold text-grey-900 dark:text-white;
+  }
+
+  &__message {
+    @apply text-grey-600 dark:text-grey-400;
+  }
+
+  // ========================================
+  // Toast Close Button
+  // ========================================
+  &__close {
+    @apply flex-shrink-0 p-1 rounded-md;
+    @apply text-grey-400 hover:text-grey-600 dark:hover:text-grey-200;
+    @apply hover:bg-grey-100 dark:hover:bg-grey-700;
+    @apply transition-colors cursor-pointer;
+
+    i,
+    svg {
+      @apply size-4;
+    }
+  }
+
+  // ========================================
+  // Variants
+  // ========================================
+
+  // Success
+  &--success {
+    @apply border-emerald-200 dark:border-emerald-800;
+
+    .toast__icon {
+      @apply bg-emerald-100 text-emerald-600;
+      .dark & {
+        @apply bg-emerald-900/30 text-emerald-400;
+      }
+    }
+  }
+
+  // Error
+  &--error {
+    @apply border-red-200 dark:border-red-800;
+
+    .toast__icon {
+      @apply bg-red-100 text-red-600;
+      .dark & {
+        @apply bg-red-900/30 text-red-400;
+      }
+    }
+  }
+
+  // Warning
+  &--warning {
+    @apply border-amber-200 dark:border-amber-800;
+
+    .toast__icon {
+      @apply bg-amber-100 text-amber-600;
+      .dark & {
+        @apply bg-amber-900/30 text-amber-400;
+      }
+    }
+  }
+
+  // Info
+  &--info {
+    @apply border-blue-200 dark:border-blue-800;
+
+    .toast__icon {
+      @apply bg-blue-100 text-blue-600;
+      .dark & {
+        @apply bg-blue-900/30 text-blue-400;
+      }
+    }
+  }
+
+  // ========================================
+  // Position Variants
+  // ========================================
+  &--top-right {
+    top: 2.4rem;
+    right: 2.4rem;
+    bottom: auto;
+  }
+
+  &--top-center {
+    top: 2.4rem;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translateX(-50%);
+
+    &.toast--hidden {
+      opacity: 0 !important;
+      transform: translateX(-50%) translateY(-1rem);
+    }
+
+    &.toast--visible {
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  &--bottom-center {
+    bottom: 2.4rem;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+
+    &.toast--hidden {
+      opacity: 0 !important;
+      transform: translateX(-50%) translateY(1rem);
+    }
+
+    &.toast--visible {
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+}
+
+// Toast container for stacking multiple toasts
+.toast-container {
+  @apply fixed z-[100] flex flex-col gap-3;
+  bottom: 2.4rem;
+  right: 2.4rem;
+
+  &--top-right {
+    top: 2.4rem;
+    bottom: auto;
+  }
+}

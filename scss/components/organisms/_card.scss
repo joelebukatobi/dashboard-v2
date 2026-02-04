@@ -1,0 +1,206 @@
+// ============================================================================
+// Card Components - Consolidated (DRY/KISS/SOLID)
+// Base card, stat-card, quick-stat, and all card variants
+// ============================================================================
+
+// ============================================================================
+// Base Card
+// ============================================================================
+.card {
+  @apply bg-white rounded-lg border shadow-sm;
+  @apply border-grey-100;
+
+  .dark & {
+    @apply bg-[#1e1e1e] border-grey-700;
+  }
+
+  &__header {
+    @apply flex items-center justify-between px-[2.4rem] py-[1.6rem];
+    @apply border-b border-grey-100;
+
+    .dark & {
+      @apply border-grey-700;
+    }
+
+    &-group {
+      @apply flex items-center gap-[1.2rem];
+    }
+  }
+
+  &__title {
+    @apply text-base font-semibold text-grey-900;
+
+    .dark & {
+      @apply text-white;
+    }
+  }
+
+  &__subtitle {
+    @apply mt-[0.4rem] text-xs text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__actions {
+    @apply flex items-center gap-[0.8rem];
+  }
+
+  &__icon-box {
+    @apply w-[4.0rem] h-[4.0rem] rounded-lg flex items-center justify-center flex-shrink-0;
+
+    svg {
+      @apply w-[2.0rem] h-[2.0rem];
+    }
+
+    &--blue {
+      @apply bg-blue-600/10 text-blue-600;
+      .dark & {
+        @apply bg-blue-500/20 text-blue-400;
+      }
+    }
+
+    &--red {
+      @apply bg-red-600/10 text-red-600;
+      .dark & {
+        @apply bg-red-500/20 text-red-400;
+      }
+    }
+
+    &--cyan {
+      @apply bg-cyan-600/10 text-cyan-600;
+      .dark & {
+        @apply bg-cyan-500/20 text-cyan-400;
+      }
+    }
+
+    &--purple {
+      @apply bg-purple-600/10 text-purple-600;
+      .dark & {
+        @apply bg-purple-500/20 text-purple-400;
+      }
+    }
+
+    &--grey {
+      @apply bg-grey-100 text-grey-400;
+      .dark & {
+        @apply bg-grey-800 text-grey-600;
+      }
+    }
+
+    &--lg {
+      @apply w-[6.4rem] h-[6.4rem];
+      svg {
+        @apply w-[3.2rem] h-[3.2rem];
+      }
+    }
+  }
+
+  &__info {
+    @apply flex flex-col gap-[0.2rem];
+  }
+
+  &__body {
+    @apply p-[2.4rem];
+  }
+
+  &__footer {
+    @apply px-[2.4rem] py-[1.6rem] border-t border-grey-100;
+
+    .dark & {
+      @apply border-grey-700;
+    }
+  }
+
+  &__panel {
+    @apply p-[1.6rem]; // Compact padding for media sidebars
+  }
+}
+
+// ============================================================================
+// Quick Stat Card (Dashboard stats)
+// ============================================================================
+.quick-stat {
+  @apply bg-white rounded-xl shadow-sm;
+  @apply border border-grey-100/50;
+  @apply flex flex-col h-full p-[1.6rem];
+
+  .dark & {
+    @apply bg-[#1e1e1e] border-[#333333];
+  }
+
+  &__icon {
+    @apply flex-shrink-0 flex items-center justify-center rounded-xl;
+    width: 4.4rem;
+    height: 4.4rem;
+
+    svg {
+      @apply w-[2rem] h-[2rem];
+    }
+
+    &--posts,
+    &--views,
+    &--comments,
+    &--users {
+      @apply bg-blue-100 text-blue-600;
+
+      .dark & {
+        @apply bg-white/10 text-white;
+      }
+    }
+
+    &--views {
+      @apply bg-emerald-100 text-emerald-600;
+    }
+
+    &--comments {
+      @apply bg-amber-100 text-amber-600;
+    }
+
+    &--users {
+      @apply bg-purple-100 text-purple-600;
+    }
+  }
+
+  &__content {
+    @apply mt-[1.6rem];
+  }
+
+  &__label {
+    @apply block text-sm font-medium uppercase tracking-wide;
+  }
+
+  &__value {
+    @apply block text-2xl font-bold mt-[0.4rem] leading-none;
+  }
+
+  &__change {
+    @apply inline-flex items-center gap-[0.4rem] text-base font-medium mt-[0.8rem];
+
+    svg {
+      @apply w-[1.4rem] h-[1.4rem];
+    }
+
+    &--up {
+      @apply text-emerald-600;
+
+      .dark & {
+        @apply text-emerald-400;
+      }
+    }
+
+    &--down {
+      @apply text-red-600;
+
+      .dark & {
+        @apply text-red-400;
+      }
+    }
+  }
+}
+
+// Quick stats grid
+.quick-stats {
+  @apply grid grid-cols-2 lg:grid-cols-4 gap-[1.6rem] mb-[2.4rem];
+}

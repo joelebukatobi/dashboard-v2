@@ -1,0 +1,132 @@
+// ============================================================================
+// Quill Editor & Image Upload Styles
+// Used on new-post.html for rich text editing and featured image upload
+// ============================================================================
+
+// Quill Editor Customization
+.ql-container {
+  @apply font-sans text-sm;
+  min-height: 25rem;
+  border-bottom-left-radius: 0.8rem;
+  border-bottom-right-radius: 0.8rem;
+}
+
+.ql-toolbar {
+  border-top-left-radius: 0.8rem;
+  border-top-right-radius: 0.8rem;
+  @apply bg-blue-600/20;
+
+  .dark & {
+    @apply bg-grey-800 border-grey-700;
+  }
+}
+
+.ql-editor {
+  min-height: 25rem;
+
+  &.ql-blank::before {
+    font-style: normal;
+    @apply text-grey-400;
+  }
+}
+
+// Dark mode overrides for Quill
+.dark {
+  .ql-container {
+    @apply border-grey-700 bg-grey-900 text-white;
+  }
+
+  .ql-toolbar {
+    .ql-stroke {
+      stroke: #94a3b8;
+    }
+    .ql-fill {
+      fill: #94a3b8;
+    }
+    .ql-picker-label {
+      @apply text-grey-400;
+    }
+  }
+
+  .ql-editor.ql-blank::before {
+    @apply text-grey-500;
+  }
+}
+
+// Image Upload Component
+.image-upload {
+  @apply flex flex-col gap-[1.2rem];
+
+  &__dropzone {
+    @apply border-2 border-dashed border-grey-300 rounded-lg;
+    @apply py-[3.2rem] px-[2rem] text-center cursor-pointer;
+    @apply transition-all duration-200;
+    @apply bg-grey-50;
+
+    &:hover {
+      @apply border-blue-500 bg-blue-50;
+    }
+
+    &.dragover {
+      @apply border-blue-500 bg-blue-100;
+    }
+
+    .dark & {
+      @apply bg-grey-800 border-grey-600;
+
+      &:hover {
+        @apply border-blue-400 bg-grey-700;
+      }
+    }
+  }
+
+  &__icon {
+    @apply w-[4.8rem] h-[4.8rem] mx-auto mb-[1.2rem] text-grey-500;
+  }
+
+  &__text {
+    @apply text-sm text-grey-600 mb-[0.4rem];
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__hint {
+    @apply text-xs text-grey-400;
+
+    .dark & {
+      @apply text-grey-500;
+    }
+  }
+
+  &__preview {
+    @apply hidden relative rounded-lg overflow-hidden max-w-full;
+    aspect-ratio: 16 / 9;
+    @apply bg-grey-100;
+
+    &.has-image {
+      @apply block;
+    }
+
+    img {
+      @apply w-full h-full object-cover;
+    }
+
+    .dark & {
+      @apply bg-grey-800;
+    }
+  }
+
+  &__remove {
+    @apply absolute top-[0.8rem] right-[0.8rem];
+    @apply w-[3.2rem] h-[3.2rem] rounded-full;
+    @apply bg-black/60 text-white border-none cursor-pointer;
+    @apply flex items-center justify-center;
+    @apply transition-colors duration-200;
+
+    &:hover {
+      @apply bg-red-500;
+    }
+  }
+}

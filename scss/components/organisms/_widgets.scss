@@ -1,0 +1,373 @@
+// ============================================================================
+// Widgets Components - Fully Refactored (DRY/KISS/SOLID)
+// Reusable widget/list components for dashboard
+// ============================================================================
+
+// ==================================================
+// WIDGET CONTAINER
+// ==================================================
+.widget {
+  @apply bg-white rounded-xl shadow-sm;
+  @apply border border-grey-100/50;
+  @apply flex flex-col h-full overflow-hidden;
+
+  .dark & {
+    @apply bg-[#1e1e1e] border-[#333333];
+  }
+
+  &--flush .widget__body {
+    @apply px-0 pb-0;
+  }
+
+  &__link {
+    @apply text-base font-medium text-blue-600 hover:text-blue-700 dark:text-grey-400 dark:hover:text-white;
+    @apply inline-flex items-center gap-[0.4rem];
+  }
+
+  &__header {
+    @apply flex items-center justify-between px-[1.6rem] pt-[1.6rem];
+  }
+
+  &__title {
+    @apply text-xl font-semibold leading-tight;
+  }
+
+  &__subtitle {
+    @apply text-base;
+  }
+
+  &__actions {
+    @apply flex items-center gap-[0.8rem];
+  }
+
+  &__body {
+    @apply px-[1.6rem] pb-[1.6rem] flex-1;
+  }
+
+  &__footer {
+    @apply px-[1.6rem] py-[1.6rem] border-t border-grey-100;
+    @apply bg-grey-50;
+
+    .dark & {
+      @apply border-grey-700 bg-grey-800/50;
+    }
+  }
+
+  // Traffic Overview mobile layout
+  @media (max-width: 640px) {
+    .widget__header--traffic {
+      @apply flex-col items-start gap-[0.5rem];
+
+      .widget__title,
+      .widget__subtitle {
+        @apply text-left w-full;
+      }
+
+      .chart-range {
+        @apply w-full justify-start mt-[0.5rem];
+      }
+    }
+  }
+}
+
+// ==================================================
+// TIMELINE
+// ==================================================
+.activity-timeline {
+  @apply space-y-[1.6rem];
+
+  &__item {
+    @apply flex items-start gap-[1.2rem];
+  }
+
+  &__dot {
+    @apply flex-shrink-0 flex items-center justify-center rounded-full;
+    width: 3.2rem;
+    height: 3.2rem;
+    @apply mt-[0.2rem];
+
+    svg {
+      @apply w-[1.6rem] h-[1.6rem];
+    }
+
+    &--post,
+    &--comment,
+    &--user {
+      @apply bg-blue-100 text-blue-600;
+
+      .dark & {
+        @apply bg-white/10 text-white;
+      }
+    }
+
+    &--comment {
+      @apply bg-emerald-100 text-emerald-600;
+    }
+
+    &--user {
+      @apply bg-purple-100 text-purple-600;
+    }
+  }
+
+  &__content {
+    @apply flex-1 min-w-0 pt-[0.2rem];
+  }
+
+  &__text {
+    @apply text-xl lg:text-base leading-relaxed;
+
+    strong {
+      @apply font-semibold;
+    }
+
+    a {
+      @apply hover:underline;
+      @apply text-blue-600;
+
+      .dark & {
+        @apply text-white;
+      }
+    }
+  }
+
+  &__time {
+    @apply text-sm;
+  }
+}
+
+// ==================================================
+// ACTIVITY LIST
+// ==================================================
+.activity-list {
+  @apply divide-y divide-grey-100;
+
+  .dark & {
+    @apply divide-grey-700;
+  }
+
+  &__item {
+    @apply flex items-start gap-[1.6rem] py-[1.6rem] first:pt-0 last:pb-0;
+  }
+
+  &__icon {
+    @apply flex-shrink-0 flex items-center justify-center rounded-full;
+    width: 4rem;
+    height: 4rem;
+
+    svg {
+      @apply w-[2rem] h-[2rem];
+    }
+
+    &--post {
+      @apply bg-blue-100 text-blue-600;
+
+      .dark & {
+        @apply bg-white/10 text-white;
+      }
+    }
+
+    &--comment {
+      @apply bg-emerald-100 text-emerald-600;
+
+      .dark & {
+        @apply bg-emerald-900/30 text-emerald-400;
+      }
+    }
+
+    &--user {
+      @apply bg-purple-100 text-purple-600;
+
+      .dark & {
+        @apply bg-purple-900/30 text-purple-400;
+      }
+    }
+  }
+
+  &__content {
+    @apply flex-1 min-w-0;
+  }
+
+  &__title {
+    @apply text-xl lg:text-base;
+  }
+
+  &__desc {
+    @apply text-base truncate;
+  }
+
+  &__time {
+    @apply text-sm;
+  }
+}
+
+// ==================================================
+// RANKED LIST
+// ==================================================
+.top-list {
+  @apply space-y-[0.8rem];
+
+  .widget--flush & {
+    @apply px-[2rem] pb-[2rem];
+  }
+
+  &__left {
+    @apply flex items-start gap-[1.2rem];
+  }
+
+  &__right {
+    @apply flex items-center justify-end gap-[1.2rem];
+  }
+
+  &__item {
+    @apply flex flex-col lg:flex-row justify-between gap-[1.2rem] px-[1.2rem] py-[1rem] rounded-lg;
+    @apply bg-blue-600/5;
+
+    .dark & {
+      @apply bg-[#373737]/50;
+    }
+  }
+
+  &__rank {
+    @apply flex-shrink-0 flex items-center justify-center rounded-full;
+    width: 2.8rem;
+    height: 2.8rem;
+    @apply text-base font-bold;
+    @apply bg-grey-100 text-grey-600;
+
+    .dark & {
+      @apply bg-grey-700 text-grey-400;
+    }
+
+    &--1 {
+      @apply bg-amber-100 text-amber-700;
+
+      .dark & {
+        @apply bg-amber-900/30 text-amber-400;
+      }
+    }
+
+    &--2 {
+      @apply bg-grey-200 text-grey-700;
+
+      .dark & {
+        @apply bg-grey-600 text-grey-300;
+      }
+    }
+
+    &--3 {
+      @apply bg-orange-100 text-orange-700;
+
+      .dark & {
+        @apply bg-orange-900/30 text-orange-400;
+      }
+    }
+  }
+
+  &__info {
+    @apply flex-1 min-w-0;
+  }
+
+  &__title {
+    @apply text-xl lg:text-base;
+  }
+
+  &__url {
+    @apply text-sm truncate;
+  }
+
+  &__value {
+    @apply flex-shrink-0 text-sm font-semibold tabular-nums text-right;
+    @apply text-grey-900;
+    min-width: 3.5rem;
+
+    .dark & {
+      @apply text-white;
+    }
+  }
+
+  &__change {
+    @apply flex-shrink-0 flex items-center gap-[0.2rem] text-xs font-medium tabular-nums;
+    min-width: 3rem;
+
+    svg {
+      @apply w-[1.2rem] h-[1.2rem];
+    }
+
+    &--up {
+      @apply text-emerald-600;
+
+      .dark & {
+        @apply text-emerald-400;
+      }
+    }
+
+    &--down {
+      @apply text-red-600;
+
+      .dark & {
+        @apply text-red-400;
+      }
+    }
+  }
+}
+
+// ==================================================
+// MEDIA LIST
+// ==================================================
+.recent-posts {
+  @apply divide-y divide-grey-100;
+
+  .dark & {
+    @apply divide-grey-700;
+  }
+
+  &__item {
+    @apply flex items-start gap-[1.6rem] py-[1.6rem] px-[2rem] first:pt-0 last:pb-0;
+
+    .widget--flush & {
+      @apply px-[2rem];
+
+      &:first-child {
+        @apply pt-0;
+      }
+
+      &:last-child {
+        @apply pb-[2rem];
+      }
+    }
+  }
+
+  &__image {
+    @apply flex-shrink-0 w-[5.6rem] h-[4rem] rounded-lg overflow-hidden;
+    @apply bg-grey-100;
+
+    .dark & {
+      @apply bg-grey-700;
+    }
+
+    img {
+      @apply w-full h-full object-cover;
+    }
+  }
+
+  &__content {
+    @apply flex-1 min-w-0;
+  }
+
+  &__title {
+    @apply text-xl lg:text-base;
+  }
+
+  &__meta {
+    @apply flex items-center gap-[0.4rem];
+    @apply text-sm;
+
+    span {
+      @apply inline-block;
+    }
+  }
+
+  &__status {
+    @apply flex-shrink-0 ml-auto;
+  }
+}

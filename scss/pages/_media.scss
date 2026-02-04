@@ -1,0 +1,171 @@
+// ============================================================================
+// Media Library Pages (Images, Videos) & Components
+// ============================================================================
+
+// ========================================
+// Media Grid Layout
+// ========================================
+.media-grid {
+  @apply grid gap-[1.6rem]; // Uniform gap for rows and columns
+  // Responsive grid: 2 cols mobile, 3 tablet, 5 desktop
+  @apply grid-cols-2 sm:grid-cols-3 lg:grid-cols-5;
+}
+
+// ========================================
+// Media Layout (Sidebar + Grid split)
+// ========================================
+.media-layout {
+  @apply flex flex-col lg:flex-row gap-[2.4rem] relative;
+
+  &__sidebar {
+    @apply w-full lg:w-[28rem] flex-shrink-0;
+    @media (min-width: 1024px) {
+      flex: 1; // 1:2 ratio with content
+    }
+  }
+
+  &__content {
+    @apply flex-1 min-w-0;
+    @media (min-width: 1024px) {
+      flex: 2; // 2:1 ratio with sidebar
+    }
+  }
+}
+
+// ========================================
+// Media Card Component
+// ========================================
+.media-card {
+  @apply relative flex flex-col bg-white rounded-xl shadow-sm border border-grey-100 overflow-hidden transition-all duration-200;
+  @apply hover:shadow-md hover:border-blue-200;
+
+  .dark & {
+    @apply bg-grey-800 border-grey-700;
+    @apply hover:border-blue-500/30;
+  }
+
+  // Clickable area (wraps the whole card or just the thumbnail/title)
+  // Making the whole card clickable for navigation
+  &__link {
+    @apply h-full flex flex-col;
+  }
+
+  // Toggle/Select Checkbox (Absolute top-left)
+  &__select {
+    @apply absolute top-[0.8rem] left-[0.8rem] z-10;
+    @apply opacity-0 transition-opacity duration-200;
+
+    // Show on hover or if checked
+    .media-card:hover &,
+    &:checked {
+      @apply opacity-100;
+    }
+  }
+
+  // Thumbnail Container
+  &__thumbnail {
+    @apply relative w-full aspect-square bg-grey-50 overflow-hidden;
+    @apply flex items-center justify-center;
+
+    .dark & {
+      @apply bg-grey-900;
+    }
+
+    img,
+    video {
+      @apply w-full h-full object-cover transition-transform duration-500;
+    }
+
+    // Zoom effect on hover
+    .media-card:hover & img {
+      @apply scale-105;
+    }
+
+    // File type icon (if no preview available or for docs)
+    &--icon {
+      @apply text-grey-400;
+      .dark & {
+        @apply text-grey-600;
+      }
+    }
+
+    // Video duration badge
+    &-badge {
+      @apply absolute bottom-[0.8rem] right-[0.8rem];
+      @apply px-[0.6rem] py-[0.2rem] rounded text-xs font-medium;
+      @apply bg-black/70 text-white backdrop-blur-sm;
+    }
+  }
+
+  // Details Section
+  &__details {
+    @apply p-[0.8rem] flex flex-col gap-[0.2rem] min-w-0; // Reduced padding and gap
+  }
+
+  &__title {
+    @apply text-sm font-medium text-grey-900 truncate;
+    .dark & {
+      @apply text-white;
+    }
+  }
+
+  &__meta {
+    @apply text-xs text-grey-500 truncate;
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  // Category/Tag Badge (creative addition)
+  &__tag {
+    @apply absolute top-[0.8rem] left-[0.8rem] z-10;
+    @apply px-[0.6rem] py-[0.2rem] rounded-full text-[10px] font-semibold uppercase tracking-wide;
+    @apply bg-blue-100 text-blue-700 shadow-sm;
+    @apply opacity-0 transition-opacity duration-200;
+
+    .dark & {
+      @apply bg-blue-900/50 text-blue-300;
+    }
+
+    // Show on hover
+    .media-card:hover & {
+      @apply opacity-100;
+    }
+  }
+
+  // Quick Actions (Overlay or Bottom)
+  // Let's verify if user wants hover actions. "clicking the card opens a new page"
+  // But maybe quick delete?
+  // Use absolute position for quick actions overlaid on thumbnail top-right
+  &__actions {
+    @apply absolute top-[0.8rem] right-[0.8rem] z-10 flex gap-[0.4rem];
+    @apply opacity-0 transform translate-y-[-0.4rem] transition-all duration-200;
+
+    .media-card:hover & {
+      @apply opacity-100 translate-y-0;
+    }
+  }
+
+  &__action-btn {
+    @apply p-[0.4rem] rounded bg-white text-grey-500 shadow-sm border border-grey-100;
+    @apply hover:text-blue-600 hover:border-blue-200;
+
+    .dark & {
+      @apply bg-grey-800 text-grey-400 border-grey-600;
+      @apply hover:text-blue-400 hover:border-blue-500;
+    }
+  }
+}
+
+// ========================================
+// Media Preview (for edit pages)
+// ========================================
+.media-preview {
+  &__image {
+    @apply w-full h-auto rounded-xl object-cover;
+  }
+
+  &__video {
+    @apply w-full h-auto rounded-xl;
+  }
+}

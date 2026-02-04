@@ -1,0 +1,229 @@
+// ============================================================================
+// Data Filter Component - Search, Filter, Sort Controls
+// BEM + Tailwind @apply | Dark mode via .dark &
+// ============================================================================
+
+
+
+.data-filter {
+  @apply flex flex-col sm:flex-row items-stretch sm:items-center gap-[1.6rem];
+  @apply mb-[2.4rem];
+
+  // ========================================
+  // Search Input
+  // ========================================
+  &__search {
+    @apply flex-1 relative;
+
+    &-icon {
+      @apply absolute left-[1rem] top-1/2 -translate-y-1/2;
+      @apply w-[1.6rem] h-[1.6rem] text-grey-400 pointer-events-none;
+
+      .dark & {
+        @apply text-grey-500;
+      }
+    }
+
+    &-input {
+      @apply w-full h-[3.2rem] pl-[4rem] pr-[1.2rem];
+      @apply text-[1.3rem];
+      @apply bg-white text-grey-900 placeholder-grey-400;
+      @apply border border-grey-200 rounded-lg;
+      @apply outline-none;
+      @apply transition-all duration-200;
+
+      &:focus {
+        @apply border-blue-600 ring-2 ring-blue-600/20;
+      }
+
+      .dark & {
+        @apply bg-[#1e1e1e] text-white placeholder-grey-500;
+        @apply border-grey-700;
+
+        &:focus {
+          @apply border-blue-500 ring-blue-500/20;
+        }
+      }
+    }
+  }
+
+  // ========================================
+  // Controls Group (Filters + Sort)
+  // ========================================
+  &__controls {
+    @apply flex items-center gap-[1.2rem];
+  }
+
+  // ========================================
+  // Filter Dropdown
+  // ========================================
+  &__dropdown {
+    @apply relative;
+
+    &-trigger {
+      @apply flex items-center gap-[0.6rem];
+      @apply h-[3.2rem] px-[1.2rem];
+      @apply text-[1.3rem] font-medium;
+      @apply bg-white text-grey-700;
+      @apply border border-grey-200 rounded-lg;
+      @apply cursor-pointer;
+      @apply transition-all duration-200;
+
+      &:hover {
+        @apply bg-blue-600/10 border-blue-600/30 text-blue-700;
+      }
+
+      .dark & {
+        @apply bg-[#1e1e1e] text-grey-300 border-grey-700;
+
+        &:hover {
+          @apply bg-blue-600/10 border-blue-600/30 text-blue-400;
+        }
+      }
+
+      svg {
+        @apply w-[1.4rem] h-[1.4rem];
+      }
+    }
+
+    &-menu {
+      @apply absolute right-0 top-full mt-[0.8rem];
+      @apply min-w-[18rem] py-[0.8rem];
+      @apply bg-white rounded-lg shadow-lg;
+      @apply border border-grey-200;
+      @apply z-50;
+      @apply opacity-0 invisible;
+      @apply transition-all duration-200;
+
+      .dark & {
+        @apply bg-[#1e1e1e] border-grey-700;
+      }
+
+      &.open {
+        @apply opacity-100 visible;
+      }
+    }
+
+    &-item {
+      @apply flex items-center gap-[1.2rem];
+      @apply w-full px-[1.6rem] py-[1rem];
+      @apply text-[1.4rem] text-left;
+      @apply text-grey-700 hover:bg-grey-50;
+      @apply cursor-pointer;
+      @apply transition-colors duration-200;
+
+      .dark & {
+        @apply text-grey-300 hover:bg-grey-800;
+      }
+
+      &--active {
+        @apply text-blue-600 bg-blue-50;
+
+        .dark & {
+          @apply text-blue-400 bg-blue-900/20;
+        }
+      }
+    }
+  }
+
+  // ========================================
+  // Sort Toggle
+  // ========================================
+  &__sort {
+    @apply flex items-center gap-[0.6rem];
+    @apply h-[3.2rem] px-[1.2rem];
+    @apply text-[1.3rem] font-medium;
+    @apply bg-white text-grey-700;
+    @apply border border-grey-200 rounded-lg;
+    @apply cursor-pointer;
+    @apply transition-all duration-200;
+
+    &:hover {
+      @apply bg-blue-600/10 border-blue-600/30 text-blue-700;
+    }
+
+    .dark & {
+      @apply bg-[#1e1e1e] text-grey-300 border-grey-700;
+
+      &:hover {
+        @apply bg-blue-600/10 border-blue-600/30 text-blue-400;
+      }
+    }
+
+    svg {
+      @apply w-[1.4rem] h-[1.4rem];
+    }
+
+    &--asc svg {
+      @apply rotate-0;
+    }
+
+    &--desc svg {
+      @apply rotate-180;
+    }
+  }
+
+  // ========================================
+  // Add Button
+  // ========================================
+  &__add {
+    @apply flex items-center gap-[0.6rem];
+    @apply h-[3.2rem] px-[1.4rem];
+    @apply text-[1.3rem] font-medium;
+    @apply bg-blue-600 text-white rounded-lg;
+    @apply cursor-pointer;
+    @apply transition-all duration-200;
+
+    &:hover {
+      @apply bg-blue-700;
+    }
+
+    .dark & {
+      &:hover {
+        @apply bg-blue-500;
+      }
+    }
+
+    svg {
+      @apply w-[1.6rem] h-[1.6rem];
+    }
+  }
+
+  // ========================================
+  // Active Filters (Pills)
+  // ========================================
+  &__active {
+    @apply flex flex-wrap items-center gap-[0.8rem];
+    @apply mt-[1.2rem];
+  }
+
+  &__pill {
+    @apply inline-flex items-center gap-[0.6rem];
+    @apply px-[1rem] py-[0.4rem] rounded-full;
+    @apply text-[1.2rem] font-medium;
+    @apply bg-blue-100 text-blue-700;
+
+    .dark & {
+      @apply bg-blue-900/30 text-blue-300;
+    }
+
+    &-remove {
+      @apply w-[1.4rem] h-[1.4rem];
+      @apply cursor-pointer hover:text-blue-900;
+
+      .dark & {
+        @apply hover:text-blue-100;
+      }
+    }
+  }
+
+  &__clear {
+    @apply text-[1.2rem] text-grey-500 hover:text-grey-700;
+    @apply cursor-pointer;
+    @apply transition-colors duration-200;
+
+    .dark & {
+      @apply text-grey-400 hover:text-grey-200;
+    }
+  }
+}
