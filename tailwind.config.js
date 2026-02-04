@@ -1,25 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './src/templates/**/*.html',
-    './src/templates/**/*.js',
+    './*.html',
+    './pages/**/*.html',
+    './components/**/*.html',
     './scss/**/*.scss',
+    './js/**/*.js',
+    './node_modules/preline/dist/*.js',
   ],
   safelist: [
-    // Preline tab active states
-    'hs-tab-active:bg-white',
-    'hs-tab-active:text-black',
+    'hs-tab-active:bg-blue-600',
+    'hs-tab-active:bg-blue-500',
+    'hs-tab-active:text-white',
     'hs-tab-active:shadow-sm',
-    'dark:hs-tab-active:bg-white',
-    'dark:hs-tab-active:text-grey-900',
-    // Preline dropdown states
-    'hs-dropdown-open:opacity-100',
-    'hs-dropdown-open:visible',
-    'hs-dropdown-open:scale-100',
-    // Preline accordion states
-    'hs-accordion-active:bg-blue-50',
-    'hs-accordion-active:text-blue-600',
-    // Add more as needed
+    'dark:hs-tab-active:bg-blue-500',
+    'dark:hs-tab-active:text-white',
   ],
   darkMode: 'class',
   theme: {
@@ -129,7 +124,7 @@ module.exports = {
     // Breakpoints use Tailwind defaults (industry standard)
   },
   plugins: [
-    // Preline plugin removed - Preline v2.x doesn't require Tailwind plugin
+    require('preline/plugin'),
     // Custom plugin for additional utilities
     function ({ addUtilities, addComponents, theme }) {
       // Scrollbar utilities
