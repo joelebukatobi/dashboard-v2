@@ -25,10 +25,8 @@ class AuthController {
       const rateLimit = checkRateLimit(loginAttempts, clientIp, 5, 15 * 60 * 1000);
       if (rateLimit.blocked) {
         reply.code(429);
-        return reply.html(errorPage({
-          title: 'Too Many Attempts',
-          message: 'Too many login attempts. Please try again in 15 minutes.',
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: 'Too many login attempts. Please try again in 15 minutes.'
         }));
       }
       
@@ -36,10 +34,8 @@ class AuthController {
       const validation = validate(loginSchema, request.body);
       if (!validation.success) {
         reply.code(400);
-        return reply.html(errorPage({
-          title: 'Validation Error',
-          message: validation.errors.join(', '),
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: validation.errors.join(', ')
         }));
       }
       
@@ -50,10 +46,8 @@ class AuthController {
       
       if (!result.valid) {
         reply.code(401);
-        return reply.html(errorPage({
-          title: 'Login Failed',
-          message: result.error,
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: result.error
         }));
       }
       
@@ -84,17 +78,15 @@ class AuthController {
       
       // Return success with redirect
       reply.header('HX-Redirect', '/admin/dashboard');
-      return reply.html(successToast({
+      return reply.type('text/html').send(successToast({
         message: 'Login successful! Redirecting...'
       }));
       
     } catch (error) {
       request.log.error(error);
       reply.code(500);
-      return reply.html(errorPage({
-        title: 'Server Error',
-        message: 'An unexpected error occurred. Please try again.',
-        type: 'error'
+      return reply.type('text/html').send(errorToast({
+        message: 'An unexpected error occurred. Please try again.'
       }));
     }
   }
@@ -123,17 +115,15 @@ class AuthController {
       
       // Redirect to login
       reply.header('HX-Redirect', '/admin/auth/login');
-      return reply.html(successToast({
+      return reply.type('text/html').send(successToast({
         message: 'Logged out successfully'
       }));
       
     } catch (error) {
       request.log.error(error);
       reply.code(500);
-      return reply.html(errorPage({
-        title: 'Error',
-        message: 'Error during logout',
-        type: 'error'
+      return reply.type('text/html').send(errorToast({
+        message: 'Error during logout'
       }));
     }
   }
@@ -170,10 +160,8 @@ class AuthController {
       
       if (!email) {
         reply.code(400);
-        return reply.html(errorPage({
-          title: 'Error',
-          message: 'Email is required',
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: 'Email is required'
         }));
       }
       
@@ -190,17 +178,15 @@ class AuthController {
         request.log.info(`Password reset token for ${email}: ${token}`);
       }
       
-      return reply.html(successToast({
+      return reply.type('text/html').send(successToast({
         message: 'If an account exists with this email, you will receive reset instructions.'
       }));
       
     } catch (error) {
       request.log.error(error);
       reply.code(500);
-      return reply.html(errorPage({
-        title: 'Error',
-        message: 'An error occurred. Please try again.',
-        type: 'error'
+      return reply.type('text/html').send(errorToast({
+        message: 'An error occurred. Please try again.'
       }));
     }
   }
@@ -216,10 +202,8 @@ class AuthController {
       // Validate passwords match
       if (password !== confirmPassword) {
         reply.code(400);
-        return reply.html(errorPage({
-          title: 'Error',
-          message: 'Passwords do not match',
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: 'Passwords do not match'
         }));
       }
       
@@ -227,10 +211,8 @@ class AuthController {
       const passwordCheck = validatePasswordStrength(password);
       if (!passwordCheck.valid) {
         reply.code(400);
-        return reply.html(errorPage({
-          title: 'Weak Password',
-          message: passwordCheck.errors.join('. '),
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: passwordCheck.errors.join('. ')
         }));
       }
       
@@ -239,10 +221,8 @@ class AuthController {
       
       if (!resetData) {
         reply.code(400);
-        return reply.html(errorPage({
-          title: 'Invalid Token',
-          message: 'This reset link is invalid or has expired.',
-          type: 'error'
+        return reply.type('text/html').send(errorToast({
+          message: 'This reset link is invalid or has expired.'
         }));
       }
       
@@ -250,36 +230,39 @@ class AuthController {
       await authService.resetPassword(resetData.user.id, password);
       
       reply.header('HX-Redirect', '/admin/auth/login?reset=success');
-      return reply.html(successToast({
+      return reply.type('text/html').send(successToast({
         message: 'Password reset successful. Please login with your new password.'
       }));
       
     } catch (error) {
       request.log.error(error);
       reply.code(500);
-      return reply.html(errorPage({
-        title: 'Error',
-        message: 'An error occurred. Please try again.',
-        type: 'error'
+      return reply.type('text/html').send(errorToast({
+        message: 'An error occurred. Please try again.'
       }));
     }
   }
 }
 
-// Helper functions for responses (will be replaced with actual templates)
-function errorPage({ title, message, type }) {
+// Helper functions for HTMX responses
+function errorToast({ message }) {
   return `
-    <div class="error-message ${type}">
-      <h2>${title}</h2>
-      <p>${message}</p>
+    <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-800 mb-4" role="alert">
+      <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span class="text-sm font-medium">${message}</span>
     </div>
   `;
 }
 
 function successToast({ message }) {
   return `
-    <div class="toast toast-success">
-      ${message}
+    <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-800 mb-4" role="alert">
+      <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      <span class="text-sm font-medium">${message}</span>
     </div>
   `;
 }
