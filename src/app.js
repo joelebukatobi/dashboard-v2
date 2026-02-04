@@ -15,6 +15,8 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: '.env.development' });
 
 export default async function app(fastify, opts) {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
   // Register security plugins
   await fastify.register(fastifyHelmet, {
     contentSecurityPolicy: {
@@ -26,6 +28,11 @@ export default async function app(fastify, opts) {
         connectSrc: ["'self'"],
         fontSrc: ["'self'"],
       }
+    },
+    // Disable HSTS in development - it forces HTTPS which breaks localhost
+    strictTransportSecurity: isDevelopment ? false : {
+      maxAge: 15552000,
+      includeSubDomains: true
     }
   });
   
