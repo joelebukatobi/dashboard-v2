@@ -65,8 +65,8 @@ export default async function app(fastify, opts) {
     };
   });
 
-  // TODO: Register admin routes
-  // await fastify.register(import('./routes/auth.routes.js'), { prefix: '/admin/auth' });
+  // Register admin routes
+  await fastify.register(import('./routes/auth.routes.js'), { prefix: '/admin/auth' });
   // await fastify.register(import('./routes/dashboard.routes.js'), { prefix: '/admin/dashboard' });
   // await fastify.register(import('./routes/posts.routes.js'), { prefix: '/admin/posts' });
   // await fastify.register(import('./routes/categories.routes.js'), { prefix: '/admin/categories' });
