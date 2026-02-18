@@ -14,6 +14,7 @@
   svg {
     @apply hidden sm:inline-block;
     @apply size-[1.4rem];
+    stroke-width: 1;
   }
 
   // Primary
@@ -137,19 +138,31 @@
 
     // Edit variation
     &--edit {
-      @apply hover:text-amber-600;
+      @apply hover:text-amber-600 hover:bg-amber-50 cursor-pointer;
+      
       .dark & {
-        @apply hover:text-amber-400;
+        @apply hover:text-amber-400 hover:bg-amber-900/20;
       }
     }
 
     // Delete variation
     &--delete {
-      @apply hover:text-red-600;
+      @apply hover:text-red-600 hover:bg-red-50 cursor-pointer;
+      
       .dark & {
-        @apply hover:text-red-400;
+        @apply hover:text-red-400 hover:bg-red-900/20;
       }
     }
+
+    // Icon stroke for action buttons
+    &--edit svg,
+    &--delete svg {
+      stroke-width: 1;
+    }
+  }
+
+  // Full-width button
+  &--full {
   }
 
   // Full-width button
@@ -189,4 +202,21 @@
 // Button Grouping (for filter bars, toolbars)
 .btn-group {
   @apply flex gap-[0.8rem];
+}
+
+// Anchor tag specific overrides for action buttons (higher specificity)
+a.btn--action--edit:hover {
+  color: var(--color-amber-600);
+}
+
+a.btn--action--delete:hover {
+  color: var(--color-red-600);
+}
+
+.dark a.btn--action--edit:hover {
+  color: var(--color-amber-400);
+}
+
+.dark a.btn--action--delete:hover {
+  color: var(--color-red-400);
 }

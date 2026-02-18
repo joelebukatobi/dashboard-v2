@@ -263,7 +263,7 @@ $collapsed-item-size: 3.2rem;
 
   // Submenu
   &__submenu {
-    @apply overflow-hidden pl-[3.2rem];
+    @apply overflow-hidden pl-[3.2rem] mb-0;
     max-height: 0;
     transition: max-height 0.3s ease;
 

@@ -7,6 +7,11 @@
 .modal-overlay {
   @apply hidden size-full fixed top-0 start-0 overflow-x-hidden overflow-y-auto;
   z-index: 80; // High z-index for modal overlays
+
+  // Show when Preline adds 'open' class
+  &.open {
+    @apply block;
+  }
 }
 
 .modal {
