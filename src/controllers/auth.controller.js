@@ -54,10 +54,7 @@ class AuthController {
       // Clear rate limit on successful login
       clearRateLimit(loginAttempts, clientIp);
       
-      // Create session
-      const session = await authService.createSession(result.user.id, rememberMe);
-      
-      // Generate JWT token
+      // Generate JWT token first
       const token = await reply.jwtSign(
         { 
           userId: result.user.id,
@@ -66,6 +63,9 @@ class AuthController {
         },
         { expiresIn: rememberMe ? '30d' : '24h' }
       );
+      
+      // Create session with JWT token
+      const session = await authService.createSession(result.user.id, rememberMe, token);
       
       // Set HTTP-only cookie
       reply.setCookie('token', token, {
@@ -97,6 +97,10 @@ class AuthController {
    */
   async logout(request, reply) {
     try {
+      // Clear rate limit for this IP on logout
+      const clientIp = request.ip;
+      clearRateLimit(loginAttempts, clientIp);
+
       // Get token from cookie
       const token = request.cookies.token;
       

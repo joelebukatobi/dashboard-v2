@@ -83,8 +83,8 @@ class AuthService {
    * @param {boolean} rememberMe - Whether to create long-lived session
    * @returns {Promise<object>} - Session object
    */
-  async createSession(userId, rememberMe = false) {
-    const token = generateSecureToken(32);
+  async createSession(userId, rememberMe = false, jwtToken = null) {
+    const token = jwtToken || generateSecureToken(32);
     const sessionId = generateSessionId();
     
     // Set expiration based on rememberMe

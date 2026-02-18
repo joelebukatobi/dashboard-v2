@@ -32,41 +32,37 @@ function extractToken(request) {
 export async function authenticate(request, reply) {
   try {
     const token = extractToken(request);
-    
+
     if (!token) {
-      reply.code(401);
       throw new Error('Authentication required');
     }
-    
+
     // Verify JWT token
     const decoded = await request.jwtVerify(token);
-    
+
     if (!decoded || !decoded.userId) {
-      reply.code(401);
       throw new Error('Invalid token');
     }
-    
+
     // Validate session in database
     const sessionData = await authService.findValidSession(token);
-    
+
     if (!sessionData) {
-      reply.code(401);
       throw new Error('Session expired or invalid');
     }
-    
+
     // Check if user is still active
     if (sessionData.user.status === 'SUSPENDED') {
-      reply.code(403);
       throw new Error('Account suspended');
     }
-    
+
     // Attach user to request
     request.user = sessionData.user;
     request.sessionToken = token;
-    
+
     // Update last active (async, don't wait)
     authService.updateLastActive(sessionData.user.id).catch(() => {});
-    
+
   } catch (err) {
     // Clear invalid token cookie
     reply.clearCookie('token', {
@@ -75,7 +71,7 @@ export async function authenticate(request, reply) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict'
     });
-    
+
     throw err;
   }
 }
