@@ -59,6 +59,23 @@ export function authLayout({ title = 'Sign In', description = 'Sign in to your a
 
     <!-- Initialize Lucide icons and handle theme -->
     <script>
+      // Theme initialization for auth pages
+      const html = document.documentElement;
+      const savedTheme = localStorage.getItem('theme');
+
+      if (savedTheme === null) {
+        // First visit - check system preference
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          html.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          localStorage.setItem('theme', 'light');
+        }
+      } else if (savedTheme === 'dark') {
+        // Returning visitor with saved preference
+        html.classList.add('dark');
+      }
+
       lucide.createIcons();
 
       function copyEmail() {
@@ -80,17 +97,6 @@ export function authLayout({ title = 'Sign In', description = 'Sign in to your a
 
         lucide.createIcons();
       }
-
-      function applySystemTheme() {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-
-      applySystemTheme();
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applySystemTheme);
 
       // HTMX event handlers
       document.body.addEventListener('htmx:afterRequest', function(evt) {
