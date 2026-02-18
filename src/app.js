@@ -6,6 +6,7 @@ import fastifyCors from '@fastify/cors';
 import fastifyJwt from '@fastify/jwt';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
+import fastifyMultipart from '@fastify/multipart';
 import fastifyHtml from 'fastify-html';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -48,6 +49,12 @@ export default async function app(fastify, opts) {
 
   await fastify.register(fastifyCookie);
   await fastify.register(fastifyFormbody);
+  await fastify.register(fastifyMultipart, {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB
+      files: 1,
+    }
+  });
   await fastify.register(fastifyCors, {
     origin: process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://127.0.0.1:3000'] : false,
     credentials: true,
@@ -100,10 +107,10 @@ export default async function app(fastify, opts) {
     };
   });
 
-  // Register admin routes
-  await fastify.register(import('./routes/auth.routes.js'), { prefix: '/admin/auth' });
-  // await fastify.register(import('./routes/dashboard.routes.js'), { prefix: '/admin/dashboard' });
-  // await fastify.register(import('./routes/posts.routes.js'), { prefix: '/admin/posts' });
+   // Register admin routes
+   await fastify.register(import('./routes/auth.routes.js'), { prefix: '/admin/auth' });
+   await fastify.register(import('./routes/dashboard.routes.js'), { prefix: '/admin/dashboard' });
+   await fastify.register(import('./routes/posts.routes.js'), { prefix: '/admin/posts' });
   // await fastify.register(import('./routes/categories.routes.js'), { prefix: '/admin/categories' });
   // await fastify.register(import('./routes/tags.routes.js'), { prefix: '/admin/tags' });
   // await fastify.register(import('./routes/users.routes.js'), { prefix: '/admin/users' });
