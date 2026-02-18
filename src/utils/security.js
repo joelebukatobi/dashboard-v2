@@ -102,6 +102,11 @@ export function sanitizeInput(input) {
  * @returns {object} - { blocked: boolean, remaining: number }
  */
 export function checkRateLimit(store, key, maxAttempts = 5, windowMs = 15 * 60 * 1000) {
+  // Disable rate limiting in development mode
+  if (process.env.NODE_ENV === 'development') {
+    return { blocked: false, remaining: maxAttempts };
+  }
+
   const now = Date.now();
   const record = store.get(key);
   
