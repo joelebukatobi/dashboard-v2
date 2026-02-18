@@ -15,7 +15,7 @@ scss/*.scss → sass → .build/components.css → postcss (Tailwind v4) → dis
 ```
 project/
 ├── css/
-│   ├── main.css          # Tailwind v4 entry point
+│   ├── index.css         # Tailwind v4 entry point
 │   └── theme.css         # Custom theme tokens (@theme block)
 ├── scss/
 │   ├── main.scss         # SCSS entry point
@@ -61,7 +61,7 @@ module.exports = {
 
 > **Note**: Use `.cjs` extension for CommonJS compatibility with ESM projects.
 
-### css/main.css (Tailwind v4 Entry Point)
+### css/index.css (Tailwind v4 Entry Point)
 
 ```css
 /* Tailwind v4 base import */
@@ -253,11 +253,11 @@ Add to `package.json`:
 {
   "scripts": {
     "css:scss": "sass scss/main.scss .build/components.css --style=compressed",
-    "css:tailwind": "postcss css/main.css -o dist/css/main.css",
+    "css:tailwind": "postcss css/index.css -o dist/css/main.css",
     "css:build": "npm run css:scss && npm run css:tailwind",
     "css:watch": "npm-run-all --parallel css:watch:*",
     "css:watch:scss": "sass scss/main.scss .build/components.css --watch",
-    "css:watch:tailwind": "postcss css/main.css -o dist/css/main.css --watch"
+    "css:watch:tailwind": "postcss css/index.css -o dist/css/main.css --watch"
   }
 }
 ```
@@ -396,7 +396,7 @@ Tailwind v4 has limited `@apply` support. Use:
 ## Migration from Tailwind v3
 
 1. **Remove** `tailwind.config.js`
-2. **Create** `css/main.css` with `@import 'tailwindcss'`
+2. **Create** `css/index.css` with `@import 'tailwindcss'`
 3. **Move** theme config to `css/theme.css` using `@theme` block
 4. **Update** `postcss.config.js` to use `@tailwindcss/postcss`
 5. **Replace** `@apply` in SCSS with CSS custom properties or standard CSS
