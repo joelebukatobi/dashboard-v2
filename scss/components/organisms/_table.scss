@@ -149,10 +149,10 @@
     }
 
     a {
-      @apply hover:text-blue-600 transition-colors duration-200;
+      @apply text-grey-900 hover:text-blue-600 transition-colors duration-200;
 
       .dark & {
-        @apply hover:text-blue-400;
+        @apply text-white hover:text-blue-400;
       }
     }
   }

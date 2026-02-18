@@ -7,3 +7,118 @@
 // - _table.scss (structure, labels, titles)
 // - _badge.scss (meta badges, status indicators)
 // - _button.scss (actions)
+
+// Sticky table layout for desktop
+.posts {
+  .content {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 5.6rem); // Full viewport minus main navbar
+    
+    > .page-header,
+    > .data-filter {
+      flex-shrink: 0;
+    }
+    
+    > .table-container {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 200px; // Ensure minimum visible rows
+      padding-right: 1.6rem; // Space between table and scrollbar
+      
+      // Sticky table header
+      .table__thead {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background-color: var(--color-white);
+      }
+    }
+    
+    // Pagination wrapper (page-footer)
+    > .page-footer {
+      flex-shrink: 0;
+      border-top: none; // Remove top border
+    }
+  }
+}
+
+// Edit/New Post Pages Sticky Layout (Desktop)
+.content--edit,
+.content--new {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 5.6rem); // Full viewport minus main navbar
+  
+  > .page-header {
+    flex-shrink: 0;
+  }
+  
+  > .edit-form-container,
+  > .new-form-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 2.4rem; // Space at bottom
+  }
+}
+
+// Delete Modal - High z-index to appear above sticky headers
+#deleteModal {
+  z-index: 100;
+}
+
+// Mobile: Normal scrolling for Edit/New pages
+@media (max-width: 1023px) {
+  .content--edit,
+  .content--new {
+    height: auto;
+    
+    > .edit-form-container,
+    > .new-form-container {
+      overflow-y: visible;
+    }
+  }
+  
+  .posts {
+    .content {
+      height: auto;
+      
+      > .table-container {
+        overflow-y: visible;
+        
+        // Add spacing between mobile cards
+        .table__tr {
+          margin-bottom: 1.2rem;
+        }
+        
+        // Add extra space after last card before footer
+        .table__tbody {
+          margin-bottom: 2rem;
+        }
+      }
+      
+      // Fixed footer at bottom on mobile
+      > .page-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: var(--color-white);
+        z-index: 100;
+        border-top: none; // Remove top border
+        padding: 2rem 1.6rem; // Increased padding for better height
+        box-shadow: 0 -2px 4px -1px rgba(0, 0, 0, 0.02); // Very subtle shadow
+        
+        .dark & {
+          background-color: var(--color-grey-900);
+          box-shadow: 0 -2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+      }
+    }
+  }
+  
+  // Add padding to posts page only to prevent content from being hidden behind fixed footer
+  body:has(.posts) {
+    padding-bottom: 7rem; // Increased for taller footer
+  }
+}

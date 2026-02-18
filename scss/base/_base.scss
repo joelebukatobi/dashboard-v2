@@ -60,12 +60,35 @@ html {
   font-size: 62.5%; // 1rem = 10px (Default for < 1536px)
   @apply overflow-hidden h-full;
 
-  // Large screens (Standard Laptops/Desktops)
-  @screen 2xl {
-    font-size: 100%;
+  // Standard laptops/desktops
+  @media (min-width: 1440px) {
+    font-size: 87.5%; // 1rem = 16px
   }
+
+  // Large screens with HiDPI (accounting for 150% system scaling)
+  // @media (min-width: 1700px) {
+  //   font-size: 150%; // 1rem = 24px
+  // }
 }
 
 body {
   @apply overflow-hidden h-full max-w-[100vw];
+  @apply bg-white;
+
+  .dark & {
+    @apply bg-grey-900;
+  }
+}
+
+// ============================================================================
+// HTMX Loading Indicators
+// ============================================================================
+
+.htmx-indicator {
+  display: none;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-indicator.htmx-request {
+  display: inline-block;
 }
