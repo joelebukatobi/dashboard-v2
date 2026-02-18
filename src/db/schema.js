@@ -113,6 +113,7 @@ export const categories = pgTable('categories', {
   slug: varchar('slug', { length: 100 }).notNull().unique(),
   description: text('description'),
   status: categoryStatusEnum('status').default('PUBLISHED').notNull(),
+  colorClass: varchar('color_class', { length: 50 }).default('badge--primary').notNull(),
   postCount: integer('post_count').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
