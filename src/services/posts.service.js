@@ -1,6 +1,7 @@
 // src/services/posts.service.js
 import { db, posts, categories, tags, postTags, users, mediaItems } from '../db/index.js';
 import { eq, and, desc, asc, like, sql } from 'drizzle-orm';
+import { activityService } from './activity.service.js';
 
 /**
  * Posts Service
@@ -224,7 +225,18 @@ class PostsService {
       await this.incrementCategoryPostCount(categoryId);
     }
 
-    return this.getPostById(post.id);
+    // Get full post data for logging
+    const fullPost = await this.getPostById(post.id);
+
+    // Log activity
+    await activityService.logPostCreated(userId, fullPost);
+
+    // Log publication separately if published
+    if (status === 'PUBLISHED') {
+      await activityService.logPostPublished(userId, fullPost);
+    }
+
+    return fullPost;
   }
 
   /**
@@ -288,6 +300,13 @@ class PostsService {
       await this.updatePostTags(id, tagIds);
     }
 
+    // Track changes for activity log
+    const changes = {};
+    if (title && title !== post.title) changes.title = { from: post.title, to: title };
+    if (slug && slug !== post.slug) changes.slug = { from: post.slug, to: slug };
+    if (status && status !== post.status) changes.status = { from: post.status, to: status };
+    if (categoryId && categoryId !== post.categoryId) changes.categoryId = { from: post.categoryId, to: categoryId };
+
     // Update category counts if status changed
     if (status && status !== post.status) {
       if (status === 'PUBLISHED') {
@@ -300,19 +319,36 @@ class PostsService {
       }
     }
 
-    return this.getPostById(id);
+    // Get updated post
+    const updatedPost = await this.getPostById(id);
+
+    // Log activity
+    if (Object.keys(changes).length > 0) {
+      await activityService.logPostUpdated(userId || post.authorId, updatedPost, changes);
+    }
+
+    // Log if post was published for first time
+    if (isPublishing) {
+      await activityService.logPostPublished(userId || post.authorId, updatedPost);
+    }
+
+    return updatedPost;
   }
 
   /**
    * Delete post
    * @param {string} id - Post ID
+   * @param {string} [userId] - User performing the deletion
    * @returns {Promise<boolean>} - Success status
    */
-  async deletePost(id) {
+  async deletePost(id, userId) {
     const post = await this.getPostById(id);
     if (!post) {
       throw new Error('Post not found');
     }
+
+    // Log activity BEFORE deletion
+    await activityService.logPostDeleted(userId || post.authorId, post);
 
     // Delete post tags first
     await db.delete(postTags).where(eq(postTags.postId, id));
@@ -418,9 +454,16 @@ class PostsService {
           firstName: users.firstName,
           lastName: users.lastName,
         },
+        category: {
+          id: categories.id,
+          title: categories.title,
+          slug: categories.slug,
+          colorClass: categories.colorClass,
+        },
       })
       .from(posts)
       .leftJoin(users, eq(posts.authorId, users.id))
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
       .where(eq(posts.status, 'PUBLISHED'))
       .orderBy(desc(posts.viewCount))
       .limit(limit);
@@ -428,6 +471,7 @@ class PostsService {
     return results.map(r => ({
       ...r.post,
       author: r.author,
+      category: r.category,
     }));
   }
 
@@ -447,6 +491,36 @@ class PostsService {
     
     const [{ count }] = await query;
     return Number(count);
+  }
+
+  /**
+   * Increment post view count
+   * @param {string} id - Post ID
+   * @returns {Promise<boolean>} - Success status
+   */
+  async incrementViewCount(id) {
+    await db
+      .update(posts)
+      .set({
+        viewCount: sql`${posts.viewCount} + 1`,
+      })
+      .where(eq(posts.id, id));
+    
+    return true;
+  }
+
+  /**
+   * Get total views across all posts
+   * @returns {Promise<number>} - Total view count
+   */
+  async getTotalViews() {
+    const result = await db
+      .select({
+        total: sql`COALESCE(SUM(${posts.viewCount}), 0)::integer`,
+      })
+      .from(posts);
+    
+    return result[0]?.total || 0;
   }
 }
 
