@@ -1,17 +1,19 @@
 // src/db/schema.js
-import { 
-  pgTable, 
-  uuid, 
-  varchar, 
-  text, 
-  integer, 
-  boolean, 
-  timestamp, 
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  integer,
+  boolean,
+  timestamp,
   jsonb,
   pgEnum,
   serial,
   primaryKey,
-  foreignKey
+  foreignKey,
+  date,
+  uniqueIndex
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -330,6 +332,21 @@ export const analyticsEvents = pgTable('analytics_events', {
   metadata: jsonb('metadata'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// ============================================
+// DAILY PAGE VIEWS (for traffic analytics)
+// ============================================
+
+export const dailyPageViews = pgTable('daily_page_views', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  date: date('date').notNull(),
+  totalViews: integer('total_views').default(0).notNull(),
+  uniqueVisitors: integer('unique_visitors').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, (table) => ({
+  dateIdx: uniqueIndex('daily_page_views_date_idx').on(table.date),
+}));
 
 // ============================================
 // SUBSCRIBERS
