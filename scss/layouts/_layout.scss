@@ -111,6 +111,11 @@
     // Main content area (2/3 width on large screens)
     &--main {
       @apply grid-cols-1 lg:grid-cols-3;
+      align-items: start;
+
+      > * {
+        height: 37.6rem; // 376px fixed height for both widgets
+      }
 
       > :first-child {
         @media (min-width: theme('screens.lg')) {

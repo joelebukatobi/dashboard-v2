@@ -40,7 +40,42 @@
   }
 
   &__chart {
-    @apply w-full min-h-[30rem] h-[280px] bg-gradient-to-b from-blue-600/10 dark:bg-gradient-to-b dark:from-grey-800/10 to-transparent rounded-xl flex items-center justify-center text-grey-500 dark:text-grey-400;
+    @apply w-full bg-gradient-to-b from-blue-600/10 dark:bg-gradient-to-b dark:from-grey-800/10 to-transparent rounded-xl flex items-center justify-center text-grey-500 dark:text-grey-400;
+
+    // Default height when not in a constrained widget
+    min-height: 30rem;
+    height: 280px;
+  }
+}
+
+// ============================================================================
+// Traffic Chart (Preline ApexCharts)
+// ============================================================================
+.traffic-chart {
+  @apply flex flex-col p-[1.6rem] h-full;
+
+  &__summary {
+    @apply flex justify-center gap-[2.4rem] mb-[1.2rem];
+    flex-shrink: 0;
+  }
+
+  &__stat {
+    @apply text-center;
+  }
+
+  &__stat-value {
+    @apply block text-xl font-bold text-grey-900 dark:text-white;
+  }
+
+  &__stat-label {
+    @apply block text-xs text-grey-500 dark:text-grey-400 mt-[0.2rem];
+  }
+
+  // ApexCharts container - fills remaining space
+  & > div[id^="traffic-chart-"] {
+    @apply w-full flex-1;
+    min-height: 0;
+    position: relative;
   }
 }
 
@@ -52,17 +87,13 @@
   &__item {
     @apply py-[0.6rem] px-[1.2rem] text-sm font-medium rounded-md;
     @apply text-grey-600 dark:text-grey-400;
-    @apply hover:text-grey-600 dark:hover:text-white transition-colors;
+    @apply hover:text-grey-900 dark:hover:text-white transition-colors;
 
-    // Active state using Preline modifier
-    @apply hs-tab-active:bg-white hs-tab-active:text-black hs-tab-active:shadow-sm;
-    @apply dark:hs-tab-active:bg-white dark:hs-tab-active:text-grey-900;
-
-    // Fallback active class
+    // Active state - blue background with white text (matching button style)
     &--active,
     &.active {
       @apply bg-blue-600 text-white shadow-sm;
-      @apply dark:bg-white dark:text-black;
+      @apply dark:bg-blue-500 dark:text-white;
     }
   }
 }

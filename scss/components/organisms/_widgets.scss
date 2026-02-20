@@ -19,6 +19,26 @@
     @apply px-0 pb-0;
   }
 
+  // Recent Activity: Fill the fixed height container
+  &--recent-activity {
+    @apply h-full;
+
+    .chart-container__chart {
+      min-height: auto;
+      height: auto;
+    }
+  }
+
+  // Traffic Overview: Fill the grid row to match Recent Activity
+  &--traffic-overview {
+    @apply h-full;
+
+    .chart-container__chart {
+      @apply h-full;
+      min-height: 0;
+    }
+  }
+
   &__link {
     @apply text-base font-medium text-blue-600 hover:text-blue-700 dark:text-grey-400 dark:hover:text-white;
     @apply inline-flex items-center gap-[0.4rem];
@@ -74,7 +94,8 @@
 // TIMELINE
 // ==================================================
 .activity-timeline {
-  @apply space-y-[1.6rem];
+  // @apply space-between;
+  @apply h-full flex flex-col justify-between;
 
   &__item {
     @apply flex items-start gap-[1.2rem];
@@ -88,6 +109,7 @@
 
     svg {
       @apply w-[1.6rem] h-[1.6rem];
+      stroke-width: 1;
     }
 
     &--post,
@@ -110,11 +132,12 @@
   }
 
   &__content {
-    @apply flex-1 min-w-0 pt-[0.2rem];
+    @apply flex-1 min-w-0 pt-[0.2rem] flex flex-col gap-[0.4rem];
   }
 
   &__text {
-    @apply text-xl lg:text-base leading-relaxed;
+    @apply text-xl lg:text-base leading-tight;
+    margin: 0;
 
     strong {
       @apply font-semibold;
@@ -132,6 +155,7 @@
 
   &__time {
     @apply text-sm;
+    margin: 0;
   }
 }
 
@@ -215,11 +239,11 @@
   }
 
   &__right {
-    @apply flex items-center justify-end gap-[1.2rem];
+    @apply flex items-start justify-end gap-[1.2rem];
   }
 
   &__item {
-    @apply flex flex-col lg:flex-row justify-between gap-[1.2rem] px-[1.2rem] py-[1rem] rounded-lg;
+    @apply flex flex-col lg:flex-row lg:items-start justify-between gap-[1.2rem] px-[1.2rem] py-[1rem] rounded-lg;
     @apply bg-blue-600/5;
 
     .dark & {
@@ -261,18 +285,84 @@
         @apply bg-orange-900/30 text-orange-400;
       }
     }
+
+    // Category color variants (matching badge colors)
+    &--primary {
+      @apply bg-blue-100 text-blue-700;
+      .dark & {
+        @apply bg-blue-900/30 text-blue-400;
+      }
+    }
+
+    &--secondary {
+      @apply bg-purple-100 text-purple-700;
+      .dark & {
+        @apply bg-purple-900/30 text-purple-400;
+      }
+    }
+
+    &--purple {
+      @apply bg-purple-100 text-purple-700;
+      .dark & {
+        @apply bg-purple-900/30 text-purple-400;
+      }
+    }
+
+    &--success {
+      @apply bg-emerald-100 text-emerald-700;
+      .dark & {
+        @apply bg-emerald-900/30 text-emerald-400;
+      }
+    }
+
+    &--warning {
+      @apply bg-amber-100 text-amber-700;
+      .dark & {
+        @apply bg-amber-900/30 text-amber-400;
+      }
+    }
+
+    &--danger {
+      @apply bg-red-100 text-red-700;
+      .dark & {
+        @apply bg-red-900/30 text-red-400;
+      }
+    }
+
+    &--info {
+      @apply bg-cyan-100 text-cyan-700;
+      .dark & {
+        @apply bg-cyan-900/30 text-cyan-400;
+      }
+    }
+
+    &--neutral {
+      @apply bg-grey-100 text-grey-700;
+      .dark & {
+        @apply bg-grey-700 text-grey-300;
+      }
+    }
+
+    &--pink {
+      @apply bg-pink-100 text-pink-700;
+      .dark & {
+        @apply bg-pink-900/30 text-pink-400;
+      }
+    }
   }
 
   &__info {
-    @apply flex-1 min-w-0;
+    @apply flex-1 min-w-0 flex flex-col;
   }
 
   &__title {
     @apply text-xl lg:text-base;
+    margin: 0;
   }
 
   &__url {
     @apply text-sm truncate;
+    margin: 0;
   }
 
   &__value {
@@ -322,7 +412,7 @@
   }
 
   &__item {
-    @apply flex items-start gap-[1.6rem] py-[1.6rem] px-[2rem] first:pt-0 last:pb-0;
+    @apply flex items-start gap-[1.6rem] py-[1.2rem] px-[1.6rem] first:pt-0 last:pb-0;
 
     .widget--flush & {
       @apply px-[2rem];
@@ -338,7 +428,7 @@
   }
 
   &__image {
-    @apply flex-shrink-0 w-[5.6rem] h-[4rem] rounded-lg overflow-hidden;
+    @apply flex-shrink-0 w-[4rem] h-[3rem] rounded-lg overflow-hidden;
     @apply bg-grey-100;
 
     .dark & {
