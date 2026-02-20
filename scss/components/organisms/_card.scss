@@ -137,6 +137,7 @@
 
     svg {
       @apply w-[2rem] h-[2rem];
+      stroke-width: 1;
     }
 
     &--posts,
@@ -180,6 +181,7 @@
 
     svg {
       @apply w-[1.4rem] h-[1.4rem];
+      stroke-width: 1;
     }
 
     &--up {
