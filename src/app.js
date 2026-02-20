@@ -97,6 +97,13 @@ export default async function app(fastify, opts) {
     decorateReply: false,
   });
 
+  // Serve ApexCharts
+  await fastify.register(fastifyStatic, {
+    root: path.join(__dirname, '../node_modules/apexcharts/dist'),
+    prefix: '/vendor/apexcharts/',
+    decorateReply: false,
+  });
+
   // Health check endpoint
   fastify.get('/health', async () => {
     return {
