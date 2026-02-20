@@ -434,6 +434,24 @@ class PostsController {
       return reply.send({ available: false });
     }
   }
+
+  /**
+   * POST /admin/posts/:id/view
+   * Increment post view count
+   * Public endpoint for blog tracking
+   */
+  async incrementViewCount(request, reply) {
+    try {
+      const { id } = request.params;
+      
+      await postsService.incrementViewCount(id);
+      
+      return reply.code(204).send();
+    } catch (error) {
+      request.log.error(error);
+      return reply.code(500).send({ error: 'Failed to track view' });
+    }
+  }
 }
 
 // Helper functions for fragments

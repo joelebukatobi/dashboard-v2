@@ -77,4 +77,10 @@ export default async function postsRoutes(fastify) {
     preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: postsController.uploadImage.bind(postsController)
   });
+
+  // POST /admin/posts/:id/view
+  // Increment post view count (public endpoint for blog tracking)
+  fastify.post('/:id/view', {
+    handler: postsController.incrementViewCount.bind(postsController)
+  });
 }
