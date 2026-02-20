@@ -72,6 +72,10 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
     <!-- Mobile Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- ApexCharts CSS & JS -->
+    <link rel="stylesheet" href="/vendor/apexcharts/apexcharts.css">
+    <script src="/vendor/apexcharts/apexcharts.min.js"></script>
+
     <!-- Preline UI JS -->
     <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
 
@@ -210,6 +214,15 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
 
         // Re-initialize icons after HTMX content swap
         lucide.createIcons();
+      });
+
+      // Handle chart initialization after HTMX swaps
+      document.body.addEventListener('htmx:afterSwap', function(evt) {
+        // Re-initialize icons
+        lucide.createIcons();
+        
+        // Charts that need initialization will have inline scripts that run automatically
+        // This event ensures any global cleanup/setup happens after swap
       });
 
       // Logout handler

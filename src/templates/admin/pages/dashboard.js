@@ -19,7 +19,7 @@ import { mainLayout } from '../layouts/main.js';
  * @param {Array} options.topPosts - Top performing posts
  * @returns {string} Complete HTML page
  */
-export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [], topPosts = [] }) {
+export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [], topPosts = [], range = '30d', trafficChart = '' }) {
   const {
     totalPosts = 248,
     totalViews = '45.2K',
@@ -132,64 +132,67 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
     <!-- Main Dashboard Grid -->
     <div class="dashboard-grid dashboard-grid--main">
       <!-- Traffic Chart -->
-      <div class="widget">
+      <div class="widget widget--traffic-overview">
         <div class="widget__header widget__header--traffic">
           <div>
             <h3 class="widget__title">Traffic Overview</h3>
             <p class="widget__subtitle">Page views and unique visitors</p>
           </div>
           <!-- Chart Range Tabs -->
-          <nav class="chart-range" aria-label="Chart range" role="tablist">
+          <nav class="chart-range" aria-label="Chart range" role="tablist" id="traffic-tabs">
             <button
               type="button"
-              class="chart-range__item"
+              class="chart-range__item ${range === '7d' ? 'active' : ''}"
               id="chart-range-7d"
-              aria-selected="false"
-              data-hs-tab="#chart-panel-7d"
-              aria-controls="chart-panel-7d"
+              aria-selected="${range === '7d' ? 'true' : 'false'}"
+              data-range="7d"
               role="tab"
               hx-get="/admin/dashboard/traffic?range=7d"
-              hx-target="#chart-panel-30d"
-              hx-swap="outerHTML"
+              hx-target="#chart-container-wrapper"
+              hx-swap="innerHTML"
+              onclick="updateActiveTab('7d')"
             >
               7 Days
             </button>
             <button
               type="button"
-              class="chart-range__item active"
+              class="chart-range__item ${range === '30d' || !range ? 'active' : ''}"
               id="chart-range-30d"
-              aria-selected="true"
-              data-hs-tab="#chart-panel-30d"
-              aria-controls="chart-panel-30d"
+              aria-selected="${range === '30d' || !range ? 'true' : 'false'}"
+              data-range="30d"
               role="tab"
+              hx-get="/admin/dashboard/traffic?range=30d"
+              hx-target="#chart-container-wrapper"
+              hx-swap="innerHTML"
+              onclick="updateActiveTab('30d')"
             >
               30 Days
             </button>
             <button
               type="button"
-              class="chart-range__item"
+              class="chart-range__item ${range === '90d' ? 'active' : ''}"
               id="chart-range-90d"
-              aria-selected="false"
-              data-hs-tab="#chart-panel-90d"
-              aria-controls="chart-panel-90d"
+              aria-selected="${range === '90d' ? 'true' : 'false'}"
+              data-range="90d"
               role="tab"
               hx-get="/admin/dashboard/traffic?range=90d"
-              hx-target="#chart-panel-30d"
-              hx-swap="outerHTML"
+              hx-target="#chart-container-wrapper"
+              hx-swap="innerHTML"
+              onclick="updateActiveTab('90d')"
             >
               90 Days
             </button>
             <button
               type="button"
-              class="chart-range__item"
+              class="chart-range__item ${range === '1y' ? 'active' : ''}"
               id="chart-range-1y"
-              aria-selected="false"
-              data-hs-tab="#chart-panel-1y"
-              aria-controls="chart-panel-1y"
+              aria-selected="${range === '1y' ? 'true' : 'false'}"
+              data-range="1y"
               role="tab"
               hx-get="/admin/dashboard/traffic?range=1y"
-              hx-target="#chart-panel-30d"
-              hx-swap="outerHTML"
+              hx-target="#chart-container-wrapper"
+              hx-swap="innerHTML"
+              onclick="updateActiveTab('1y')"
             >
               1 Year
             </button>
@@ -197,21 +200,41 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
         </div>
         <hr class="divider" />
         <div class="widget__body">
-          <!-- Chart Container -->
-          <div id="chart-panel-30d" role="tabpanel" aria-labelledby="chart-range-30d">
-            <div class="chart-container__chart">
-              <div class="text-center text-gray-500 py-8">
-                <i data-lucide="bar-chart-2" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
-                <p>Traffic chart will be displayed here</p>
-                <p class="text-sm">Connect to database to view analytics</p>
+          <!-- Chart Container Wrapper - HTMX target -->
+          <div id="chart-container-wrapper">
+            ${trafficChart || `
+            <div id="chart-panel-${range || '30d'}" role="tabpanel" aria-labelledby="chart-range-${range || '30d'}">
+              <div class="chart-container__chart">
+                <div class="text-center text-gray-500 py-8">
+                  <i data-lucide="bar-chart-2" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                  <p>Loading chart...</p>
+                </div>
               </div>
             </div>
+            `}
           </div>
         </div>
       </div>
 
+      <script>
+        function updateActiveTab(selectedRange) {
+          // Remove active class from all tabs
+          document.querySelectorAll('.chart-range__item').forEach(tab => {
+            tab.classList.remove('active');
+            tab.setAttribute('aria-selected', 'false');
+          });
+          
+          // Add active class to selected tab
+          const activeTab = document.querySelector('#chart-range-' + selectedRange);
+          if (activeTab) {
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
+          }
+        }
+      </script>
+
       <!-- Recent Activity -->
-      <div class="widget">
+      <div class="widget widget--recent-activity">
         <div class="widget__header">
           <h3 class="widget__title">Recent Activity</h3>
           <a href="#" class="widget__link">View all</a>
@@ -231,30 +254,7 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <div class="widget widget--flush">
         <div class="widget__header">
           <h3 class="widget__title">Recent Posts</h3>
-          <div class="hs-dropdown [--placement:bottom-right]">
-            <button id="hs-dropdown-add-post" type="button" class="hs-dropdown-toggle btn btn--md btn--ghost">
-              Add New
-              <i data-lucide="chevron-down" class="dropdown__chevron"></i>
-            </button>
-            <div
-              class="hs-dropdown-menu dropdown__menu dropdown__menu--sm"
-              role="menu"
-              aria-labelledby="hs-dropdown-add-post"
-            >
-              <a class="dropdown__item" href="/admin/posts/new">
-                <i data-lucide="file-edit"></i>
-                New Post
-              </a>
-              <a class="dropdown__item" href="#">
-                <i data-lucide="copy"></i>
-                Duplicate Last
-              </a>
-              <a class="dropdown__item" href="#">
-                <i data-lucide="upload"></i>
-                Import
-              </a>
-            </div>
-          </div>
+          <a href="/admin/posts/new" class="widget__link">Add New</a>
         </div>
         <hr class="divider" />
         <div class="widget__body">
@@ -339,7 +339,7 @@ function getRecentPosts(posts) {
           <span>${post.date || 'No date'}</span>
         </div>
       </div>
-      <span class="badge badge--${post.status === 'published' ? 'success' : 'warning'}">${post.status || 'Draft'}</span>
+      <span class="badge badge--${post.status === 'PUBLISHED' ? 'success' : 'warning'}">${post.status ? post.status.charAt(0).toUpperCase() + post.status.slice(1).toLowerCase() : 'Draft'}</span>
     </div>
   `).join('');
 }
@@ -358,7 +358,7 @@ function getTopPosts(posts) {
   return posts.map((post, index) => `
     <div class="top-list__item">
       <div class="top-list__left">
-        <span class="top-list__rank top-list__rank--${index + 1}">${index + 1}</span>
+        <span class="top-list__rank top-list__rank--${post.categoryColor || 'primary'}">${index + 1}</span>
         <div class="top-list__info">
           <p class="top-list__title">${post.title}</p>
           <span class="top-list__url">${post.url || '/blog/' + post.slug}</span>
