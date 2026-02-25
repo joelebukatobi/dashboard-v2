@@ -13,7 +13,7 @@ import { authLayout } from '../layouts/auth.js';
  */
 export function loginPage({ error = '', success = '' } = {}) {
   const errorHtml = error 
-    ? `<div class="alert alert--error" role="alert">${escapeHtml(error)}</div>` 
+    ? `<div class="alert alert--danger" role="alert">${escapeHtml(error)}</div>` 
     : '';
   
   const successHtml = success 
@@ -29,20 +29,18 @@ export function loginPage({ error = '', success = '' } = {}) {
               <p class="auth-card__subtitle">Sign in to your account to continue</p>
             </div>
 
-            <hr class="divider" />
+            <!-- Error message area - always visible, fills with content on error -->
+            <p id="login-error" class="auth-card__error">&nbsp;</p>
 
-            <!-- Response area for HTMX -->
-            <div id="login-response">
-              ${errorHtml}
-              ${successHtml}
-            </div>
+            <hr class="divider" />
 
             <!-- Login Form -->
             <form
               class="auth-card__form"
               hx-post="/admin/auth/login"
-              hx-target="#login-response"
+              hx-target="#login-error"
               hx-swap="innerHTML"
+              novalidate
             >
               <!-- Email -->
               <div class="form-field">
