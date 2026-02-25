@@ -3,26 +3,23 @@ import { z } from 'zod';
 
 /**
  * Email validation schema
- * - Must be valid email format
  * - Max 255 characters
  * - Converted to lowercase
+ * Note: Format validation is handled in auth service for specific error messages
  */
 export const emailSchema = z
   .string()
   .min(1, 'Email is required')
-  .email('Invalid email format')
   .max(255, 'Email must be less than 255 characters')
   .transform(email => email.toLowerCase().trim());
 
 /**
  * Password validation schema
- * - Min 8 characters
- * - Must meet strength requirements (checked separately)
+ * Note: Strength validation is handled in auth service for specific error messages
  */
 export const passwordSchema = z
   .string()
-  .min(1, 'Password is required')
-  .min(8, 'Password must be at least 8 characters');
+  .min(1, 'Password is required');
 
 /**
  * Login request validation schema
@@ -30,7 +27,7 @@ export const passwordSchema = z
 export const loginSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
-  rememberMe: z.boolean().default(false)
+  rememberMe: z.enum(['true', 'false']).default('false').transform(val => val === 'true')
 });
 
 /**

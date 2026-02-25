@@ -43,32 +43,57 @@ class AuthService {
    * Validate user credentials
    * @param {string} email - User email
    * @param {string} password - Plain text password
-   * @returns {Promise<object>} - { valid: boolean, user?: object, error?: string }
+   * @returns {Promise<object>} - { valid: boolean, user?: object, errorType?: string }
    */
   async validateCredentials(email, password) {
+    // Check email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { valid: false, errorType: 'INVALID_EMAIL_FORMAT' };
+    }
+    
+    // Check password length
+    if (password.length < 8) {
+      return { valid: false, errorType: 'PASSWORD_TOO_SHORT' };
+    }
+    
+    // Check for lowercase letter
+    if (!/[a-z]/.test(password)) {
+      return { valid: false, errorType: 'PASSWORD_NO_LOWERCASE' };
+    }
+    
+    // Check for uppercase letter
+    if (!/[A-Z]/.test(password)) {
+      return { valid: false, errorType: 'PASSWORD_NO_UPPERCASE' };
+    }
+    
+    // Check for number
+    if (!/\d/.test(password)) {
+      return { valid: false, errorType: 'PASSWORD_NO_NUMBER' };
+    }
+    
     // Find user by email
     const user = await this.findUserByEmail(email);
     
     if (!user) {
-      // Don't reveal if email exists - security best practice
-      return { valid: false, error: 'Invalid credentials' };
+      return { valid: false, errorType: 'EMAIL_NOT_FOUND' };
     }
     
     // Check if user is suspended
     if (user.status === 'SUSPENDED') {
-      return { valid: false, error: 'Account suspended. Contact administrator.' };
+      return { valid: false, errorType: 'ACCOUNT_SUSPENDED' };
     }
     
     // Check if user is invited (not yet active)
     if (user.status === 'INVITED') {
-      return { valid: false, error: 'Please check your email to activate your account.' };
+      return { valid: false, errorType: 'ACCOUNT_NOT_ACTIVATED' };
     }
     
     // Verify password
     const isValidPassword = await verifyPassword(password, user.password);
     
     if (!isValidPassword) {
-      return { valid: false, error: 'Invalid credentials' };
+      return { valid: false, errorType: 'WRONG_PASSWORD' };
     }
     
     // Remove password from user object before returning

@@ -45,10 +45,21 @@ class AuthController {
       const result = await authService.validateCredentials(email, password);
       
       if (!result.valid) {
-        reply.code(401);
-        return reply.type('text/html').send(errorToast({
-          message: result.error
-        }));
+        // Map error types to specific messages
+        const errorMessages = {
+          'INVALID_EMAIL_FORMAT': 'Invalid email format',
+          'PASSWORD_TOO_SHORT': 'Password must be at least 8 characters',
+          'PASSWORD_NO_LOWERCASE': 'Password must contain at least 1 lowercase letter',
+          'PASSWORD_NO_UPPERCASE': 'Password must contain at least 1 uppercase letter',
+          'PASSWORD_NO_NUMBER': 'Password must contain at least 1 number',
+          'EMAIL_NOT_FOUND': 'Email not found',
+          'WRONG_PASSWORD': 'Wrong password',
+          'ACCOUNT_SUSPENDED': 'Account suspended',
+          'ACCOUNT_NOT_ACTIVATED': 'Account not activated'
+        };
+        
+        const message = errorMessages[result.errorType] || 'Invalid credentials';
+        return reply.type('text/html').send(message);
       }
       
       // Clear rate limit on successful login
@@ -250,14 +261,7 @@ class AuthController {
 
 // Helper functions for HTMX responses
 function errorToast({ message }) {
-  return `
-    <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-800 mb-4" role="alert">
-      <svg class="w-5 h-5 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <span class="text-sm font-medium">${message}</span>
-    </div>
-  `;
+  return message;
 }
 
 function successToast({ message }) {
