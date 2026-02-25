@@ -10,17 +10,18 @@ import { mainLayout } from '../../layouts/main.js';
  */
 export function postNewPage({ categories, tags, user }) {
   const content = `
-    <div class="content content--new">
+    <div class="content content-main">
       <!-- Page Header -->
       <div class="page-header">
         <div class="page-header__left">
           <h1 class="page-header__title">New Post</h1>
           <p class="page-header__subtitle">Create and publish a new blog post</p>
         </div>
+        <div class="page-header__toast-container"></div>
       </div>
 
       <!-- New Post Form Container (Scrollable) -->
-      <div class="new-form-container">
+      <div class="page-main">
         <div class="card">
         <div class="card__header">
           <h2 class="card__title">Post Details</h2>
@@ -35,38 +36,50 @@ export function postNewPage({ categories, tags, user }) {
           >
             <div id="form-response"></div>
 
-            <!-- Title -->
-            <div class="form__group">
-              <label class="form__label form__label--required">Post Title</label>
-              <input
-                type="text"
-                class="form__input"
-                id="postTitle"
-                name="title"
-                placeholder="Enter post title"
-                required
-              />
-              <input type="hidden" name="slug" id="postSlug" />
-            </div>
-
             <!-- Featured Image -->
             <div class="form__group">
               <label class="form__label">Featured Image</label>
               <div class="image-upload">
-                <div class="image-upload__preview" id="imagePreview" style="display: none;">
-                  <img src="" alt="Featured image preview" id="previewImg" />
-                  <button type="button" class="image-upload__remove" id="removeImage" title="Remove image">
-                    <i data-lucide="x" class="size-4"></i>
-                  </button>
-                </div>
-                <div class="image-upload__dropzone" id="dropzone">
-                  <i data-lucide="image-plus" class="image-upload__icon"></i>
-                  <p class="image-upload__text">Click to upload or drag and drop</p>
-                  <p class="image-upload__hint">PNG, JPG, WebP up to 10MB</p>
-                  <input type="file" id="imageInput" accept="image/*" hidden />
+                <div class="image-upload__preview has-image" id="imagePreview">
+                  <img src="/public/uploads/images/featured-posts.jpg" alt="Featured image" id="previewImg" />
+                  <div class="image-upload__dropzone image-upload__dropzone--overlay" id="dropzone">
+                    <i data-lucide="image-plus" class="image-upload__icon"></i>
+                    <p class="image-upload__text">Click to upload or drag and drop</p>
+                    <p class="image-upload__hint">PNG, JPG, WebP up to 10MB</p>
+                    <input type="file" id="imageInput" accept="image/*" hidden />
+                  </div>
                 </div>
               </div>
               <input type="hidden" name="featuredImageId" id="featuredImageId" />
+            </div>
+
+            <!-- Title & Slug Row -->
+            <div class="form__row form__row--2col">
+              <!-- Title -->
+              <div class="form__group">
+                <label class="form__label form__label--required">Post Title</label>
+                <input
+                  type="text"
+                  class="form__input"
+                  id="postTitle"
+                  name="title"
+                  placeholder="Enter post title"
+                  required
+                />
+              </div>
+
+              <!-- Slug -->
+              <div class="form__group">
+                <label class="form__label">Slug</label>
+                <input
+                  type="text"
+                  class="form__input"
+                  name="slug"
+                  id="postSlug"
+                  placeholder="auto-generated-from-title"
+                />
+                <p class="form__hint">Auto-generated from title. Editable if needed.</p>
+              </div>
             </div>
 
             <!-- Author, Category & Tags Row -->
@@ -74,52 +87,75 @@ export function postNewPage({ categories, tags, user }) {
               <!-- Author -->
               <div class="form__group">
                 <label class="form__label form__label--required">Author</label>
-                <div class="hs-dropdown hs-dropdown--full [--placement:bottom-left]">
-                  <button id="hs-dropdown-author" type="button" class="hs-dropdown-toggle form__input form__select">
-                    <span id="selectedAuthor">${user ? `${user.firstName} ${user.lastName}` : 'Select an author'}</span>
-                    <i data-lucide="chevron-down" class="size-4 text-grey-400"></i>
-                  </button>
-                  <div class="hs-dropdown-menu dropdown__menu dropdown__menu--full" aria-labelledby="hs-dropdown-author">
-                    <a href="#" class="dropdown__item" data-value="${user?.id || ''}">${user ? `${user.firstName} ${user.lastName}` : 'Current User'}</a>
-                  </div>
-                  <input type="hidden" name="authorId" id="postAuthor" value="${user?.id || ''}" />
-                </div>
+                <select
+                  name="authorId"
+                  id="postAuthor"
+                  data-hs-select='{
+                    "placeholder": "Select an author...",
+                    "toggleClasses": "form__select-toggle",
+                    "dropdownClasses": "form__select-dropdown",
+                    "optionClasses": "form__select-option"
+                  }'
+                  class="hidden"
+                >
+                  <option value="${user?.id || ''}" selected>${user ? `${user.firstName} ${user.lastName}` : 'Current User'}</option>
+                </select>
               </div>
 
               <!-- Category -->
               <div class="form__group">
                 <label class="form__label form__label--required">Category</label>
-                <div class="hs-dropdown hs-dropdown--full [--placement:bottom-left]">
-                  <button id="hs-dropdown-category" type="button" class="hs-dropdown-toggle form__input form__select">
-                    <span id="selectedCategory">Select a category</span>
-                    <i data-lucide="chevron-down" class="size-4 text-grey-400"></i>
-                  </button>
-                  <div class="hs-dropdown-menu dropdown__menu dropdown__menu--full" aria-labelledby="hs-dropdown-category">
-                    ${categories.map((cat) => `
-                      <a href="#" class="dropdown__item" data-value="${cat.id}">${cat.title}</a>
-                    `).join('')}
-                  </div>
-                  <input type="hidden" name="categoryId" id="postCategory" />
-                </div>
+                <select
+                  name="categoryId"
+                  id="postCategory"
+                  data-hs-select='{
+                    "placeholder": "Select a category...",
+                    "toggleClasses": "form__select-toggle",
+                    "dropdownClasses": "form__select-dropdown",
+                    "optionClasses": "form__select-option"
+                  }'
+                  class="hidden"
+                >
+                  <option value="">Choose</option>
+                  ${categories
+                    .map(
+                      (cat) => `
+                    <option value="${cat.id}">${cat.title}</option>
+                  `,
+                    )
+                    .join('')}
+                </select>
               </div>
 
               <!-- Tags -->
               <div class="form__group">
                 <label class="form__label">Tags</label>
-                <input
-                  type="text"
-                  class="form__input"
-                  name="tags"
+                <select
+                  name="tagIds"
                   id="postTags"
-                  placeholder="e.g. react, frontend, web"
-                />
-                <p class="form__hint">Separate tags with commas</p>
+                  multiple
+                  data-hs-select='{
+                    "placeholder": "Select tags...",
+                    "toggleClasses": "form__select-toggle",
+                    "dropdownClasses": "form__select-dropdown",
+                    "optionClasses": "form__select-option"
+                  }'
+                  class="hidden"
+                >
+                  ${tags
+                    .map(
+                      (tag) => `
+                    <option value="${tag.id}">${tag.name}</option>
+                  `,
+                    )
+                    .join('')}
+                </select>
               </div>
             </div>
 
-            <!-- Excerpt -->
+            <!-- Short Description -->
             <div class="form__group">
-              <label class="form__label">Excerpt</label>
+              <label class="form__label">Short Description</label>
               <textarea
                 class="form__input form__textarea"
                 name="excerpt"
@@ -131,7 +167,7 @@ export function postNewPage({ categories, tags, user }) {
             <!-- Content (Rich Text Editor) -->
             <div class="form__group">
               <label class="form__label form__label--required">Content</label>
-              <div id="editor" style="min-height: 300px;"></div>
+              <div id="editor" class="post-editor"></div>
               <input type="hidden" name="content" id="contentInput" />
             </div>
 
@@ -141,11 +177,9 @@ export function postNewPage({ categories, tags, user }) {
         <div class="card__footer">
           <div class="form__field-group">
             <button type="button" class="btn btn--primary" onclick="submitForm('PUBLISHED')">
-              <i data-lucide="send"></i>
               Publish Post
             </button>
             <button type="button" class="btn btn--outline-primary" onclick="submitForm('DRAFT')">
-              <i data-lucide="save"></i>
               Save Draft
             </button>
             <a href="/admin/posts" class="btn btn--ghost btn--cancel">Cancel</a>
@@ -247,14 +281,14 @@ export function postNewPage({ categories, tags, user }) {
           document.getElementById('contentInput').value = editor.getData();
         }
 
-        // Set status
-        const statusRadios = document.querySelectorAll('input[name="status"]');
-        statusRadios.forEach(radio => {
-          radio.checked = radio.value === status;
-        });
+        // Set status on the hidden input
+        const statusInput = document.querySelector('input[name="status"]');
+        if (statusInput) {
+          statusInput.value = status;
+        }
 
-        // Submit
-        document.getElementById('newPostForm').requestSubmit();
+        // Submit using HTMX trigger
+        htmx.trigger('#newPostForm', 'submit');
       }
 
       // Image upload handling
@@ -284,7 +318,7 @@ export function postNewPage({ categories, tags, user }) {
             const data = await response.json();
             previewImg.src = data.url;
             featuredImageId.value = data.id;
-            imagePreview.style.display = 'block';
+            imagePreview.classList.add('has-image');
             lucide.createIcons();
           }
         } catch (error) {
@@ -295,7 +329,7 @@ export function postNewPage({ categories, tags, user }) {
       removeImage?.addEventListener('click', () => {
         imageInput.value = '';
         featuredImageId.value = '';
-        imagePreview.style.display = 'none';
+        imagePreview.classList.remove('has-image');
       });
     </script>
   `;
@@ -309,7 +343,7 @@ export function postNewPage({ categories, tags, user }) {
     breadcrumbs: [
       { label: 'Dashboard', url: '/admin/dashboard' },
       { label: 'Blog Posts', url: '/admin/posts' },
-      { label: 'New Post', url: '/admin/posts/new' }
-    ]
+      { label: 'New Post', url: '/admin/posts/new' },
+    ],
   });
 }
