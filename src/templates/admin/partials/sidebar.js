@@ -58,16 +58,16 @@ export function sidebar({ activeRoute = '/', user } = {}) {
               </a>
             </li>
             <li>
-              <div class="sidebar__item sidebar__item--has-submenu">
+              <div class="sidebar__item sidebar__item--has-submenu ${isActive('/categories') || isActive('/tags') ? 'sidebar__item--active' : ''}">
                 <span class="sidebar__item-icon">
-                  <i data-lucide="folder"></i>
+                  <i data-lucide="files"></i>
                 </span>
-                <span class="sidebar__item-text">Categories</span>
+                <span class="sidebar__item-text">Attributes</span>
                 <span class="sidebar__item-arrow">
                   <i data-lucide="chevron-right"></i>
                 </span>
               </div>
-              <ul class="sidebar__submenu">
+              <ul class="sidebar__submenu ${isActive('/categories') || isActive('/tags') ? 'sidebar__submenu--open' : ''}">
                 <li>
                   <a href="/admin/categories" class="sidebar__submenu-item ${isActive('/categories')}">Categories</a>
                 </li>

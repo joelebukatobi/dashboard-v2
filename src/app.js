@@ -118,8 +118,8 @@ export default async function app(fastify, opts) {
    await fastify.register(import('./routes/auth.routes.js'), { prefix: '/admin/auth' });
    await fastify.register(import('./routes/dashboard.routes.js'), { prefix: '/admin/dashboard' });
    await fastify.register(import('./routes/posts.routes.js'), { prefix: '/admin/posts' });
-  // await fastify.register(import('./routes/categories.routes.js'), { prefix: '/admin/categories' });
-  // await fastify.register(import('./routes/tags.routes.js'), { prefix: '/admin/tags' });
+   await fastify.register(import('./routes/categories.routes.js'), { prefix: '/admin/categories' });
+   await fastify.register(import('./routes/tags.routes.js'), { prefix: '/admin/tags' });
   // await fastify.register(import('./routes/users.routes.js'), { prefix: '/admin/users' });
   // await fastify.register(import('./routes/images.routes.js'), { prefix: '/admin/images' });
   // await fastify.register(import('./routes/videos.routes.js'), { prefix: '/admin/videos' });

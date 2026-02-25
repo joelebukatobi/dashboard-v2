@@ -65,7 +65,7 @@ class ActivityService {
 
     return results.map(r => ({
       ...r.activity,
-      user: r.user.id ? r.user : null,
+      user: r.user?.id ? r.user : null,
     }));
   }
 

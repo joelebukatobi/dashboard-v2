@@ -36,6 +36,12 @@
   --radius-3: 2.4rem;
   --radius-4: 3.2rem;
   
+  /* Override Tailwind defaults */
+  --radius-sm: 0.24rem;  /* 2.4px */
+  --radius-md: 0.4rem;   /* 4px */
+  --radius-lg: 0.8rem;   /* 8px */
+  --radius-xl: 1.6rem;   /* 16px */
+  
   /* Max width */
   --max-width-8xl: 88rem;
   
