@@ -77,7 +77,7 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
     <script src="/vendor/apexcharts/apexcharts.min.js"></script>
 
     <!-- Preline UI JS -->
-    <script src="https://cdn.jsdelivr.net/npm/preline@2.0.3/dist/preline.min.js"></script>
+    <script src="/vendor/preline/preline.js"></script>
 
     <!-- Dashboard JavaScript -->
     <script>
@@ -221,6 +221,17 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
         // Re-initialize icons
         lucide.createIcons();
         
+        // Re-initialize Preline selects after HTMX swap
+        if (typeof HSSelect !== 'undefined') {
+          document.querySelectorAll('[data-hs-select]').forEach(function(el) {
+            var instance = HSSelect.getInstance(el);
+            if (instance) {
+              instance.destroy();
+            }
+            new HSSelect(el);
+          });
+        }
+        
         // Charts that need initialization will have inline scripts that run automatically
         // This event ensures any global cleanup/setup happens after swap
       });
@@ -242,41 +253,118 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
       // Handle HTMX trigger events for Preline toasts
       document.body.addEventListener('htmx:toast', function(evt) {
         if (evt.detail) {
-          // Try Preline's HSToast first
-          if (typeof HSToast !== 'undefined') {
-            HSToast.show({
-              title: evt.detail.type === 'success' ? 'Success' : 'Error',
-              message: evt.detail.message,
-              variant: evt.detail.type || 'success',
-              duration: 3000
-            });
-          } else {
-            // Fallback: Create a simple toast using Preline's alert styles
-            const toastContainer = document.getElementById('toast-container');
-            if (toastContainer) {
-              const toast = document.createElement('div');
-              const isSuccess = evt.detail.type === 'success';
-              const bgClass = isSuccess ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
-              const iconSvg = isSuccess 
-                ? '<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>'
-                : '<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>';
-              
-              toast.className = 'max-w-xs border rounded-lg shadow-lg mb-3 transform transition-all duration-300 translate-x-full ' + bgClass;
-              toast.innerHTML = '<div class="flex items-center gap-3 px-4 py-3">' + iconSvg + '<span class="text-sm font-medium">' + evt.detail.message + '</span></div>';
-              
-              toastContainer.appendChild(toast);
-              
-              // Animate in
-              requestAnimationFrame(function() {
-                toast.classList.remove('translate-x-full');
+          // Store toast info for later
+          const toastInfo = evt.detail;
+          
+          // Function to display the toast
+          function displayToast() {
+            // Try Preline's HSToast first
+            if (typeof HSToast !== 'undefined') {
+              HSToast.show({
+                title: toastInfo.type === 'success' ? 'Success' : 'Error',
+                message: toastInfo.message,
+                variant: toastInfo.type || 'success',
+                duration: 3000
               });
+            } else {
+              // Check for page-header toast container first, then fall back to global
+              let toastContainer = document.querySelector('.page-header__toast-container');
+              let isPageHeaderToast = true;
               
-              // Remove after 3 seconds
-              setTimeout(function() {
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(function() { toast.remove(); }, 300);
-              }, 3000);
+              if (!toastContainer) {
+                // Fall back to global toast container
+                toastContainer = document.getElementById('toast-container');
+                isPageHeaderToast = false;
+              }
+              
+              if (toastContainer) {
+                const toast = document.createElement('div');
+                const isSuccess = toastInfo.type === 'success';
+                const bgClass = isSuccess ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800';
+                const iconSvg = isSuccess 
+                  ? '<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>'
+                  : '<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>';
+                
+                if (isPageHeaderToast) {
+                  // Page header toast: slide from left (after title) to right end
+                  toast.className = 'border rounded-lg shadow-sm transform transition-all duration-700 ease-out ' + bgClass;
+                  toast.style.position = 'absolute';
+                  toast.style.left = '0';
+                  toast.style.transform = 'translateX(0)';
+                  toast.style.opacity = '1';
+                  toast.innerHTML = '<div class="flex items-center gap-3 px-4 py-3 whitespace-nowrap">' + iconSvg + '<span class="text-sm font-medium">' + toastInfo.message + '</span></div>';
+                  
+                  toastContainer.appendChild(toast);
+                  
+                  // Get the container width to calculate how far to slide
+                  const containerWidth = toastContainer.offsetWidth;
+                  const toastWidth = toast.offsetWidth;
+                  const slideDistance = containerWidth - toastWidth;
+                  
+                  // Animate from left to right end
+                  requestAnimationFrame(function() {
+                    toast.style.transform = 'translateX(' + slideDistance + 'px)';
+                  });
+                  
+                  // Fade out and remove after 3 seconds
+                  setTimeout(function() {
+                    toast.style.opacity = '0';
+                    setTimeout(function() { toast.remove(); }, 300);
+                  }, 3000);
+                } else {
+                  // Global toast: slide from right to left (original behavior)
+                  toast.className = 'max-w-xs border rounded-lg shadow-sm mb-3 transform transition-all duration-300 translate-x-full ' + bgClass;
+                  toast.innerHTML = '<div class="flex items-center gap-3 px-4 py-3">' + iconSvg + '<span class="text-sm font-medium">' + toastInfo.message + '</span></div>';
+                  
+                  toastContainer.appendChild(toast);
+                  
+                  // Animate in
+                  requestAnimationFrame(function() {
+                    toast.classList.remove('translate-x-full');
+                  });
+                  
+                  // Remove after 3 seconds
+                  setTimeout(function() {
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(function() { toast.remove(); }, 300);
+                  }, 3000);
+                }
+              }
             }
+          }
+          
+          // Show toast with a small delay to ensure modal has closed
+          setTimeout(displayToast, 100);
+        }
+      });
+
+      // Handle delayed redirects with toasts
+      document.body.addEventListener('htmx:beforeSwap', function(evt) {
+        const xhr = evt.detail.xhr;
+        const location = xhr.getResponseHeader('HX-Location');
+        const trigger = xhr.getResponseHeader('HX-Trigger');
+        
+        // Check if we have both location and toast trigger
+        if (location && trigger) {
+          try {
+            const triggerData = JSON.parse(trigger);
+            if (triggerData['htmx:toast']) {
+              // Prevent the swap (which would include the redirect)
+              evt.preventDefault();
+              
+              // Show toast
+              document.body.dispatchEvent(new CustomEvent('htmx:toast', {
+                detail: triggerData['htmx:toast']
+              }));
+              
+              // Redirect after 4 seconds
+              setTimeout(function() {
+                window.location.href = location;
+              }, 4000);
+            }
+          } catch (e) {
+            // If JSON parse fails, let HTMX handle it normally
+            console.error('Failed to parse HX-Trigger:', e);
           }
         }
       });

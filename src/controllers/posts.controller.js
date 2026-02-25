@@ -135,8 +135,12 @@ class PostsController {
         }));
       }
 
-      // Parse tags
-      const tagIds = tagIdsString ? tagIdsString.split(',').filter(Boolean) : [];
+      // Parse tags - handle both array (from multi-select) and comma-separated string
+      const tagIds = Array.isArray(tagIdsString)
+        ? tagIdsString.filter(Boolean)
+        : tagIdsString
+          ? tagIdsString.split(',').filter(Boolean)
+          : [];
 
       // Create post
       const post = await postsService.createPost({
@@ -151,8 +155,8 @@ class PostsController {
         metaDescription,
       }, request.user.id);
 
-      // Redirect to posts list or edit page
-      reply.header('HX-Redirect', `/admin/posts/${post.id}/edit`);
+      // Send location for delayed redirect + toast trigger
+      reply.header('HX-Location', `/admin/posts/${post.id}/edit`);
       reply.header('HX-Trigger', JSON.stringify({ "htmx:toast": { message: status === 'PUBLISHED' ? 'Post published successfully!' : 'Draft saved successfully!', type: 'success' } }));
       return reply.type('text/html').send('');
 
@@ -233,8 +237,12 @@ class PostsController {
         }));
       }
 
-      // Parse tags
-      const tagIds = tagIdsString ? tagIdsString.split(',').filter(Boolean) : undefined;
+      // Parse tags - handle both array (from multi-select) and comma-separated string
+      const tagIds = Array.isArray(tagIdsString)
+        ? tagIdsString.filter(Boolean)
+        : tagIdsString
+          ? tagIdsString.split(',').filter(Boolean)
+          : undefined;
 
       // Update post
       const post = await postsService.updatePost(id, {
@@ -273,7 +281,7 @@ class PostsController {
       
       await postsService.deletePost(id);
 
-      reply.header('HX-Redirect', '/admin/posts');
+      reply.header('HX-Location', '/admin/posts');
       reply.header('HX-Trigger', JSON.stringify({ "htmx:toast": { message: 'Post deleted successfully', type: 'success' } }));
       return reply.type('text/html').send('');
 
