@@ -10,17 +10,18 @@ import { mainLayout } from '../../layouts/main.js';
  */
 export function postEditPage({ categories, tags, post, user }) {
   const content = `
-    <div class="content content--edit">
+    <div class="content content-main">
       <!-- Page Header -->
       <div class="page-header">
         <div class="page-header__left">
           <h1 class="page-header__title">Edit Post</h1>
           <p class="page-header__subtitle">Update your blog post</p>
         </div>
+        <div class="page-header__toast-container"></div>
       </div>
 
       <!-- Edit Post Form Container (Scrollable) -->
-      <div class="edit-form-container">
+      <div class="page-main">
         <div class="card">
         <div class="card__header">
           <h2 class="card__title">Post Details</h2>
@@ -141,9 +142,6 @@ export function postEditPage({ categories, tags, post, user }) {
 
             <input type="hidden" name="status" id="postStatus" value="${post.status}" />
           </form>
-
-          <!-- Toast Container -->
-          <div id="toast-container" class="mt-4"></div>
         </div>
         <div class="card__footer">
           <div class="form__field-group">
@@ -249,8 +247,8 @@ export function postEditPage({ categories, tags, post, user }) {
         // Set status in hidden field
         document.getElementById('postStatus').value = status;
 
-        // Submit
-        document.getElementById('editPostForm').requestSubmit();
+        // Submit using HTMX trigger
+        htmx.trigger('#editPostForm', 'submit');
       }
 
       // Image upload handling

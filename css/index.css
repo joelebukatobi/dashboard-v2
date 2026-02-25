@@ -6,6 +6,17 @@
 /* Tailwind CSS v4 base, components, and utilities */
 @import "tailwindcss";
 
+/* ============================================================================
+ * SAFELIST: Classes used in JavaScript (HTMX error/success responses)
+ * These classes are dynamically generated in controllers and must be safelisted
+ * to ensure they're included in the final CSS build
+ * ============================================================================ */
+
+/* Error toast/message classes */
+/* bg-red-50 border-red-200 text-red-800 */
+/* Success toast/message classes */
+/* bg-green-50 border-green-200 text-green-800 */
+
 /* Enable class-based dark mode - dark styles only apply when .dark class is present */
 @custom-variant dark (&:where(.dark, .dark *));
 

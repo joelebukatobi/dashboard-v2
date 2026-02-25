@@ -5,3 +5,5 @@ export { loginPage } from './login.js';
 export { resetPasswordPage } from './reset-password.js';
 export { dashboardPage } from './dashboard.js';
 export { postsListPage, postNewPage, postEditPage } from './posts/index.js';
+export { categoriesListPage, categoryNewPage, categoryEditPage } from './categories/index.js';
+export { tagsListPage, tagNewPage, tagEditPage } from './tags/index.js';

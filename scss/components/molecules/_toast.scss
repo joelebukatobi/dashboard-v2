@@ -181,3 +181,20 @@
     bottom: auto;
   }
 }
+
+// Page Header Toast Container
+.page-header__toast-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 4rem;
+  overflow: hidden;
+  pointer-events: none;
+
+  // The toast elements inside
+  > div {
+    pointer-events: auto;
+  }
+}
