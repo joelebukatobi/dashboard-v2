@@ -8,24 +8,29 @@
   @apply bg-transparent p-0 rounded-none mx-0;
 
   &__item {
-    @apply flex items-center justify-center min-w-[2rem] h-[2rem] px-[0.6rem];
+    @apply flex items-center justify-center w-[2rem] h-[2rem];
     @apply text-sm font-semibold text-grey-600 dark:text-grey-400;
     @apply bg-white dark:bg-grey-800;
     @apply border border-grey-200 dark:border-grey-700;
-    @apply rounded-lg shadow-sm;
+    @apply rounded-[0.24rem] shadow-sm;
     @apply transition-all duration-200;
 
     &:hover {
       @apply border-blue-200 text-blue-600;
       @apply z-10;
+
+      .dark & {
+        @apply border-grey-500 text-grey-200;
+      }
     }
 
     &--active {
-      @apply bg-blue-600 text-white border-blue-600 font-bold; // Bolder text, white
+      @apply bg-blue-600 text-white border-blue-600 font-bold;
       @apply hover:bg-blue-700 hover:border-blue-700;
 
       .dark & {
-        @apply bg-blue-600 text-white border-blue-600 font-bold;
+        @apply bg-grey-700 text-white border-grey-600 font-bold;
+        @apply hover:bg-grey-600 hover:border-grey-500;
       }
     }
 
@@ -38,9 +43,13 @@
       @apply w-[1.2rem] h-[1.2rem];
     }
 
-    // Chevron button hover: blue bg, white icon
+    // Chevron button hover
     &:has(svg):hover {
       @apply bg-blue-600 border-blue-600 text-white;
+
+      .dark & {
+        @apply bg-grey-700 border-grey-600 text-white;
+      }
     }
   }
 
