@@ -10,7 +10,19 @@
 // ============================================================================
 
 .table {
-  @apply w-full;
+  @apply w-full overflow-x-auto;
+
+  // ========================================
+  // Table Element (direct child table)
+  // ========================================
+  table {
+    // Mobile: Display as block so content is visible
+    @apply block w-full;
+
+    // Desktop: Standard table display
+    @apply lg:table;
+    @apply lg:border-collapse;
+  }
 
   // ========================================
   // Table Label (Mobile specific)
@@ -25,20 +37,6 @@
   }
 
   // ========================================
-
-  // ========================================
-  // Table Element
-  // ========================================
-  &__table {
-    // Mobile: Display as block so content is visible
-    @apply block w-full;
-
-    // Desktop: Standard table display
-    @apply lg:table;
-    @apply lg:border-collapse;
-  }
-
-  // ========================================
   // Table Header (Hidden on mobile)
   // ========================================
   &__thead {
@@ -48,13 +46,17 @@
     // Desktop: Show header
     @apply lg:table-header-group;
 
+    .dark & {
+      @apply bg-grey-900;
+    }
+
     th {
       @apply text-left px-[1.6rem] py-[1rem];
       @apply text-base font-semibold capitalize tracking-normal;
       @apply text-grey-500 border-b border-grey-200;
 
       .dark & {
-        @apply text-grey-400 border-grey-700;
+        @apply text-grey-300 border-grey-700 bg-grey-900;
       }
 
       // Right-align last column (typically Actions)
@@ -88,7 +90,7 @@
     @apply lg:bg-transparent lg:shadow-none lg:border-0;
 
     .dark & {
-      @apply bg-[#1e1e1e] border-[#333333];
+      @apply bg-grey-900 border-grey-800;
       @apply lg:bg-transparent lg:border-0;
     }
 
@@ -97,7 +99,7 @@
       @apply lg:bg-blue-600/5;
 
       .dark & {
-        @apply lg:bg-blue-600/10;
+        @apply lg:bg-grey-700/50;
       }
     }
   }

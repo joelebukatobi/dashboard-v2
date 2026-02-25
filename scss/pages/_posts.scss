@@ -39,13 +39,16 @@
     > .page-footer {
       flex-shrink: 0;
       border-top: none; // Remove top border
+      margin-top: 0; // Remove margin-top
+      height: 8rem; // Fixed height for footer
+      display: flex;
+      align-items: center; // Center pagination vertically only
     }
   }
 }
 
 // Edit/New Post Pages Sticky Layout (Desktop)
-.content--edit,
-.content--new {
+.content-main {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 5.6rem); // Full viewport minus main navbar
@@ -54,12 +57,16 @@
     flex-shrink: 0;
   }
   
-  > .edit-form-container,
-  > .new-form-container {
+  > .page-main {
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 2.4rem; // Space at bottom
+    padding-right: 2.4rem; // Space between content and scrollbar
   }
+}
+
+// CKEditor container
+.post-editor {
+  min-height: 32rem; // 320px
 }
 
 // Delete Modal - High z-index to appear above sticky headers
@@ -69,12 +76,10 @@
 
 // Mobile: Normal scrolling for Edit/New pages
 @media (max-width: 1023px) {
-  .content--edit,
-  .content--new {
+  .content-main {
     height: auto;
     
-    > .edit-form-container,
-    > .new-form-container {
+    > .page-main {
       overflow-y: visible;
     }
   }
@@ -82,9 +87,10 @@
   .posts {
     .content {
       height: auto;
+      overflow-y: auto; // Enable vertical scrolling
       
-      > .table-container {
-        overflow-y: visible;
+      > .table {
+        overflow-x: auto;
         
         // Add spacing between mobile cards
         .table__tr {
