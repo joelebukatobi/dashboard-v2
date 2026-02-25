@@ -12,7 +12,7 @@
   @apply flex flex-col h-full overflow-hidden;
 
   .dark & {
-    @apply bg-[#1e1e1e] border-[#333333];
+    @apply bg-grey-900 border-grey-800;
   }
 
   &--flush .widget__body {
@@ -247,7 +247,7 @@
     @apply bg-blue-600/5;
 
     .dark & {
-      @apply bg-[#373737]/50;
+      @apply bg-grey-800/50;
     }
   }
 

@@ -35,9 +35,9 @@
   @apply opacity-0 invisible z-50;
   @apply bg-white;
   .dark & {
-    @apply bg-[#1e1e1e];
+    @apply bg-grey-900;
   }
-  @apply shadow-lg rounded-xl;
+  @apply shadow-lg rounded-md;
   @apply border;
   @apply border-grey-100;
   .dark & {
@@ -92,7 +92,7 @@
 
 // Dropdown item
 .dropdown__item {
-  @apply flex items-center gap-[.64rem] py-[0.64rem] px-[.8rem] rounded-lg text-sm w-full;
+  @apply flex items-center gap-[.64rem] py-[0.64rem] px-[.8rem] rounded-md text-sm w-full;
   @apply text-grey-900;
   .dark & {
     @apply text-white;
@@ -148,6 +148,14 @@
   @apply border-grey-100;
   .dark & {
     @apply border-grey-700;
+  }
+}
+
+// Preline Select toggle button active styles (when dropdown is open)
+.hs-select.active {
+  .form__input,
+  .form__select {
+    @apply outline-none ring-2 ring-blue-500/20 border-blue-500;
   }
 }
 

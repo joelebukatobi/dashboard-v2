@@ -61,7 +61,7 @@
 
     // Dark mode
     .dark & {
-      @apply bg-[#1e1e1e] text-white placeholder-grey-500;
+      @apply bg-grey-900 text-white placeholder-grey-500;
       @apply border-grey-700;
 
       &:hover:not(:disabled):not(:focus) {
@@ -73,11 +73,11 @@
       }
 
       &:disabled {
-        @apply bg-[#181818] text-grey-600;
+        @apply bg-grey-900 text-grey-600;
       }
 
       &:read-only {
-        @apply bg-[#212121];
+        @apply bg-grey-900;
       }
     }
   }

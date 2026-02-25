@@ -19,10 +19,10 @@
     }
 
     .dark & {
-      @apply bg-[#373737];
+      @apply bg-grey-800;
 
       &:focus {
-        @apply bg-[#1e1e1e] border-blue-500;
+        @apply bg-grey-900 border-blue-500;
       }
     }
   }
@@ -39,14 +39,14 @@
     }
 
     .dark & {
-      @apply bg-[#373737];
+      @apply bg-grey-800;
 
       &:hover {
-        @apply bg-[#404040];
+        @apply bg-grey-800;
       }
 
       &:focus {
-        @apply bg-[#1e1e1e] border-blue-500;
+        @apply bg-grey-900 border-blue-500;
       }
     }
   }

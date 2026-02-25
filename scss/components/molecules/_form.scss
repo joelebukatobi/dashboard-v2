@@ -23,14 +23,14 @@
 
   &__input,
   &__select {
-    @apply w-full px-[1.2rem] py-[0.8rem] rounded-lg;
+    @apply w-full px-[1.2rem] py-[0.8rem] rounded-md;
     @apply text-sm;
     @apply border border-grey-100/50;
     @apply transition-colors duration-200;
     @apply bg-white;
 
     .dark & {
-      @apply border-[#333333] bg-[#1e1e1e];
+      @apply border-grey-800 bg-grey-900;
     }
 
     &:focus {
@@ -67,7 +67,7 @@
   }
 
   &__textarea {
-    @apply w-full px-[1.2rem] py-[0.8rem] rounded-lg;
+    @apply w-full px-[1.2rem] py-[0.8rem] rounded-md;
     @apply text-sm;
     @apply border border-grey-100/50;
     @apply transition-colors duration-200;
@@ -75,7 +75,7 @@
     @apply min-h-[100px] resize-y;
 
     .dark & {
-      @apply border-[#333333] bg-[#1e1e1e];
+      @apply border-grey-800 bg-grey-900;
     }
 
     &:focus {
@@ -308,6 +308,229 @@
 
     .dark & {
       @apply border-grey-700;
+    }
+  }
+}
+
+// Image Upload Component
+.image-upload {
+  @apply flex flex-col gap-[1.2rem];
+
+  &__dropzone {
+    @apply border border-dashed border-grey-100/50 rounded-md;
+    @apply py-[3.2rem] px-[2rem] text-center cursor-pointer;
+    @apply transition-all duration-200;
+    @apply bg-grey-50;
+
+    &:hover {
+      @apply border-blue-500 bg-blue-50;
+    }
+
+    &.dragover {
+      @apply border-blue-500 bg-blue-100;
+    }
+
+    .dark & {
+      @apply bg-grey-800 border-grey-600;
+
+      &:hover {
+        @apply border-blue-400 bg-grey-700;
+      }
+    }
+
+    &--overlay {
+      @apply absolute inset-0;
+      @apply bg-black/60;
+      @apply flex flex-col items-center justify-center;
+      @apply border-0;
+      @apply opacity-0;
+      @apply transition-opacity duration-200;
+
+      &:hover {
+        @apply opacity-100 bg-black/60;
+      }
+
+      &.dragover {
+        @apply opacity-100 bg-black/70;
+      }
+
+      // Dark mode: lighter overlay so image remains visible
+      .dark & {
+        @apply bg-grey-900/40;
+
+        &:hover {
+          @apply bg-grey-900/40;
+        }
+
+        &.dragover {
+          @apply bg-grey-900/50;
+        }
+      }
+
+      .image-upload__icon {
+        @apply text-white;
+
+        .dark & {
+          @apply text-white;
+        }
+      }
+
+      .image-upload__text {
+        @apply text-white;
+
+        .dark & {
+          @apply text-white;
+        }
+      }
+
+      .image-upload__hint {
+        @apply text-white/70;
+
+        .dark & {
+          @apply text-white/70;
+        }
+      }
+    }
+  }
+
+  &__icon {
+    @apply w-[4.8rem] h-[4.8rem] mx-auto mb-[1.2rem] text-grey-500;
+    stroke-width: 1;
+  }
+
+  &__text {
+    @apply text-sm text-grey-600 mb-[0.4rem];
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__hint {
+    @apply text-xs text-grey-400;
+
+    .dark & {
+      @apply text-grey-500;
+    }
+  }
+
+  &__preview {
+    @apply hidden relative rounded-md overflow-hidden max-w-full;
+    aspect-ratio: 32 / 9;
+    max-height: 16rem;
+    @apply bg-grey-100;
+
+    &.has-image {
+      @apply block;
+    }
+
+    img {
+      @apply w-full h-full object-cover;
+    }
+
+    .dark & {
+      @apply bg-grey-800;
+    }
+  }
+
+  &__remove {
+    @apply absolute top-[0.8rem] right-[0.8rem];
+    @apply w-[3.2rem] h-[3.2rem] rounded-full;
+    @apply bg-black/60 text-white border-none cursor-pointer;
+    @apply flex items-center justify-center;
+    @apply transition-colors duration-200;
+
+    &:hover {
+      @apply bg-red-500;
+    }
+  }
+}
+
+// Preline Select Custom Classes (BEM children of .form)
+.form {
+  &__select {
+    // Toggle button styling
+    &-toggle {
+      @apply hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative w-full flex items-center justify-between cursor-pointer px-[1.2rem] py-[0.8rem] bg-white border border-grey-100/50 rounded-md text-sm text-grey-900 hover:border-grey-300 focus:outline-none dark:bg-grey-900 dark:border-grey-800 dark:text-white dark:hover:border-grey-600;
+    }
+    
+    // Dropdown menu styling
+    &-dropdown {
+      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 rounded-md shadow-lg overflow-hidden overflow-y-auto p-[0.4rem] scrollbar-hide dark:bg-grey-900 dark:border-grey-700;
+    }
+    
+    // Option items styling
+    &-option {
+      @apply py-[0.64rem] px-[0.8rem] w-full text-sm text-grey-900 cursor-pointer rounded-md transition-all duration-200 border-0 focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
+    }
+  }
+}
+
+// CKEditor 5 Styling
+.ck-editor {
+  &__editable {
+    min-height: 240px !important;
+  }
+}
+
+// CKEditor Toolbar Styling
+.ck {
+  &.ck-toolbar {
+    .ck-toolbar__items {
+      .ck-button {
+        .ck-icon {
+          width: 1.2rem !important;
+          height: 1.2rem !important;
+        }
+      }
+    }
+  }
+}
+
+// CKEditor Dark Mode
+.dark {
+  // Target the toolbar wrapper border specifically
+  .ck.ck-editor__top .ck-sticky-panel .ck-sticky-panel__content {
+    border: 1px solid #404040 !important;
+    border-bottom: 1px solid #404040 !important;
+  }
+
+  .ck {
+    &.ck-editor__main {
+      .ck-editor__editable {
+        background-color: #1e1e1e !important;
+        color: #ffffff !important;
+        border-color: #404040 !important;
+      }
+    }
+    
+    &.ck-toolbar {
+      background-color: #2a2a2a !important;
+      border: none !important;
+      
+      .ck-toolbar__items {
+        .ck-button {
+          color: #e5e5e5 !important;
+          
+          &:hover {
+            background-color: #404040 !important;
+          }
+          
+          &.ck-on {
+            background-color: #505050 !important;
+          }
+        }
+      }
+    }
+    
+    &.ck-dropdown__panel {
+      background-color: #2a2a2a !important;
+      border-color: #404040 !important;
+    }
+    
+    // Target all CKEditor borders
+    &.ck-editor {
+      border: 1px solid #404040 !important;
     }
   }
 }
