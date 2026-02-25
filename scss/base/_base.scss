@@ -58,7 +58,12 @@
 html {
   // box-sizing: border-box; // Handled by Tailwind preflight
   font-size: 62.5%; // 1rem = 10px (Default for < 1536px)
-  @apply overflow-hidden h-full;
+  @apply h-full;
+
+  // Desktop: prevent body scroll, app handles scrolling
+  @media (min-width: 1024px) {
+    @apply overflow-hidden;
+  }
 
   // Standard laptops/desktops
   @media (min-width: 1440px) {
@@ -72,8 +77,13 @@ html {
 }
 
 body {
-  @apply overflow-hidden h-full max-w-[100vw];
+  @apply h-full max-w-[100vw];
   @apply bg-white;
+
+  // Desktop: prevent body scroll, app handles scrolling
+  @media (min-width: 1024px) {
+    @apply overflow-hidden;
+  }
 
   .dark & {
     @apply bg-grey-900;
