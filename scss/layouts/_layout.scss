@@ -12,8 +12,10 @@
     width: calc(100% - var(--sidebar-width));
 
     // Ensure direct children (page wrappers like .posts, .users) fill the space
+    // NOTE: Removed min-h-0 to prevent content collapse when modals are open
+    // Previously caused posts table to disappear when delete modal was triggered
     > div:not(.header):not(.mobile-search) {
-      @apply flex-1 w-full flex flex-col min-h-0;
+      @apply flex-1 w-full flex flex-col;
     }
 
     @media (max-width: 1023px) {
@@ -63,12 +65,24 @@
       // Stack buttons on mobile
       @apply flex-wrap;
     }
+
+    &__toast-container {
+      @apply relative flex-1 flex items-center;
+      @apply min-h-[4rem] overflow-hidden;
+      pointer-events: none;
+
+      > div {
+        pointer-events: auto;
+      }
+    }
   }
 
   // Page Footer (Pagination) - pushes to bottom of content
   & .page-footer {
-    @apply w-full pt-[2.4rem] lg:pt-[1.6rem] px-0 bg-white border-t border-grey-100;
-    @apply mt-[2.4rem] lg:mt-auto; // Push to bottom of flex container
+    @apply w-full px-0 bg-white border-t border-grey-100;
+    @apply flex items-center; // Center content vertically only
+    @apply mt-0; // Remove margin-top
+    height: 8rem; // Fixed height for footer
 
     .dark & {
       @apply bg-grey-900 border-grey-800;
