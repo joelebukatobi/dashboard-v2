@@ -27,7 +27,7 @@
     @apply bg-white relative overflow-hidden;
 
     .dark & {
-      @apply bg-[#181818];
+      @apply bg-grey-900;
     }
   }
 
@@ -62,7 +62,7 @@
     @apply bg-white/70 opacity-0 transition-opacity duration-300;
 
     .dark & {
-      @apply bg-[#181818]/75;
+      @apply bg-grey-900/75;
     }
   }
 
@@ -104,13 +104,13 @@
 .auth-card {
   @apply bg-white;
   .dark & {
-    @apply bg-[#1e1e1e];
+    @apply bg-grey-900;
   }
   @apply rounded-2xl shadow-lg;
   @apply p-[3.2rem] sm:p-[4rem] space-y-[2.4rem];
 
   &__header {
-    @apply text-center mb-[2.4rem];
+    @apply text-center mb-[.8rem];
   }
 
   &__title {
@@ -119,6 +119,10 @@
 
   &__subtitle {
     @apply text-[1.2rem];
+  }
+
+  &__error {
+    @apply text-red-800 text-center text-[1.2rem] m-0 p-0;
   }
 
   &__form {
@@ -247,8 +251,8 @@
     @apply hover:bg-grey-50 hover:border-grey-400;
 
     .dark & {
-      @apply bg-[#1e1e1e] text-white border-grey-600;
-      @apply hover:bg-[#2a2a2a] hover:border-grey-500;
+      @apply bg-grey-900 text-white border-grey-600;
+      @apply hover:bg-grey-800 hover:border-grey-500;
     }
   }
 
