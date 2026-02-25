@@ -18,6 +18,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             <h1 class="page-header__title">Blog Posts</h1>
             <p class="page-header__subtitle">Manage your blog posts</p>
           </div>
+          <div class="page-header__toast-container"></div>
         </div>
 
         <!-- Data Filter -->
@@ -85,8 +86,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             </button>
 
             <!-- Add New -->
-            <a href="/admin/posts/new" class="btn btn-icon btn--primary">
-              <i data-lucide="plus"></i>
+            <a href="/admin/posts/new" class="btn btn--primary">
               <span>${posts.length === 0 ? 'Create First Post' : 'New Post'}</span>
             </a>
           </div>
@@ -97,10 +97,8 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             ? emptyState()
             : `
           <!-- Data List (Table) -->
-          <div class="table-container">
-            <div class="table">
-              <!-- Desktop: Proper HTML Table -->
-              <table class="table__table">
+          <div class="table">
+            <table>
               <thead class="table__thead">
                 <tr>
                   <th>Title</th>
@@ -156,8 +154,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
                   )
                   .join('')}
               </tbody>
-              </table>
-            </div>
+            </table>
           </div>
 
           ${totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
@@ -177,6 +174,11 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
         
         // Update form action
         form.setAttribute('hx-delete', '/admin/posts/' + postId);
+        
+        // Tell HTMX to re-process the form with the new attribute
+        if (typeof htmx !== 'undefined') {
+          htmx.process(form);
+        }
         
         // Update title display
         if (titleElement) {
@@ -246,7 +248,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
           <form 
             id="deletePostForm"
             hx-delete=""
-            hx-target=".table-container"
+            hx-target=".table"
             hx-swap="innerHTML"
             class="px-6 pb-6 flex flex-col gap-3"
           >
