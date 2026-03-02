@@ -1,7 +1,7 @@
 // src/templates/admin/pages/media/images/edit.js
 // Edit image page template
 
-import { mainLayout } from '../../layouts/main.js';
+import { mainLayout } from '../../../layouts/main.js';
 
 /**
  * Generate image edit page
