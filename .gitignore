@@ -66,3 +66,4 @@ coverage/
 *.local
 .history/
 cookies.txt
+.serena/
