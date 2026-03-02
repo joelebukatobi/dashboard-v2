@@ -7,7 +7,7 @@
 // WIDGET CONTAINER
 // ==================================================
 .widget {
-  @apply bg-white rounded-xl shadow-sm;
+  @apply bg-white rounded-lg shadow-sm;
   @apply border border-grey-100/50;
   @apply flex flex-col h-full overflow-hidden;
 

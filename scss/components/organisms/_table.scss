@@ -12,14 +12,9 @@
 .table {
   @apply w-full overflow-x-auto;
 
-  // ========================================
-  // Table Element (direct child table)
-  // ========================================
-  table {
-    // Mobile: Display as block so content is visible
+  // Supports both wrapper div and direct table element
+  &, table {
     @apply block w-full;
-
-    // Desktop: Standard table display
     @apply lg:table;
     @apply lg:border-collapse;
   }

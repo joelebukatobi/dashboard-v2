@@ -156,7 +156,7 @@ $collapsed-item-size: 3.2rem;
 
   &__toggle {
     @apply hidden lg:flex items-center justify-center cursor-pointer;
-    @apply w-[2.8rem] h-[2.8rem] rounded-lg bg-white/10 text-white/70;
+    @apply w-[2.8rem] h-[2.8rem] rounded-md bg-white/10 text-white/70;
     @apply hover:bg-white/20 hover:text-white;
   }
 
@@ -202,7 +202,7 @@ $collapsed-item-size: 3.2rem;
 
     &:hover {
       background-color: var(--color-bg-sidebar-hover);
-      @apply text-white rounded-lg;
+      @apply text-white rounded-md;
     }
 
     &--active {
@@ -273,7 +273,7 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__submenu-item {
-    @apply block px-[1.6rem] py-[0.8rem] text-sm text-white/60 rounded-lg no-underline;
+    @apply block px-[1.6rem] py-[0.8rem] text-sm text-white/60 rounded-md no-underline;
     @apply hover:text-white hover:bg-white/5 transition-colors duration-200;
   }
 

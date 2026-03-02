@@ -36,11 +36,11 @@
     @apply w-full;
     @apply text-[1.04rem] placeholder:text-[1.04rem];
     @apply bg-white text-grey-900 placeholder-grey-400;
-    @apply border border-grey-200 rounded-[0.6rem];
+    @apply border border-grey-200 rounded-md;
     @apply outline-none;
     @apply transition-all duration-200;
 
-    @apply h-[3.2rem] px-[1.6rem];
+    @apply h-[3.2rem] px-[1.2rem];
 
     // States
     &:hover:not(:disabled):not(:focus) {

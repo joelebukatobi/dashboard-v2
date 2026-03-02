@@ -20,10 +20,9 @@
       @apply content-['*'] ml-[0.4rem] text-red-500;
     }
   }
-
   &__input,
   &__select {
-    @apply w-full px-[1.2rem] py-[0.8rem] rounded-md;
+    @apply w-full px-[1.2rem] rounded-md h-[3.2rem];
     @apply text-sm;
     @apply border border-grey-100/50;
     @apply transition-colors duration-200;
@@ -67,7 +66,7 @@
   }
 
   &__textarea {
-    @apply w-full px-[1.2rem] py-[0.8rem] rounded-md;
+    @apply w-full px-[1.2rem] py-[1.2rem] rounded-md;
     @apply text-sm;
     @apply border border-grey-100/50;
     @apply transition-colors duration-200;
@@ -190,7 +189,8 @@
   }
 
   &__info-box {
-    @apply rounded-lg p-[1.6rem] bg-blue-600/5 mb-[1.6rem];
+    @apply p-[1.6rem] bg-blue-600/5 mb-[1.6rem];
+    border-radius: var(--radius-md);
     .dark & {
       @apply bg-blue-500/20;
     }
@@ -269,7 +269,8 @@
   // Account Info Box
   // ========================================
   &__account-info {
-    @apply bg-blue-600/5 rounded-lg p-4;
+    @apply bg-blue-600/5 p-4;
+    border-radius: var(--radius-md);
 
     .dark & {
       @apply bg-blue-50/5;
@@ -317,7 +318,8 @@
   @apply flex flex-col gap-[1.2rem];
 
   &__dropzone {
-    @apply border border-dashed border-grey-100/50 rounded-md;
+    @apply border border-dashed border-grey-100/50;
+    border-radius: var(--radius-md);
     @apply py-[3.2rem] px-[2rem] text-center cursor-pointer;
     @apply transition-all duration-200;
     @apply bg-grey-50;
@@ -451,17 +453,19 @@
   &__select {
     // Toggle button styling
     &-toggle {
-      @apply hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative w-full flex items-center justify-between cursor-pointer px-[1.2rem] py-[0.8rem] bg-white border border-grey-100/50 rounded-md text-sm text-grey-900 hover:border-grey-300 focus:outline-none dark:bg-grey-900 dark:border-grey-800 dark:text-white dark:hover:border-grey-600;
+      @apply hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative w-full flex items-center justify-between cursor-pointer px-[1.2rem] bg-white border border-grey-100/50 text-sm text-grey-900 hover:border-grey-300 focus:outline-none dark:bg-grey-900 dark:border-grey-800 dark:text-white dark:hover:border-grey-600 h-[3.2rem] rounded-md;
     }
     
     // Dropdown menu styling
     &-dropdown {
-      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 rounded-md shadow-lg overflow-hidden overflow-y-auto p-[0.4rem] scrollbar-hide dark:bg-grey-900 dark:border-grey-700;
+      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 shadow-lg overflow-hidden overflow-y-auto p-[0.4rem] scrollbar-hide dark:bg-grey-900 dark:border-grey-700;
+      border-radius: var(--radius-md);
     }
     
     // Option items styling
     &-option {
-      @apply py-[0.64rem] px-[0.8rem] w-full text-sm text-grey-900 cursor-pointer rounded-md transition-all duration-200 border-0 focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
+      @apply py-[0.64rem] px-[0.8rem] w-full text-sm text-grey-900 cursor-pointer transition-all duration-200 border-0 focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
+      border-radius: var(--radius-md);
     }
   }
 }
