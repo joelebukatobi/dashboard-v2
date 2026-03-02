@@ -319,6 +319,12 @@ class PostsService {
       }
     }
 
+    // Handle category change when status stays PUBLISHED
+    if (post.status === 'PUBLISHED' && categoryId !== undefined && categoryId !== post.categoryId) {
+      await this.decrementCategoryPostCount(post.categoryId);
+      await this.incrementCategoryPostCount(categoryId);
+    }
+
     // Get updated post
     const updatedPost = await this.getPostById(id);
 
@@ -347,6 +353,12 @@ class PostsService {
       throw new Error('Post not found');
     }
 
+    // Get current tags before deletion to decrement counts
+    const currentTags = await db
+      .select({ tagId: postTags.tagId })
+      .from(postTags)
+      .where(eq(postTags.postId, id));
+
     // Log activity BEFORE deletion
     await activityService.logPostDeleted(userId || post.authorId, post);
 
@@ -361,6 +373,11 @@ class PostsService {
       await this.decrementCategoryPostCount(post.categoryId);
     }
 
+    // Decrement tag counts
+    for (const { tagId } of currentTags) {
+      await this.decrementTagPostCount(tagId);
+    }
+
     return true;
   }
 
@@ -368,10 +385,29 @@ class PostsService {
    * Update post tags
    * @param {string} postId - Post ID
    * @param {Array<string>} tagIds - Tag IDs
+   * @param {boolean} [shouldUpdateCounts=true] - Whether to update tag post counts
    */
-  async updatePostTags(postId, tagIds) {
+  async updatePostTags(postId, tagIds, shouldUpdateCounts = true) {
+    // Get current tags to calculate differences
+    let currentTagIds = [];
+    if (shouldUpdateCounts) {
+      const currentTags = await db
+        .select({ tagId: postTags.tagId })
+        .from(postTags)
+        .where(eq(postTags.postId, postId));
+      currentTagIds = currentTags.map(t => t.tagId);
+    }
+
     // Remove existing tags
     await db.delete(postTags).where(eq(postTags.postId, postId));
+
+    // Decrement count for removed tags
+    if (shouldUpdateCounts) {
+      const removedTags = currentTagIds.filter(id => !tagIds.includes(id));
+      for (const tagId of removedTags) {
+        await this.decrementTagPostCount(tagId);
+      }
+    }
 
     // Add new tags
     if (tagIds.length > 0) {
@@ -380,6 +416,14 @@ class PostsService {
         tagId,
       }));
       await db.insert(postTags).values(tagValues);
+
+      // Increment count for new tags
+      if (shouldUpdateCounts) {
+        const addedTags = tagIds.filter(id => !currentTagIds.includes(id));
+        for (const tagId of addedTags) {
+          await this.incrementTagPostCount(tagId);
+        }
+      }
     }
   }
 
@@ -411,6 +455,36 @@ class PostsService {
         postCount: sql`${categories.postCount} - 1`,
       })
       .where(eq(categories.id, categoryId));
+  }
+
+  /**
+   * Increment tag post count
+   * @param {string} tagId - Tag ID
+   */
+  async incrementTagPostCount(tagId) {
+    if (!tagId) return;
+    
+    await db
+      .update(tags)
+      .set({
+        postCount: sql`${tags.postCount} + 1`,
+      })
+      .where(eq(tags.id, tagId));
+  }
+
+  /**
+   * Decrement tag post count
+   * @param {string} tagId - Tag ID
+   */
+  async decrementTagPostCount(tagId) {
+    if (!tagId) return;
+    
+    await db
+      .update(tags)
+      .set({
+        postCount: sql`GREATEST(${tags.postCount} - 1, 0)`,
+      })
+      .where(eq(tags.id, tagId));
   }
 
   /**
