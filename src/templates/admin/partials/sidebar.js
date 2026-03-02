@@ -77,7 +77,7 @@ export function sidebar({ activeRoute = '/', user } = {}) {
               </ul>
             </li>
             <li>
-              <div class="sidebar__item sidebar__item--has-submenu">
+              <div class="sidebar__item sidebar__item--has-submenu ${isActive('/media') ? 'sidebar__item--active' : ''}">
                 <span class="sidebar__item-icon">
                   <i data-lucide="image"></i>
                 </span>
@@ -86,12 +86,12 @@ export function sidebar({ activeRoute = '/', user } = {}) {
                   <i data-lucide="chevron-right"></i>
                 </span>
               </div>
-              <ul class="sidebar__submenu">
+              <ul class="sidebar__submenu ${isActive('/media') ? 'sidebar__submenu--open' : ''}">
                 <li>
-                  <a href="/admin/images" class="sidebar__submenu-item ${isActive('/images')}">Images</a>
+                  <a href="/admin/media/images" class="sidebar__submenu-item ${isActive('/media/images')}">Images</a>
                 </li>
                 <li>
-                  <a href="/admin/videos" class="sidebar__submenu-item ${isActive('/videos')}">Videos</a>
+                  <a href="/admin/media/videos" class="sidebar__submenu-item ${isActive('/media/videos')}">Videos</a>
                 </li>
               </ul>
             </li>
