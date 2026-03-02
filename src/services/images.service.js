@@ -175,8 +175,8 @@ class ImagesService {
         caption: metadata.caption || '',
         description: metadata.description || '',
         tag: metadata.tag || null,
-        path: `/uploads/images/${filename}`,
-        thumbnailPath: `/uploads/images/thumbs/${thumbFilename}`,
+        path: `/public/uploads/images/${filename}`,
+        thumbnailPath: `/public/uploads/images/thumbs/${thumbFilename}`,
         uploadedBy: userId,
       })
       .returning();
