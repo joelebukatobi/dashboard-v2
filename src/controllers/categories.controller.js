@@ -16,16 +16,15 @@ class CategoriesController {
     try {
       const user = request.user;
       const {
-        status,
         search,
         sortBy = 'createdAt',
         sortOrder = 'desc',
         page = 1,
+        toast,
       } = request.query;
 
       // Get categories with pagination
       const { data: categories, pagination } = await categoriesService.getAll({
-        status,
         search,
         sortBy,
         sortOrder,
@@ -57,7 +56,8 @@ class CategoriesController {
           categories,
           pagination,
           counts,
-          filters: { status, search },
+          filters: { search },
+          toast,
         })
       );
     } catch (error) {
@@ -99,7 +99,7 @@ class CategoriesController {
   async create(request, reply) {
     try {
       const user = request.user;
-      const { title, slug, description, status, colorClass } = request.body;
+      const { title, slug, description, colorClass } = request.body;
 
       // Validate required fields
       if (!title) {
@@ -114,7 +114,6 @@ class CategoriesController {
         title,
         slug,
         description,
-        status: status || 'PUBLISHED',
         colorClass: colorClass || 'badge--primary',
       }, user.id);
 
@@ -172,7 +171,7 @@ class CategoriesController {
     try {
       const user = request.user;
       const { id } = request.params;
-      const { title, slug, description, status, colorClass } = request.body;
+      const { title, slug, description, colorClass } = request.body;
 
       // Check if category exists
       const existing = await categoriesService.getById(id);
@@ -188,7 +187,6 @@ class CategoriesController {
         title,
         slug,
         description,
-        status,
         colorClass,
       }, user.id);
 
@@ -213,12 +211,17 @@ class CategoriesController {
       const user = request.user;
       const { id } = request.params;
 
-      // Delete category
-      await categoriesService.delete(id, user.id);
+      // Delete category and get result
+      const result = await categoriesService.delete(id, user.id);
 
-      // Redirect to list with toast notification
-      reply.header('HX-Location', '/admin/categories');
-      reply.header('HX-Trigger', JSON.stringify({ "htmx:toast": { message: 'Category deleted successfully!', type: 'success' } }));
+      // Build success message
+      let message = 'Category deleted successfully';
+      if (result.postsMoved > 0) {
+        message = `Category deleted. ${result.postsMoved} post${result.postsMoved === 1 ? '' : 's'} moved to Uncategorized`;
+      }
+
+      // Full browser redirect to categories list with toast param
+      reply.header('HX-Redirect', `/admin/categories?toast=${encodeURIComponent(message)}`);
       return reply.type('text/html').send('');
     } catch (error) {
       request.log.error(error);
@@ -261,7 +264,6 @@ function categoriesTableFragment({ categories, pagination, counts }) {
         <h3 class="text-lg font-medium text-gray-900 mb-2">No categories found</h3>
         <p class="text-gray-500 mb-4">Get started by creating your first category.</p>
         <a href="/admin/categories/new" class="btn btn--primary">
-          <i data-lucide="plus"></i>
           Create Category
         </a>
       </div>
@@ -269,8 +271,6 @@ function categoriesTableFragment({ categories, pagination, counts }) {
   }
 
   const rows = categories.map((category) => {
-    const statusClass = category.status === 'PUBLISHED' ? 'status--success' : 'status--draft';
-    const statusDot = category.status === 'PUBLISHED' ? 'status__dot--success' : '';
     const date = new Date(category.createdAt).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -294,13 +294,6 @@ function categoriesTableFragment({ categories, pagination, counts }) {
           <div class="table__title">${category.description || '-'}</div>
         </td>
         <td class="table__td">
-          <span class="table__label">Status</span>
-          <span class="status ${statusClass}">
-            <span class="status__dot ${statusDot}"></span>
-            ${category.status}
-          </span>
-        </td>
-        <td class="table__td">
           <span class="table__label">Date</span>
           ${date}
         </td>
@@ -310,7 +303,14 @@ function categoriesTableFragment({ categories, pagination, counts }) {
               <i data-lucide="pencil"></i>
               <span class="btn--action__text">Edit</span>
             </a>
-            <button class="btn--action btn--action--delete" data-hs-overlay="#deleteModal" onclick="setDeleteId('${category.id}')">
+            <button
+              type="button"
+              class="btn--action btn--action--delete"
+              data-category-id="${category.id}"
+              data-category-title="${category.title}"
+              data-post-count="${category.postCount || 0}"
+              onclick="openDeleteModal(this)"
+            >
               <i data-lucide="trash-2"></i>
               <span class="btn--action__text">Delete</span>
             </button>
@@ -320,24 +320,84 @@ function categoriesTableFragment({ categories, pagination, counts }) {
     `;
   }).join('');
 
+  // Build pagination for the fragment
+  const paginationFragment = pagination && pagination.totalPages > 1 
+    ? fragmentPaginationHtml({ 
+        page: pagination.page, 
+        totalPages: pagination.totalPages, 
+        filters: {} 
+      }) 
+    : '';
+
   return `
-    <div class="table">
-      <table class="table__table">
-        <thead class="table__thead">
-          <tr>
-            <th>Title</th>
-            <th>Slug</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody class="table__tbody">
-          ${rows}
-        </tbody>
-      </table>
-    </div>
+    <table class="table">
+      <thead class="table__thead">
+        <tr>
+          <th>Title</th>
+          <th>Slug</th>
+          <th>Description</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table__tbody">
+        ${rows}
+      </tbody>
+    </table>
+    ${paginationFragment}
+  `;
+}
+
+// Pagination helper for fragments (mirrors the template's paginationHtml)
+function fragmentPaginationHtml({ page, totalPages, filters }) {
+  const params = new URLSearchParams();
+  if (filters?.status) params.set('status', filters.status);
+  if (filters?.search) params.set('search', filters.search);
+
+  const baseQuery = params.toString();
+  const queryPrefix = baseQuery ? `&${baseQuery}` : '';
+
+  let links = '';
+
+  // Previous button
+  const prevDisabled = page <= 1 ? 'pagination__item--disabled' : '';
+  const prevHref = page > 1 ? `/admin/categories?page=${page - 1}${queryPrefix}` : '#';
+  links += `<a href="${prevHref}" class="pagination__item ${prevDisabled}"><i data-lucide="chevron-left"></i></a>`;
+
+  // Page numbers
+  let pageNumbers = [];
+  const maxVisible = 5;
+
+  if (totalPages <= maxVisible) {
+    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  } else if (page <= 3) {
+    pageNumbers = [1, 2, 3, 4, '...', totalPages];
+  } else if (page >= totalPages - 2) {
+    pageNumbers = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  } else {
+    pageNumbers = [1, '...', page - 1, page, page + 1, '...', totalPages];
+  }
+
+  pageNumbers.forEach((p) => {
+    if (p === '...') {
+      links += '<span class="pagination__ellipsis">...</span>';
+    } else {
+      const active = p === page ? 'pagination__item--active' : '';
+      links += `<a href="/admin/categories?page=${p}${queryPrefix}" class="pagination__item ${active}">${p}</a>`;
+    }
+  });
+
+  // Next button
+  const nextDisabled = page >= totalPages ? 'pagination__item--disabled' : '';
+  const nextHref = page < totalPages ? `/admin/categories?page=${page + 1}${queryPrefix}` : '#';
+  links += `<a href="${nextHref}" class="pagination__item ${nextDisabled}"><i data-lucide="chevron-right"></i></a>`;
+
+  return `
+    <footer class="page-footer">
+      <div class="pagination">
+        ${links}
+      </div>
+    </footer>
   `;
 }
 
