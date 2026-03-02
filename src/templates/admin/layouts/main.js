@@ -186,24 +186,34 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
       });
 
       // Submenu Toggle
-      const submenuTriggers = document.querySelectorAll('.sidebar__item--has-submenu');
+      function initSidebarSubmenus() {
+        const submenuTriggers = document.querySelectorAll('.sidebar__item--has-submenu');
 
-      submenuTriggers.forEach((trigger) => {
-        trigger.addEventListener('click', () => {
-          const parent = trigger.parentElement;
-          const submenu = parent.querySelector('.sidebar__submenu');
-
-          document.querySelectorAll('.sidebar__submenu--open').forEach((openSubmenu) => {
-            if (openSubmenu !== submenu) {
-              openSubmenu.classList.remove('sidebar__submenu--open');
-              openSubmenu.previousElementSibling?.classList.remove('sidebar__item--expanded');
-            }
-          });
-
-          trigger.classList.toggle('sidebar__item--expanded');
-          submenu.classList.toggle('sidebar__submenu--open');
+        submenuTriggers.forEach((trigger) => {
+          // Remove existing listener to avoid duplicates
+          trigger.removeEventListener('click', handleSubmenuClick);
+          // Add new listener
+          trigger.addEventListener('click', handleSubmenuClick);
         });
-      });
+      }
+
+      function handleSubmenuClick() {
+        const parent = this.parentElement;
+        const submenu = parent.querySelector('.sidebar__submenu');
+
+        document.querySelectorAll('.sidebar__submenu--open').forEach((openSubmenu) => {
+          if (openSubmenu !== submenu) {
+            openSubmenu.classList.remove('sidebar__submenu--open');
+            openSubmenu.previousElementSibling?.classList.remove('sidebar__item--expanded');
+          }
+        });
+
+        this.classList.toggle('sidebar__item--expanded');
+        submenu.classList.toggle('sidebar__submenu--open');
+      }
+
+      // Initialize on page load
+      initSidebarSubmenus();
 
       // HTMX event handlers
       document.body.addEventListener('htmx:afterRequest', function(evt) {
@@ -214,6 +224,9 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
 
         // Re-initialize icons after HTMX content swap
         lucide.createIcons();
+        
+        // Re-initialize sidebar submenus after HTMX swaps
+        initSidebarSubmenus();
       });
 
       // Handle chart initialization after HTMX swaps
@@ -287,7 +300,7 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
                 
                 if (isPageHeaderToast) {
                   // Page header toast: slide from left (after title) to right end
-                  toast.className = 'border rounded-lg shadow-sm transform transition-all duration-700 ease-out ' + bgClass;
+                  toast.className = 'border rounded-md shadow-sm transform transition-all duration-700 ease-out ' + bgClass;
                   toast.style.position = 'absolute';
                   toast.style.left = '0';
                   toast.style.transform = 'translateX(0)';
@@ -313,7 +326,7 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
                   }, 3000);
                 } else {
                   // Global toast: slide from right to left (original behavior)
-                  toast.className = 'max-w-xs border rounded-lg shadow-sm mb-3 transform transition-all duration-300 translate-x-full ' + bgClass;
+                  toast.className = 'max-w-xs border rounded-md shadow-sm mb-3 transform transition-all duration-300 translate-x-full ' + bgClass;
                   toast.innerHTML = '<div class="flex items-center gap-3 px-4 py-3">' + iconSvg + '<span class="text-sm font-medium">' + toastInfo.message + '</span></div>';
                   
                   toastContainer.appendChild(toast);
@@ -338,34 +351,11 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
         }
       });
 
-      // Handle delayed redirects with toasts
-      document.body.addEventListener('htmx:beforeSwap', function(evt) {
-        const xhr = evt.detail.xhr;
-        const location = xhr.getResponseHeader('HX-Location');
-        const trigger = xhr.getResponseHeader('HX-Trigger');
-        
-        // Check if we have both location and toast trigger
-        if (location && trigger) {
-          try {
-            const triggerData = JSON.parse(trigger);
-            if (triggerData['htmx:toast']) {
-              // Prevent the swap (which would include the redirect)
-              evt.preventDefault();
-              
-              // Show toast
-              document.body.dispatchEvent(new CustomEvent('htmx:toast', {
-                detail: triggerData['htmx:toast']
-              }));
-              
-              // Redirect after 4 seconds
-              setTimeout(function() {
-                window.location.href = location;
-              }, 4000);
-            }
-          } catch (e) {
-            // If JSON parse fails, let HTMX handle it normally
-            console.error('Failed to parse HX-Trigger:', e);
-          }
+      // Handle HTMX redirects
+      document.body.addEventListener('htmx:afterRequest', function(evt) {
+        const redirectUrl = evt.detail.xhr.getResponseHeader('HX-Redirect');
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
         }
       });
     </script>

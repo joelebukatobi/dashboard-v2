@@ -8,7 +8,26 @@ import { mainLayout } from '../../layouts/main.js';
  * Display all posts with filters and pagination
  * Structure matches posts.html exactly
  */
-export function postsListPage({ posts, total, page, totalPages, categories, filters, user }) {
+export function postsListPage({ posts, total, page, totalPages, categories, filters, user, toast }) {
+  // Build toast script if toast param is present
+  const toastScript = toast ? `
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const toastMessages = {
+          deleted: 'Post deleted successfully!',
+        };
+        const message = toastMessages['${toast}'] || '${toast}';
+        document.body.dispatchEvent(new CustomEvent('htmx:toast', {
+          detail: { message: message, type: 'success' }
+        }));
+        // Clean up URL (remove toast param)
+        const url = new URL(window.location);
+        url.searchParams.delete('toast');
+        window.history.replaceState({}, '', url);
+      });
+    </script>
+  ` : '';
+
   const content = `
     <div class="posts">
       <div class="content">
@@ -31,7 +50,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
               placeholder="Search posts..."
               value="${filters.search || ''}"
               hx-get="/admin/posts"
-              hx-target=".table"
+              hx-target=".posts__table-content"
               hx-trigger="keyup changed delay:500ms"
               name="search"
             />
@@ -92,74 +111,74 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
           </div>
         </div>
 
+        <div class="posts__table-content">
         ${
           posts.length === 0
             ? emptyState()
             : `
           <!-- Data List (Table) -->
-          <div class="table">
-            <table>
-              <thead class="table__thead">
-                <tr>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Actions</th>
+          <table class="table">
+            <thead class="table__thead">
+              <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody class="table__tbody">
+              ${posts
+                .map(
+                  (post) => `
+                <tr class="table__tr">
+                  <td class="table__td">
+                    <span class="table__label">Title</span>
+                    <div class="table__title">
+                      <a href="/admin/posts/${post.id}/edit">${escapeHtml(post.title)}</a>
+                    </div>
+                  </td>
+                  <td class="table__td">
+                    <span class="table__label">Category</span>
+                    ${post.category ? `<span class="badge ${post.category.colorClass || 'badge--primary'}">${post.category.title}</span>` : '<span class="badge badge--neutral">Uncategorized</span>'}
+                  </td>
+                  <td class="table__td">
+                    <span class="table__label">Status</span>
+                    ${getStatusBadge(post.status)}
+                  </td>
+                  <td class="table__td">
+                    <span class="table__label">Date</span>
+                    ${formatDate(post.publishedAt || post.createdAt)}
+                  </td>
+                  <td class="table__td table__td--actions">
+                    <div class="btn-group__actions">
+                      <a href="/admin/posts/${post.id}/edit" class="btn--action btn--action--edit">
+                        <i data-lucide="pencil"></i>
+                        <span class="btn--action__text">Edit</span>
+                      </a>
+                      <button 
+                        type="button"
+                        class="btn--action btn--action--delete"
+                        data-post-id="${post.id}"
+                        data-post-title="${escapeHtml(post.title)}"
+                        onclick="openDeleteModal(this)"
+                      >
+                        <i data-lucide="trash-2"></i>
+                        <span class="btn--action__text">Delete</span>
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody class="table__tbody">
-                ${posts
-                  .map(
-                    (post) => `
-                  <tr class="table__tr">
-                    <td class="table__td">
-                      <span class="table__label">Title</span>
-                      <div class="table__title">
-                        <a href="/admin/posts/${post.id}/edit">${escapeHtml(post.title)}</a>
-                      </div>
-                    </td>
-                    <td class="table__td">
-                      <span class="table__label">Category</span>
-                      <span class="badge ${post.category?.colorClass || 'badge--primary'}">${post.category?.title || 'Uncategorized'}</span>
-                    </td>
-                    <td class="table__td">
-                      <span class="table__label">Status</span>
-                      ${getStatusBadge(post.status)}
-                    </td>
-                    <td class="table__td">
-                      <span class="table__label">Date</span>
-                      ${formatDate(post.publishedAt || post.createdAt)}
-                    </td>
-                    <td class="table__td table__td--actions">
-                      <div class="btn-group__actions">
-                        <a href="/admin/posts/${post.id}/edit" class="btn--action btn--action--edit">
-                          <i data-lucide="pencil"></i>
-                          <span class="btn--action__text">Edit</span>
-                        </a>
-                        <button 
-                          type="button"
-                          class="btn--action btn--action--delete"
-                          data-post-id="${post.id}"
-                          data-post-title="${escapeHtml(post.title)}"
-                          onclick="openDeleteModal(this)"
-                        >
-                          <i data-lucide="trash-2"></i>
-                          <span class="btn--action__text">Delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                `,
-                  )
-                  .join('')}
-              </tbody>
-            </table>
-          </div>
+              `,
+                )
+                .join('')}
+            </tbody>
+          </table>
 
           ${totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
         `
         }
+        </div>
       </div>
     </div>
 
@@ -275,7 +294,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
   return mainLayout({
     title: 'Blog Posts',
     description: 'Manage your blog posts',
-    content: content + modal,
+    content: content + modal + toastScript,
     user,
     activeRoute: '/admin/posts',
     breadcrumbs: [
