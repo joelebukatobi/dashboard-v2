@@ -122,7 +122,7 @@
 // Quick Stat Card (Dashboard stats)
 // ============================================================================
 .quick-stat {
-  @apply bg-white rounded-xl shadow-sm;
+  @apply bg-white rounded-lg shadow-sm;
   @apply border border-grey-100/50;
   @apply flex flex-col h-full p-[1.6rem];
 
@@ -131,7 +131,7 @@
   }
 
   &__icon {
-    @apply flex-shrink-0 flex items-center justify-center rounded-xl;
+    @apply flex-shrink-0 flex items-center justify-center rounded-md;
     width: 4.4rem;
     height: 4.4rem;
 

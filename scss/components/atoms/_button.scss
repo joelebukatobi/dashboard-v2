@@ -5,7 +5,7 @@
 
 .btn {
   @apply inline-flex items-center justify-center gap-[0.8rem];
-  @apply px-[1.6rem] py-[0.8rem] text-sm font-medium rounded-md cursor-pointer;
+  @apply px-[1.2rem] text-sm font-medium rounded-md cursor-pointer h-[3.2rem];
   @apply transition-all duration-200;
   @apply disabled:opacity-50 disabled:cursor-not-allowed;
 
@@ -122,7 +122,7 @@
   // Action Button (Generic)
   &--action {
     @apply flex items-center justify-center gap-[.4rem];
-    @apply p-[.4rem] rounded-md transition-all duration-200;
+    @apply p-[.4rem] transition-all duration-200 rounded-md;
     @apply text-[1.1rem] font-medium text-grey-500;
     @apply lg:bg-blue-600/5;
 
@@ -133,7 +133,7 @@
     // Icon sizing override if needed
     i,
     svg {
-      @apply w-[1.4rem] h-[1.4rem];
+      @apply w-[1.2rem] h-[1.2rem];
     }
 
     // Edit variation
@@ -190,7 +190,7 @@
   }
 
   svg {
-    @apply w-[1.6rem] h-[1.6rem];
+    @apply w-[1.2rem] h-[1.2rem];
   }
 }
 
