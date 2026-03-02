@@ -19,30 +19,45 @@
     > .data-filter {
       flex-shrink: 0;
     }
-    
-    > .table-container {
+
+    // This is the container we swap with HTMX
+    &__table-wrapper {
       flex: 1;
-      overflow-y: auto;
-      min-height: 200px; // Ensure minimum visible rows
-      padding-right: 1.6rem; // Space between table and scrollbar
+      display: flex;
+      flex-direction: column;
+      min-height: 0; /* Important for flex-shrink/scroll */
       
-      // Sticky table header
-      .table__thead {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        background-color: var(--color-white);
+      // The actual scrollable table component
+      .table {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 1.6rem;
+
+        // Sticky table header
+        .table__thead {
+          position: sticky;
+          top: 0;
+          z-index: 5;
+          background-color: var(--color-white);
+
+          .dark & {
+            background-color: var(--color-grey-900);
+          }
+        }
       }
     }
     
-    // Pagination wrapper (page-footer)
-    > .page-footer {
+    // Pagination wrapper (page-footer) - now a child of table-wrapper
+    .page-footer {
       flex-shrink: 0;
-      border-top: none; // Remove top border
-      margin-top: 0; // Remove margin-top
-      height: 8rem; // Fixed height for footer
+      height: 8rem;
       display: flex;
-      align-items: center; // Center pagination vertically only
+      align-items: center;
+      border-top: 1px solid var(--color-grey-100);
+
+      .dark & {
+        border-top-color: var(--color-grey-800);
+      }
     }
   }
 }
