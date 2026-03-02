@@ -24,7 +24,7 @@ import { relations } from 'drizzle-orm';
 export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'EDITOR', 'AUTHOR', 'VIEWER']);
 export const userStatusEnum = pgEnum('user_status', ['ACTIVE', 'INVITED', 'SUSPENDED']);
 export const postStatusEnum = pgEnum('post_status', ['PUBLISHED', 'DRAFT', 'ARCHIVED', 'SCHEDULED']);
-export const categoryStatusEnum = pgEnum('category_status', ['PUBLISHED', 'DRAFT', 'ARCHIVED']);
+
 export const commentStatusEnum = pgEnum('comment_status', ['PENDING', 'APPROVED', 'SPAM']);
 export const mediaTypeEnum = pgEnum('media_type', ['IMAGE', 'VIDEO']);
 export const settingGroupEnum = pgEnum('setting_group', ['GENERAL', 'SECURITY', 'CONTENT', 'EMAIL', 'SOCIAL']);
@@ -114,7 +114,6 @@ export const categories = pgTable('categories', {
   title: varchar('title', { length: 100 }).notNull(),
   slug: varchar('slug', { length: 100 }).notNull().unique(),
   description: text('description'),
-  status: categoryStatusEnum('status').default('PUBLISHED').notNull(),
   colorClass: varchar('color_class', { length: 50 }).default('badge--primary').notNull(),
   postCount: integer('post_count').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
@@ -155,7 +154,7 @@ export const posts = pgTable('posts', {
   excerpt: text('excerpt'),
   featuredImageId: uuid('featured_image_id').references(() => mediaItems.id),
   authorId: uuid('author_id').notNull().references(() => users.id),
-  categoryId: uuid('category_id').notNull().references(() => categories.id),
+  categoryId: uuid('category_id').references(() => categories.id),
   status: postStatusEnum('status').default('DRAFT').notNull(),
   viewCount: integer('view_count').default(0).notNull(),
   commentCount: integer('comment_count').default(0).notNull(),
