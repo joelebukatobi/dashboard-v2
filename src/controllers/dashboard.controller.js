@@ -298,7 +298,7 @@ function formatTimeAgo(dateString) {
 // Helper function for error fragment
 function errorFragment({ message }) {
   return `
-    <div class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-red-800" role="alert">
+    <div class="flex items-center gap-3 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-red-800" role="alert">
       <i data-lucide="alert-circle" class="w-5 h-5 shrink-0"></i>
       <span class="text-sm font-medium">${message}</span>
     </div>

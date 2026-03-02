@@ -20,6 +20,7 @@ class TagsController {
         sortBy = 'createdAt',
         sortOrder = 'desc',
         page = 1,
+        toast,
       } = request.query;
 
       // Get tags with pagination
@@ -49,8 +50,12 @@ class TagsController {
         tagsListPage({
           user,
           tags,
-          pagination,
+          pagination: {
+            ...pagination,
+            page: parseInt(page, 10) || 1
+          },
           filters: { search },
+          toast,
         })
       );
     } catch (error) {
@@ -207,9 +212,8 @@ class TagsController {
       // Delete tag
       await tagsService.delete(id, user.id);
 
-      // Redirect to list with toast notification
-      reply.header('HX-Location', '/admin/tags');
-      reply.header('HX-Trigger', JSON.stringify({ "htmx:toast": { message: 'Tag deleted successfully!', type: 'success' } }));
+      // Redirect to list with toast notification (avoids HTMX fragment response)
+      reply.header('HX-Redirect', '/admin/tags?toast=deleted');
       return reply.type('text/html').send('');
     } catch (error) {
       request.log.error(error);
@@ -296,7 +300,14 @@ function tagsTableFragment({ tags, pagination }) {
               <i data-lucide="pencil"></i>
               <span class="btn--action__text">Edit</span>
             </a>
-            <button class="btn--action btn--action--delete" data-hs-overlay="#deleteModal" onclick="setDeleteId('${tag.id}')">
+            <button
+              type="button"
+              class="btn--action btn--action--delete"
+              data-tag-id="${tag.id}"
+              data-tag-name="${tag.name}"
+              data-post-count="${tag.postCount || 0}"
+              onclick="openDeleteModal(this)"
+            >
               <i data-lucide="trash-2"></i>
               <span class="btn--action__text">Delete</span>
             </button>
@@ -306,24 +317,84 @@ function tagsTableFragment({ tags, pagination }) {
     `;
   }).join('');
 
+  // Build pagination for the fragment
+  const paginationFragment = pagination && pagination.totalPages > 1 
+    ? fragmentPaginationHtml({ 
+        page: pagination.page, 
+        totalPages: pagination.totalPages, 
+        filters: {} 
+      }) 
+    : '';
+
   return `
-    <div class="table">
-      <table class="table__table">
-        <thead class="table__thead">
-          <tr>
-            <th>Name</th>
-            <th>Slug</th>
-            <th>Description</th>
-            <th>Posts</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody class="table__tbody">
-          ${rows}
-        </tbody>
-      </table>
-    </div>
+    <table class="table">
+      <thead class="table__thead">
+        <tr>
+          <th>Name</th>
+          <th>Slug</th>
+          <th>Description</th>
+          <th>Posts</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table__tbody">
+        ${rows}
+      </tbody>
+    </table>
+    ${paginationFragment}
+  `;
+}
+
+// Pagination helper for fragments (mirrors the template's paginationHtml)
+function fragmentPaginationHtml({ page, totalPages, filters }) {
+  const params = new URLSearchParams();
+  if (filters?.search) params.set('search', filters.search);
+
+  const baseQuery = params.toString();
+  const queryPrefix = baseQuery ? `&${baseQuery}` : '';
+
+  let links = '';
+
+  // Previous button
+  const prevDisabled = page <= 1 ? 'pagination__item--disabled' : '';
+  const prevHref = page > 1 ? `/admin/tags?page=${page - 1}${queryPrefix}` : '#';
+  links += `<a href="${prevHref}" class="pagination__item ${prevDisabled}"><i data-lucide="chevron-left"></i></a>`;
+
+  // Page numbers
+  let pageNumbers = [];
+  const maxVisible = 5;
+
+  if (totalPages <= maxVisible) {
+    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  } else if (page <= 3) {
+    pageNumbers = [1, 2, 3, 4, '...', totalPages];
+  } else if (page >= totalPages - 2) {
+    pageNumbers = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  } else {
+    pageNumbers = [1, '...', page - 1, page, page + 1, '...', totalPages];
+  }
+
+  pageNumbers.forEach((p) => {
+    if (p === '...') {
+      links += '<span class="pagination__ellipsis">...</span>';
+    } else {
+      const active = p === page ? 'pagination__item--active' : '';
+      links += `<a href="/admin/tags?page=${p}${queryPrefix}" class="pagination__item ${active}">${p}</a>`;
+    }
+  });
+
+  // Next button
+  const nextDisabled = page >= totalPages ? 'pagination__item--disabled' : '';
+  const nextHref = page < totalPages ? `/admin/tags?page=${page + 1}${queryPrefix}` : '#';
+  links += `<a href="${nextHref}" class="pagination__item ${nextDisabled}"><i data-lucide="chevron-right"></i></a>`;
+
+  return `
+    <footer class="page-footer">
+      <div class="pagination">
+        ${links}
+      </div>
+    </footer>
   `;
 }
 
