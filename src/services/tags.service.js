@@ -194,7 +194,7 @@ class TagsService {
    * Delete a tag
    * @param {string} id - Tag ID
    * @param {string} userId - User ID deleting the tag
-   * @returns {Promise<void>}
+   * @returns {Promise<Object>} - { deleted: true, postsAffected: count }
    */
   async delete(id, userId) {
     const tag = await this.getById(id);
@@ -202,21 +202,29 @@ class TagsService {
       throw new Error('Tag not found');
     }
 
+    // Count posts with this tag before deletion
+    const postCount = await this.getPostCount(id);
+
     // Delete related post_tags first
     await db.delete(postTags).where(eq(postTags.tagId, id));
 
     // Delete tag
     await db.delete(tags).where(eq(tags.id, id));
 
-    // Log activity
+    // Log activity with post count info
     await activityService.log({
       userId,
       type: 'TAG_DELETED',
-      description: `Deleted tag "${tag.name}"`,
+      description: `Deleted tag "${tag.name}"${postCount > 0 ? ` and removed it from ${postCount} post${postCount === 1 ? '' : 's'}` : ''}`,
       entityType: 'TAG',
       entityId: id,
-      metadata: { name: tag.name },
+      metadata: { 
+        name: tag.name,
+        postsAffected: postCount 
+      },
     });
+
+    return { deleted: true, postsAffected: postCount };
   }
 
   /**

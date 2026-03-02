@@ -13,7 +13,6 @@ class CategoriesService {
   /**
    * Get all categories with optional filtering and pagination
    * @param {Object} options - Query options
-   * @param {string} [options.status] - Filter by status
    * @param {string} [options.search] - Search by title
    * @param {string} [options.sortBy='createdAt'] - Sort field
    * @param {string} [options.sortOrder='desc'] - Sort order
@@ -22,7 +21,6 @@ class CategoriesService {
    * @returns {Promise<Object>} - Categories and pagination info
    */
   async getAll({
-    status,
     search,
     sortBy = 'createdAt',
     sortOrder = 'desc',
@@ -31,10 +29,6 @@ class CategoriesService {
   } = {}) {
     // Build query conditions
     const conditions = [];
-
-    if (status) {
-      conditions.push(eq(categories.status, status));
-    }
 
     if (search) {
       conditions.push(like(categories.title, `%${search}%`));
@@ -112,7 +106,6 @@ class CategoriesService {
    * @param {string} data.title - Category title
    * @param {string} [data.slug] - Category slug (auto-generated if not provided)
    * @param {string} [data.description] - Category description
-   * @param {string} [data.status='PUBLISHED'] - Category status
    * @param {string} [data.colorClass='badge--primary'] - Badge color class
    * @param {string} userId - User creating the category
    * @returns {Promise<Object>} - Created category
@@ -136,7 +129,6 @@ class CategoriesService {
         title: data.title,
         slug,
         description: data.description,
-        status: data.status || 'PUBLISHED',
         colorClass: data.colorClass || 'badge--primary',
         postCount: 0,
       })
@@ -180,9 +172,6 @@ class CategoriesService {
     if (data.title && data.title !== existing.title) {
       changes.title = { from: existing.title, to: data.title };
     }
-    if (data.status && data.status !== existing.status) {
-      changes.status = { from: existing.status, to: data.status };
-    }
 
     const [category] = await db
       .update(categories)
@@ -218,44 +207,49 @@ class CategoriesService {
       throw new Error('Category not found');
     }
 
-    // Check if category has posts
-    if (category.postCount > 0) {
-      throw new Error(`Cannot delete category "${category.title}" - it has ${category.postCount} posts. Reassign posts first.`);
+    // Count posts in this category
+    const [{ count }] = await db
+      .select({ count: sql`count(*)::integer` })
+      .from(posts)
+      .where(eq(posts.categoryId, id));
+
+    // Move posts to NULL category before deleting
+    if (count > 0) {
+      await db
+        .update(posts)
+        .set({ categoryId: null })
+        .where(eq(posts.categoryId, id));
     }
 
     // Log activity before deletion
-    await activityService.logPostDeleted(userId, {
-      id: category.id,
-      title: category.title,
-      slug: category.slug,
-      type: 'category',
+    await activityService.log({
+      userId,
+      type: 'CATEGORY_DELETED',
+      description: `Deleted category "${category.title}"${count > 0 ? ` and moved ${count} post${count === 1 ? '' : 's'} to Uncategorized` : ''}`,
+      entityType: 'category',
+      entityId: category.id,
+      metadata: { 
+        title: category.title, 
+        slug: category.slug,
+        postsAffected: count 
+      },
     });
 
     await db.delete(categories).where(eq(categories.id, id));
 
-    return true;
+    return { deleted: true, postsMoved: count };
   }
 
   /**
-   * Get category counts by status
-   * @returns {Promise<Object>} - Counts by status
+   * Get total category count
+   * @returns {Promise<Object>} - Total count
    */
   async getCounts() {
-    const result = await db
-      .select({
-        status: categories.status,
-        count: sql`count(*)::integer`,
-      })
-      .from(categories)
-      .groupBy(categories.status);
+    const [{ count }] = await db
+      .select({ count: sql`count(*)::integer` })
+      .from(categories);
 
-    const counts = { total: 0, published: 0, draft: 0 };
-    result.forEach((row) => {
-      counts[row.status.toLowerCase()] = row.count;
-      counts.total += row.count;
-    });
-
-    return counts;
+    return { total: Number(count) };
   }
 
   /**
