@@ -2,6 +2,21 @@
 // Tags Page Styles
 // ============================================================================
 
+// Delete Modal - High z-index to appear above sticky headers
+#deleteModal {
+  z-index: 100;
+  
+  // Backdrop covers sidebar/header
+  > div:first-child {
+    z-index: 100 !important;
+  }
+  
+  // Modal content above backdrop
+  > div:nth-child(2) {
+    z-index: 101 !important;
+  }
+}
+
 .tag-table {
   // Mobile Label
   &__label {
