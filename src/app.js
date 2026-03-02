@@ -121,7 +121,7 @@ export default async function app(fastify, opts) {
    await fastify.register(import('./routes/categories.routes.js'), { prefix: '/admin/categories' });
    await fastify.register(import('./routes/tags.routes.js'), { prefix: '/admin/tags' });
   // await fastify.register(import('./routes/users.routes.js'), { prefix: '/admin/users' });
-  // await fastify.register(import('./routes/images.routes.js'), { prefix: '/admin/images' });
+   await fastify.register(import('./routes/images.routes.js'), { prefix: '/admin/media/images' });
   // await fastify.register(import('./routes/videos.routes.js'), { prefix: '/admin/videos' });
   // await fastify.register(import('./routes/settings.routes.js'), { prefix: '/admin/settings' });
   // await fastify.register(import('./routes/notifications.routes.js'), { prefix: '/admin/notifications' });
