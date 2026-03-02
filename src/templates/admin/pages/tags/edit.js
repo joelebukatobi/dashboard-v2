@@ -69,7 +69,7 @@ export function tagEditPage({ tag, user, errors = {} }) {
             <div class="form__group">
               <label class="form__label">Description</label>
               <textarea
-                class="form__input"
+                class="form__input form__textarea"
                 id="tagDescription"
                 name="description"
                 rows="4"

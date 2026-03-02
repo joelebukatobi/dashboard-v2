@@ -116,7 +116,7 @@ export function postNewPage({ categories, tags, user }) {
                   }'
                   class="hidden"
                 >
-                  <option value="">Choose</option>
+                  <option value="">Uncategorized</option>
                   ${categories
                     .map(
                       (cat) => `

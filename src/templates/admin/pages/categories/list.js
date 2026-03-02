@@ -8,7 +8,26 @@ import { mainLayout } from '../../layouts/main.js';
  * Display all categories with filters and pagination
  * Structure matches categories.html exactly
  */
-export function categoriesListPage({ categories, total, page, totalPages, filters, user }) {
+export function categoriesListPage({ categories, total, page, totalPages, filters, user, toast }) {
+  // Build toast script if toast param is present
+  const toastScript = toast ? `
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const toastMessages = {
+          deleted: 'Category deleted successfully!',
+        };
+        const message = toastMessages['${toast}'] || '${toast}';
+        document.body.dispatchEvent(new CustomEvent('htmx:toast', {
+          detail: { message: message, type: 'success' }
+        }));
+        // Clean up URL (remove toast param)
+        const url = new URL(window.location);
+        url.searchParams.delete('toast');
+        window.history.replaceState({}, '', url);
+      });
+    </script>
+  ` : '';
+
   const content = `
     <div class="categories">
       <div class="content">
@@ -31,7 +50,7 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
               placeholder="Search categories..."
               value="${filters.search || ''}"
               hx-get="/admin/categories"
-              hx-target=".table"
+              hx-target=".categories__table-content"
               hx-trigger="keyup changed delay:500ms"
               name="search"
             />
@@ -39,90 +58,82 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
 
           <div class="data-filter__controls">
             <!-- Add New -->
-            <a href="/admin/categories/new" class="btn btn-icon btn--primary">
-              <i data-lucide="plus"></i>
+            <a href="/admin/categories/new" class="btn btn--primary">
               <span>${categories.length === 0 ? 'Create First Category' : 'New Category'}</span>
             </a>
           </div>
         </div>
 
+        <div class="categories__table-content">
         ${
           categories.length === 0
             ? emptyState()
             : `
           <!-- Data List (Table) -->
-          <div class="table-container">
-            <div class="table">
-              <!-- Desktop: Proper HTML Table -->
-              <table class="table__table">
-                <thead class="table__thead">
-                  <tr>
-                    <th>Title</th>
-                    <th>Slug</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="table__tbody">
-                  ${categories
-                    .map(
-                      (category) => `
-                    <tr class="table__tr">
-                      <td class="table__td">
-                        <span class="table__label">Title</span>
-                        <div class="table__title">
-                          <a href="/admin/categories/${category.id}/edit">${escapeHtml(category.title)}</a>
-                        </div>
-                      </td>
+          <table class="table">
+              <thead class="table__thead">
+                <tr>
+                  <th>Title</th>
+                  <th>Slug</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody class="table__tbody">
+                ${categories
+                  .map(
+                    (category) => `
+                  <tr class="table__tr">
+                    <td class="table__td">
+                      <span class="table__label">Title</span>
+                      <div class="table__title">
+                        <a href="/admin/categories/${category.id}/edit">${escapeHtml(category.title)}</a>
+                      </div>
+                    </td>
 
-                      <td class="table__td">
-                        <span class="table__label">Slug</span>
-                        <div class="table__slug">${category.slug}</div>
-                      </td>
-                      <td class="table__td">
-                        <span class="table__label">Description</span>
-                        <div class="table__title">${escapeHtml(category.description) || '-'}</div>
-                      </td>
-                      <td class="table__td">
-                        <span class="table__label">Status</span>
-                        ${getStatusBadge(category.status)}
-                      </td>
-                      <td class="table__td">
-                        <span class="table__label">Date</span>
-                        ${formatDate(category.updatedAt || category.createdAt)}
-                      </td>
-                      <td class="table__td table__td--actions">
-                        <div class="btn-group__actions">
-                          <a href="/admin/categories/${category.id}/edit" class="btn--action btn--action--edit">
-                            <i data-lucide="pencil"></i>
-                            <span class="btn--action__text">Edit</span>
-                          </a>
-                          <button 
-                            type="button"
-                            class="btn--action btn--action--delete"
-                            data-category-id="${category.id}"
-                            data-category-title="${escapeHtml(category.title)}"
-                            onclick="openDeleteModal(this)"
-                          >
-                            <i data-lucide="trash-2"></i>
-                            <span class="btn--action__text">Delete</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  `,
-                    )
-                    .join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                    <td class="table__td">
+                      <span class="table__label">Slug</span>
+                      <div class="table__slug">${category.slug}</div>
+                    </td>
+                    <td class="table__td">
+                      <span class="table__label">Description</span>
+                      <div class="table__title">${escapeHtml(category.description) || '-'}</div>
+                    </td>
+                    <td class="table__td">
+                      <span class="table__label">Date</span>
+                      ${formatDate(category.updatedAt || category.createdAt)}
+                    </td>
+                    <td class="table__td table__td--actions">
+                      <div class="btn-group__actions">
+                        <a href="/admin/categories/${category.id}/edit" class="btn--action btn--action--edit">
+                          <i data-lucide="pencil"></i>
+                          <span class="btn--action__text">Edit</span>
+                        </a>
+                        <button
+                          type="button"
+                          class="btn--action btn--action--delete"
+                          data-category-id="${category.id}"
+                          data-category-title="${escapeHtml(category.title)}"
+                          data-post-count="${category.postCount || 0}"
+                          onclick="openDeleteModal(this)"
+                        >
+                          <i data-lucide="trash-2"></i>
+                          <span class="btn--action__text">Delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `,
+                  )
+                  .join('')}
+              </tbody>
+          </table>
 
           ${totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
         `
         }
+        </div>
       </div>
     </div>
 
@@ -131,21 +142,38 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
       function openDeleteModal(button) {
         const categoryId = button.getAttribute('data-category-id');
         const categoryTitle = button.getAttribute('data-category-title');
+        const postCount = parseInt(button.getAttribute('data-post-count') || '0', 10);
         const modal = document.getElementById('deleteModal');
         const form = document.getElementById('deleteCategoryForm');
-        const titleElement = document.getElementById('deleteCategoryTitle');
-        
+
         // Update form action and re-process for HTMX
         form.setAttribute('hx-delete', '/admin/categories/' + categoryId);
         if (typeof htmx !== 'undefined') {
           htmx.process(form);
         }
+
+        // Show appropriate message based on post count
+        const withPostsMsg = document.getElementById('deleteWithPosts');
+        const noPostsMsg = document.getElementById('deleteNoPosts');
         
-        // Update title display
-        if (titleElement) {
-          titleElement.textContent = categoryTitle;
+        if (withPostsMsg && noPostsMsg) {
+          if (postCount > 0) {
+            // Show "with posts" message, hide "no posts" message
+            withPostsMsg.style.display = 'block';
+            noPostsMsg.style.display = 'none';
+            // Update category name
+            withPostsMsg.querySelector('.category-name').textContent = categoryTitle;
+            // Update post count
+            withPostsMsg.querySelector('.post-count').textContent = postCount;
+            // Handle pluralization
+            withPostsMsg.querySelector('.post-plural').textContent = postCount === 1 ? '' : 's';
+          } else {
+            // Show "no posts" message, hide "with posts" message
+            withPostsMsg.style.display = 'none';
+            noPostsMsg.style.display = 'block';
+          }
         }
-        
+
         // Show modal
         modal.style.display = 'block';
         document.getElementById('modalBackdrop').style.opacity = '1';
@@ -170,6 +198,13 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
           closeDeleteModal();
         }
       });
+      
+      // Close modal after HTMX swap (successful delete)
+      document.body.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.classList.contains('table')) {
+          closeDeleteModal();
+        }
+      });
     </script>
   `;
 
@@ -181,7 +216,7 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
       class="hs-overlay hidden"
       role="dialog"
       tabindex="-1"
-      aria-labelledby="deleteModalLabel"
+      aria-labelledby="deleteCategoryTitle"
       style="display: none;"
     >
       <!-- Backdrop -->
@@ -200,16 +235,24 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
           </div>
 
           <!-- Body -->
-          <div class="px-6 pb-6">
-            <h3 id="deleteModalLabel" class="modal__title">Are you sure?</h3>
-            <p class="modal__description">This action cannot be undone. The category will be permanently deleted.</p>
+          <div class="px-6" style="padding-bottom: 16px;">
+            <h3 class="modal__title">Are you sure you want to delete?</h3>
+            <!-- Message shown when category has posts -->
+            <p id="deleteWithPosts" class="modal__description" style="display: none; margin-bottom: 0;">
+              The <strong><span class="category-name"></span> category</strong> has <strong><span class="post-count">0</span> post<span class="post-plural">s</span></strong>. 
+              They will be moved to <strong>Uncategorized</strong>.
+            </p>
+            <!-- Message shown when category has no posts -->
+            <p id="deleteNoPosts" class="modal__description" style="margin-bottom: 0;">
+              This action cannot be undone. The category will be permanently deleted.
+            </p>
           </div>
 
           <!-- Buttons (stacked, full-width) -->
           <form 
             id="deleteCategoryForm"
             hx-delete=""
-            hx-target=".table-container"
+            hx-target=".table"
             hx-swap="innerHTML"
             class="px-6 pb-6 flex flex-col gap-3"
           >
@@ -236,7 +279,7 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
   return mainLayout({
     title: 'Categories',
     description: 'Manage your blog categories',
-    content: content + modal,
+    content: content + modal + toastScript,
     user,
     activeRoute: '/admin/categories',
     breadcrumbs: [
@@ -257,29 +300,13 @@ function emptyState() {
       <h3 class="empty-state__title">No categories yet</h3>
       <p class="empty-state__description">Create your first category to organize your posts</p>
       <a href="/admin/categories/new" class="btn btn--primary mt-4">
-        <i data-lucide="plus"></i>
         Create Category
       </a>
     </div>
   `;
 }
 
-function getStatusBadge(status) {
-  const statusConfig = {
-    PUBLISHED: { class: 'status--success', label: 'Published' },
-    DRAFT: { class: 'status--warning', label: 'Draft' },
-    ARCHIVED: { class: 'status--neutral', label: 'Archived' },
-  };
 
-  const config = statusConfig[status] || statusConfig['DRAFT'];
-
-  return `
-    <span class="status ${config.class}">
-      <span class="status__dot"></span>
-      ${config.label}
-    </span>
-  `;
-}
 
 function formatDate(dateString) {
   if (!dateString) return '-';

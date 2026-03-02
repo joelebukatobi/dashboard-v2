@@ -7,7 +7,26 @@ import { mainLayout } from '../../layouts/main.js';
  * Tags List Page Template
  * Display all tags with filters and pagination
  */
-export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
+export function tagsListPage({ tags, total, page, totalPages, filters, user, toast }) {
+  // Build toast script if toast param is present
+  const toastScript = toast ? `
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const toastMessages = {
+          deleted: 'Tag deleted successfully!',
+        };
+        const message = toastMessages['${toast}'] || '${toast}';
+        document.body.dispatchEvent(new CustomEvent('htmx:toast', {
+          detail: { message: message, type: 'success' }
+        }));
+        // Clean up URL (remove toast param)
+        const url = new URL(window.location);
+        url.searchParams.delete('toast');
+        window.history.replaceState({}, '', url);
+      });
+    </script>
+  ` : '';
+
   const content = `
     <div class="tags">
       <div class="content">
@@ -30,7 +49,7 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
               placeholder="Search tags..."
               value="${filters.search || ''}"
               hx-get="/admin/tags"
-              hx-target=".table"
+              hx-target=".tags__table-content"
               hx-trigger="keyup changed delay:500ms"
               name="search"
             />
@@ -45,83 +64,83 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
           </div>
         </div>
 
+        <div class="tags__table-content">
         ${
           tags.length === 0
             ? emptyState()
             : `
           <!-- Data List (Table) -->
-          <div class="table-container">
-            <div class="table">
-              <!-- Desktop: Proper HTML Table -->
-              <table class="table__table">
-                <thead class="table__thead">
-                  <tr>
-                    <th>Name</th>
-                    <th>Slug</th>
-                    <th>Description</th>
-                    <th>Posts</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="table__tbody">
-                  ${tags
-                    .map(
-                      (tag) => `
-                    <tr class="table__tr">
-                      <td class="table__td">
-                        <span class="table__label">Name</span>
-                        <div class="table__title">
-                          <a href="/admin/tags/${tag.id}/edit">${escapeHtml(tag.name)}</a>
-                        </div>
-                      </td>
+          <!-- Desktop: Proper HTML Table -->
+          <table class="table">
+              <thead class="table__thead">
+                <tr>
+                  <th>Name</th>
+                  <th>Slug</th>
+                  <th>Description</th>
+                  <th>Posts</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody class="table__tbody">
+                ${tags
+                  .map(
+                    (tag) => `
+                  <tr class="table__tr">
+                    <td class="table__td">
+                      <span class="table__label">Name</span>
+                      <div class="table__title">
+                        <a href="/admin/tags/${tag.id}/edit">${escapeHtml(tag.name)}</a>
+                      </div>
+                    </td>
 
-                      <td class="table__td">
-                        <span class="table__label">Slug</span>
-                        <div class="table__slug">${tag.slug}</div>
-                      </td>
-                      <td class="table__td">
-                        <span class="table__label">Description</span>
-                        <div class="table__title">${escapeHtml(tag.description) || '-'}</div>
-                      </td>
-                      <td class="table__td">
-                        <span class="table__label">Posts</span>
-                        <span class="badge badge--neutral">${tag.postCount || 0}</span>
-                      </td>
-                      <td class="table__td">
-                        <span class="table__label">Date</span>
-                        ${formatDate(tag.updatedAt || tag.createdAt)}
-                      </td>
-                      <td class="table__td table__td--actions">
-                        <div class="btn-group__actions">
-                          <a href="/admin/tags/${tag.id}/edit" class="btn--action btn--action--edit">
-                            <i data-lucide="pencil"></i>
-                            <span class="btn--action__text">Edit</span>
-                          </a>
-                          <button 
-                            type="button"
-                            class="btn--action btn--action--delete"
-                            data-tag-id="${tag.id}"
-                            data-tag-name="${escapeHtml(tag.name)}"
-                            onclick="openDeleteModal(this)"
-                          >
-                            <i data-lucide="trash-2"></i>
-                            <span class="btn--action__text">Delete</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  `,
-                    )
-                    .join('')}
-                </tbody>
-              </table>
-            </div>
+                    <td class="table__td">
+                      <span class="table__label">Slug</span>
+                      <div class="table__slug">${tag.slug}</div>
+                    </td>
+                    <td class="table__td">
+                      <span class="table__label">Description</span>
+                      <div class="table__title">${escapeHtml(tag.description) || '-'}</div>
+                    </td>
+                    <td class="table__td">
+                      <span class="table__label">Posts</span>
+                      <span class="badge badge--neutral">${tag.postCount || 0}</span>
+                    </td>
+                    <td class="table__td">
+                      <span class="table__label">Date</span>
+                      ${formatDate(tag.updatedAt || tag.createdAt)}
+                    </td>
+                    <td class="table__td table__td--actions">
+                      <div class="btn-group__actions">
+                        <a href="/admin/tags/${tag.id}/edit" class="btn--action btn--action--edit">
+                          <i data-lucide="pencil"></i>
+                          <span class="btn--action__text">Edit</span>
+                        </a>
+                        <button 
+                          type="button"
+                          class="btn--action btn--action--delete"
+                          data-tag-id="${tag.id}"
+                          data-tag-name="${escapeHtml(tag.name)}"
+                          data-post-count="${tag.postCount || 0}"
+                          onclick="openDeleteModal(this)"
+                        >
+                          <i data-lucide="trash-2"></i>
+                          <span class="btn--action__text">Delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
           </div>
 
           ${totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
         `
         }
+        </div>
       </div>
     </div>
 
@@ -130,9 +149,9 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
       function openDeleteModal(button) {
         const tagId = button.getAttribute('data-tag-id');
         const tagName = button.getAttribute('data-tag-name');
+        const postCount = parseInt(button.getAttribute('data-post-count') || '0', 10);
         const modal = document.getElementById('deleteModal');
         const form = document.getElementById('deleteTagForm');
-        const nameElement = document.getElementById('deleteTagName');
 
         // Update form action and re-process for HTMX
         form.setAttribute('hx-delete', '/admin/tags/' + tagId);
@@ -140,9 +159,26 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
           htmx.process(form);
         }
 
-        // Update name display
-        if (nameElement) {
-          nameElement.textContent = tagName;
+        // Show appropriate message based on post count
+        const withPostsMsg = document.getElementById('deleteWithPosts');
+        const noPostsMsg = document.getElementById('deleteNoPosts');
+        
+        if (withPostsMsg && noPostsMsg) {
+          if (postCount > 0) {
+            // Show "with posts" message, hide "no posts" message
+            withPostsMsg.style.display = 'block';
+            noPostsMsg.style.display = 'none';
+            // Update tag name
+            withPostsMsg.querySelector('.tag-name').textContent = tagName;
+            // Update post count
+            withPostsMsg.querySelector('.post-count').textContent = postCount;
+            // Handle pluralization
+            withPostsMsg.querySelector('.post-plural').textContent = postCount === 1 ? '' : 's';
+          } else {
+            // Show "no posts" message, hide "with posts" message
+            withPostsMsg.style.display = 'none';
+            noPostsMsg.style.display = 'block';
+          }
         }
 
         // Show modal
@@ -201,16 +237,24 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
           </div>
 
           <!-- Body -->
-          <div class="px-6 pb-6">
-            <h3 id="deleteModalLabel" class="modal__title">Are you sure?</h3>
-            <p class="modal__description">This action cannot be undone. The tag <strong id="deleteTagName"></strong> will be permanently deleted.</p>
+          <div class="px-6" style="padding-bottom: 16px;">
+            <h3 class="modal__title">Are you sure you want to delete?</h3>
+            <!-- Message shown when tag has posts -->
+            <p id="deleteWithPosts" class="modal__description" style="display: none; margin-bottom: 0;">
+              The <strong><span class="tag-name"></span> tag</strong> has <strong><span class="post-count">0</span> post<span class="post-plural">s</span></strong>. 
+              They will be affected.
+            </p>
+            <!-- Message shown when tag has no posts -->
+            <p id="deleteNoPosts" class="modal__description" style="margin-bottom: 0;">
+              This action cannot be undone. The tag will be permanently deleted.
+            </p>
           </div>
 
           <!-- Buttons -->
-          <form 
+          <form
             id="deleteTagForm"
             hx-delete=""
-            hx-target=".table-container"
+            hx-target=".table"
             hx-swap="innerHTML"
             class="px-6 pb-6 flex flex-col gap-3"
           >
@@ -237,7 +281,7 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user }) {
   return mainLayout({
     title: 'Tags',
     description: 'Manage your blog tags',
-    content: content + modal,
+    content: content + modal + toastScript,
     user,
     activeRoute: '/admin/tags',
     breadcrumbs: [

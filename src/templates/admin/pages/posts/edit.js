@@ -36,52 +36,52 @@ export function postEditPage({ categories, tags, post, user }) {
           >
             <div id="form-response"></div>
 
-            <!-- Title -->
-            <div class="form__group">
-              <label class="form__label form__label--required">Post Title</label>
-              <input
-                type="text"
-                class="form__input"
-                id="postTitle"
-                name="title"
-                placeholder="Enter post title"
-                value="${escapeHtml(post.title)}"
-                required
-              />
-            </div>
-
-            <!-- Slug -->
-            <div class="form__group">
-              <label class="form__label">Slug</label>
-              <input
-                type="text"
-                class="form__input"
-                name="slug"
-                id="postSlug"
-                value="${post.slug}"
-                placeholder="auto-generated-from-title"
-              />
-              <p class="form__hint">Auto-generated from title. Editable if needed.</p>
-            </div>
-
             <!-- Featured Image -->
             <div class="form__group">
               <label class="form__label">Featured Image</label>
               <div class="image-upload">
-                <div class="image-upload__preview" id="imagePreview" style="${post.featuredImageId ? '' : 'display: none;'}">
-                  <img src="${post.featuredImageUrl || ''}" alt="Featured image preview" id="previewImg" />
-                  <button type="button" class="image-upload__remove" id="removeImage" title="Remove image">
-                    <i data-lucide="x" class="size-4"></i>
-                  </button>
-                </div>
-                <div class="image-upload__dropzone" id="dropzone">
-                  <i data-lucide="image-plus" class="image-upload__icon"></i>
-                  <p class="image-upload__text">Click to upload or drag and drop</p>
-                  <p class="image-upload__hint">PNG, JPG, WebP up to 10MB</p>
-                  <input type="file" id="imageInput" accept="image/*" hidden />
+                <div class="image-upload__preview has-image" id="imagePreview">
+                  <img src="${post.featuredImageUrl || '/public/uploads/images/featured-posts.jpg'}" alt="Featured image preview" id="previewImg" />
+                  <div class="image-upload__dropzone image-upload__dropzone--overlay" id="dropzone">
+                    <i data-lucide="image-plus" class="image-upload__icon"></i>
+                    <p class="image-upload__text">Click to upload or drag and drop</p>
+                    <p class="image-upload__hint">PNG, JPG, WebP up to 10MB</p>
+                    <input type="file" id="imageInput" accept="image/*" hidden />
+                  </div>
                 </div>
               </div>
               <input type="hidden" name="featuredImageId" id="featuredImageId" value="${post.featuredImageId || ''}" />
+            </div>
+
+            <!-- Title & Slug Row -->
+            <div class="form__row form__row--2col">
+              <!-- Title -->
+              <div class="form__group">
+                <label class="form__label form__label--required">Post Title</label>
+                <input
+                  type="text"
+                  class="form__input"
+                  id="postTitle"
+                  name="title"
+                  placeholder="Enter post title"
+                  value="${escapeHtml(post.title)}"
+                  required
+                />
+              </div>
+
+              <!-- Slug -->
+              <div class="form__group">
+                <label class="form__label">Slug</label>
+                <input
+                  type="text"
+                  class="form__input"
+                  name="slug"
+                  id="postSlug"
+                  value="${post.slug}"
+                  placeholder="auto-generated-from-title"
+                />
+                <p class="form__hint">Auto-generated from title. Editable if needed.</p>
+              </div>
             </div>
 
             <!-- Author, Category & Tags Row -->
@@ -89,54 +89,79 @@ export function postEditPage({ categories, tags, post, user }) {
               <!-- Author -->
               <div class="form__group">
                 <label class="form__label form__label--required">Author</label>
-                <div class="hs-dropdown hs-dropdown--full [--placement:bottom-left]">
-                  <button id="hs-dropdown-author" type="button" class="hs-dropdown-toggle form__input form__select">
-                    <span id="selectedAuthor">${post.author ? `${post.author.firstName} ${post.author.lastName}` : (user ? `${user.firstName} ${user.lastName}` : 'Select an author')}</span>
-                    <i data-lucide="chevron-down" class="size-4 text-grey-400"></i>
-                  </button>
-                  <div class="hs-dropdown-menu dropdown__menu dropdown__menu--full" aria-labelledby="hs-dropdown-author">
-                    <a href="#" class="dropdown__item" data-value="${post.authorId}">${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Current User'}</a>
-                  </div>
-                  <input type="hidden" name="authorId" id="postAuthor" value="${post.authorId}" />
-                </div>
+                <select
+                  name="authorId"
+                  id="postAuthor"
+                  data-hs-select='{
+                    "placeholder": "Select an author...",
+                    "toggleClasses": "form__select-toggle",
+                    "dropdownClasses": "form__select-dropdown",
+                    "optionClasses": "form__select-option"
+                  }'
+                  class="hidden"
+                >
+                  <option value="${post.authorId || ''}" selected>${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Current User'}</option>
+                </select>
               </div>
 
               <!-- Category -->
               <div class="form__group">
                 <label class="form__label form__label--required">Category</label>
-                <div class="hs-dropdown hs-dropdown--full [--placement:bottom-left]">
-                  <button id="hs-dropdown-category" type="button" class="hs-dropdown-toggle form__input form__select">
-                    <span id="selectedCategory">${post.category?.title || 'Select a category'}</span>
-                    <i data-lucide="chevron-down" class="size-4 text-grey-400"></i>
-                  </button>
-                  <div class="hs-dropdown-menu dropdown__menu dropdown__menu--full" aria-labelledby="hs-dropdown-category">
-                    ${categories.map((cat) => `
-                      <a href="#" class="dropdown__item" data-value="${cat.id}">${cat.title}</a>
-                    `).join('')}
-                  </div>
-                  <input type="hidden" name="categoryId" id="postCategory" value="${post.categoryId || ''}" />
-                </div>
+                <select
+                  name="categoryId"
+                  id="postCategory"
+                  data-hs-select='{
+                    "placeholder": "Select a category...",
+                    "toggleClasses": "form__select-toggle",
+                    "dropdownClasses": "form__select-dropdown",
+                    "optionClasses": "form__select-option"
+                  }'
+                  class="hidden"
+                >
+                  <option value="">Uncategorized</option>
+                  ${categories.map((cat) => `
+                    <option value="${cat.id}" ${post.categoryId === cat.id ? 'selected' : ''}>${cat.title}</option>
+                  `).join('')}
+                </select>
               </div>
 
               <!-- Tags -->
               <div class="form__group">
                 <label class="form__label">Tags</label>
-                <input
-                  type="text"
-                  class="form__input"
-                  name="tags"
+                <select
+                  name="tagIds"
                   id="postTags"
-                  placeholder="e.g. react, frontend, web"
-                  value="${post.tags ? post.tags.map((t) => t.name).join(', ') : ''}"
-                />
-                <p class="form__hint">Separate tags with commas</p>
+                  multiple
+                  data-hs-select='{
+                    "placeholder": "Select tags...",
+                    "toggleClasses": "form__select-toggle",
+                    "dropdownClasses": "form__select-dropdown",
+                    "optionClasses": "form__select-option"
+                  }'
+                  class="hidden"
+                >
+                  ${tags.map((tag) => `
+                    <option value="${tag.id}" ${post.tags?.some((t) => t.id === tag.id) ? 'selected' : ''}>${tag.name}</option>
+                  `).join('')}
+                </select>
               </div>
+            </div>
+
+            <!-- Short Description -->
+            <div class="form__group">
+              <label class="form__label">Short Description</label>
+              <textarea
+                class="form__input form__textarea"
+                name="excerpt"
+                rows="3"
+                placeholder="Brief summary of the post (optional)"
+              >${escapeHtml(post.excerpt || '')}</textarea>
             </div>
 
             <!-- Content (Rich Text Editor) -->
             <div class="form__group">
               <label class="form__label form__label--required">Content</label>
-              <div id="editor" style="min-height: 300px;"></div>
+              <div id="editor" class="post-editor"></div>
               <input type="hidden" name="content" id="contentInput" value="${escapeHtml(post.content)}" />
             </div>
 
@@ -146,11 +171,9 @@ export function postEditPage({ categories, tags, post, user }) {
         <div class="card__footer">
           <div class="form__field-group">
             <button type="button" class="btn btn--primary" onclick="submitForm('PUBLISHED')">
-              <i data-lucide="send"></i>
               ${post.status === 'PUBLISHED' ? 'Update Post' : 'Publish Post'}
             </button>
             <button type="button" class="btn btn--outline-primary" onclick="submitForm('DRAFT')">
-              <i data-lucide="save"></i>
               Save Draft
             </button>
             <a href="/admin/posts" class="btn btn--ghost btn--cancel">Cancel</a>
@@ -254,11 +277,10 @@ export function postEditPage({ categories, tags, post, user }) {
       // Image upload handling
       const dropzone = document.getElementById('dropzone');
       const imageInput = document.getElementById('imageInput');
-      const imagePreview = document.getElementById('imagePreview');
       const previewImg = document.getElementById('previewImg');
-      const removeImage = document.getElementById('removeImage');
       const featuredImageId = document.getElementById('featuredImageId');
 
+      // Handle click on overlay
       dropzone?.addEventListener('click', () => imageInput.click());
 
       imageInput?.addEventListener('change', async (e) => {
@@ -278,18 +300,11 @@ export function postEditPage({ categories, tags, post, user }) {
             const data = await response.json();
             previewImg.src = data.url;
             featuredImageId.value = data.id;
-            imagePreview.style.display = 'block';
             lucide.createIcons();
           }
         } catch (error) {
           console.error('Upload failed:', error);
         }
-      });
-
-      removeImage?.addEventListener('click', () => {
-        imageInput.value = '';
-        featuredImageId.value = '';
-        imagePreview.style.display = 'none';
       });
     </script>
   `;

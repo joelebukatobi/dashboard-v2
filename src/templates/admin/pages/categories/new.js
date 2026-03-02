@@ -69,7 +69,7 @@ export function categoryNewPage({ user, errors = {} }) {
             <div class="form__group">
               <label class="form__label">Description</label>
               <textarea
-                class="form__input"
+                class="form__input form__textarea"
                 id="categoryDescription"
                 name="description"
                 rows="4"
@@ -83,7 +83,6 @@ export function categoryNewPage({ user, errors = {} }) {
         <div class="card__footer">
           <div class="form__field-group">
             <button type="button" class="btn btn--primary" onclick="submitForm()">
-              <i data-lucide="plus"></i>
               Create Category
             </button>
             <a href="/admin/categories" class="btn btn--ghost btn--cancel">Cancel</a>
