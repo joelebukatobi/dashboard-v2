@@ -20,7 +20,7 @@ async function seed() {
     
     // Create admin user
     console.log('Creating admin user...');
-    const adminPassword = await bcrypt.hash('admin123', 10);
+    const adminPassword = await bcrypt.hash('Admin@123', 10);
     
     const [adminUser] = await db.insert(users).values({
       firstName: 'Admin',
@@ -75,7 +75,7 @@ async function seed() {
     console.log('🎉 Database seeding completed!');
     console.log('\nDefault admin credentials:');
     console.log('  Email: admin@example.com');
-    console.log('  Password: admin123');
+    console.log('  Password: Admin@123');
     
   } catch (error) {
     console.error('❌ Seeding failed:', error);

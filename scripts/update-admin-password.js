@@ -1,6 +1,4 @@
-// scripts/update-admin-password.js
-// Update admin password to meet new validation requirements
-
+// scripts/update-admin-password.js - Update admin password only
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -8,49 +6,40 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Configure dotenv
+// Load environment variables
 config({ path: join(__dirname, '..', '.env.development') });
 
 async function updateAdminPassword() {
-  console.log('🔑 Updating admin password...\n');
+  console.log('🔐 Updating admin password...\n');
   
-  // Dynamic imports after env is loaded
-  const { db, users } = await import('../src/db/index.js');
-  const { eq } = await import('drizzle-orm');
-  const bcrypt = await import('bcrypt');
-   
   try {
-    // New password that meets validation requirements
-    const newPassword = 'Admin@123';  // 8+ chars, uppercase, lowercase, number, special char
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Dynamic imports after env is loaded
+    const { db, users } = await import('../src/db/index.js');
+    const { eq } = await import('drizzle-orm');
+    const bcrypt = await import('bcrypt');
     
-    // Update admin user
-    const [updatedUser] = await db
+    // Hash new password
+    const newPassword = await bcrypt.hash('Admin@123', 10);
+    
+    // Update admin user password
+    const result = await db
       .update(users)
-      .set({ 
-        password: hashedPassword,
-        updatedAt: new Date()
-      })
+      .set({ password: newPassword })
       .where(eq(users.email, 'admin@example.com'))
       .returning();
     
-    if (updatedUser) {
+    if (result.length > 0) {
       console.log('✅ Admin password updated successfully!');
-      console.log('\nNew credentials:');
+      console.log('\nUpdated credentials:');
       console.log('  Email: admin@example.com');
       console.log('  Password: Admin@123');
-      console.log('\nPassword meets requirements:');
-      console.log('  ✅ 8+ characters');
-      console.log('  ✅ 1 uppercase letter');
-      console.log('  ✅ 1 lowercase letter');
-      console.log('  ✅ 1 number');
-      console.log('  ✅ 1 special character');
     } else {
-      console.log('❌ Admin user not found');
+      console.log('⚠️  Admin user not found. You may need to run the seed script first.');
     }
     
   } catch (error) {
-    console.error('❌ Error updating password:', error.message);
+    console.error('❌ Password update failed:', error);
+    console.error('Stack:', error.stack);
     process.exit(1);
   }
   
