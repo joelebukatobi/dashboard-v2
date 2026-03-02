@@ -1,7 +1,7 @@
 // src/templates/admin/pages/media/images/list.js
 // Images list page template
 
-import { mainLayout } from '../../layouts/main.js';
+import { mainLayout } from '../../../layouts/main.js';
 
 /**
  * Generate images list page
