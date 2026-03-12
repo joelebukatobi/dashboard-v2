@@ -69,7 +69,7 @@ export default async function app(fastify, opts) {
   });
 
   await fastify.register(fastifyRateLimit, {
-    max: 100,
+    max: isDevelopment ? 1000 : 100,
     timeWindow: '1 minute',
   });
 

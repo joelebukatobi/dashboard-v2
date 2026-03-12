@@ -66,4 +66,10 @@ coverage/
 *.local
 .history/
 cookies.txt
+
+# Local agent workspace files
 .serena/
+
+# Generated media uploads/cache
+public/uploads/images/image-*
+public/uploads/images/thumbs/
