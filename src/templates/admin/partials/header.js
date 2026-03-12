@@ -53,12 +53,12 @@ export function header({ user, breadcrumbs = [] }) {
         </button>
 
         <!-- Desktop Search -->
-        <div class="form-field form-field--search">
-          <div class="form-field__wrapper">
-            <i data-lucide="search" class="form-field__icon form-field__icon--left form-field__icon"></i>
+        <div class="form__group form__group--search !m-0 hidden lg:block">
+          <div class="form__wrapper">
+            <i data-lucide="search" class="input__icon input__icon--left"></i>
             <input
               type="text"
-              class="form-field__input form-field__input form-field__input--icon-left"
+              class="input input--icon-left"
               placeholder="Search..."
             />
           </div>
@@ -162,12 +162,12 @@ export function header({ user, breadcrumbs = [] }) {
 
     <!-- Mobile Search Bar -->
     <div class="mobile-search" id="mobileSearch">
-      <div class="form-field form-field--search form-field--search--mobile">
-        <div class="form-field__wrapper">
-          <i data-lucide="search" class="form-field__icon form-field__icon--left"></i>
+      <div class="form__group form__group--search form__group--search-mobile !m-0 w-full max-w-full">
+        <div class="form__wrapper w-full">
+          <i data-lucide="search" class="input__icon input__icon--left"></i>
           <input
             type="text"
-            class="form-field__input form-field__input--icon-left"
+            class="input input--icon-left w-full"
             placeholder="Search posts, pages, users..."
           />
         </div>

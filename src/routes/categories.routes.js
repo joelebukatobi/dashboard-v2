@@ -2,6 +2,7 @@
 // Category routes
 
 import { categoriesController } from '../controllers/categories.controller.js';
+import { requireAuthRedirect } from '../middleware/authenticate.js';
 
 /**
  * Register category routes
@@ -9,55 +10,45 @@ import { categoriesController } from '../controllers/categories.controller.js';
  * @param {Object} opts - Route options
  */
 export default async function categoryRoutes(fastify, opts) {
-  // Authentication middleware (reuse from auth routes)
-  const requireAuth = async (request, reply) => {
-    try {
-      await request.jwtVerify();
-      request.user = request.user || {};
-    } catch (err) {
-      reply.redirect('/admin/auth/login');
-    }
-  };
-
   // GET /admin/categories - List all categories
   fastify.get('/', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.list.bind(categoriesController),
   });
 
   // GET /admin/categories/new - Show new category form
   fastify.get('/new', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.showNewForm.bind(categoriesController),
   });
 
   // POST /admin/categories - Create category
   fastify.post('/', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.create.bind(categoriesController),
   });
 
   // GET /admin/categories/:id/edit - Show edit form
   fastify.get('/:id/edit', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.showEditForm.bind(categoriesController),
   });
 
   // PUT /admin/categories/:id - Update category
   fastify.put('/:id', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.update.bind(categoriesController),
   });
 
   // DELETE /admin/categories/:id - Delete category
   fastify.delete('/:id', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.delete.bind(categoriesController),
   });
 
   // GET /admin/categories/check-slug - Check slug availability
   fastify.get('/check-slug', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: categoriesController.checkSlug.bind(categoriesController),
   });
 }

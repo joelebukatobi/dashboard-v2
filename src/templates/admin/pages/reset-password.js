@@ -43,32 +43,32 @@ export function resetPasswordPage({ token, error = '' } = {}) {
               <input type="hidden" name="token" value="${escapeHtml(token)}" />
 
               <!-- New Password -->
-              <div class="form-field">
-                <label class="form-field__label" for="password">New Password</label>
-                <div class="form-field__wrapper">
+              <div class="form__group">
+                <label class="label" for="password">New Password</label>
+                <div class="form__wrapper">
                   <input
                     type="password"
                     id="password"
                     name="password"
-                    class="form-field__input form-field__input--lg form-field__input--icon-right"
+                    class="input input--lg input--icon-right"
                     placeholder="Enter new password"
                     minlength="8"
                     required
                   />
-                  <button type="button" class="form-field__addon" onclick="togglePassword()">
+                  <button type="button" class="input__addon" onclick="togglePassword()">
                     <i data-lucide="eye" id="password-icon"></i>
                   </button>
                 </div>
               </div>
 
               <!-- Confirm Password -->
-              <div class="form-field">
-                <label class="form-field__label" for="confirmPassword">Confirm Password</label>
+              <div class="form__group">
+                <label class="label" for="confirmPassword">Confirm Password</label>
                 <input
                   type="password"
                   id="confirmPassword"
                   name="confirmPassword"
-                  class="form-field__input form-field__input--lg"
+                  class="input input--lg"
                   placeholder="Confirm new password"
                   minlength="8"
                   required

@@ -38,7 +38,7 @@ export function postNewPage({ categories, tags, user }) {
 
             <!-- Featured Image -->
             <div class="form__group">
-              <label class="form__label">Featured Image</label>
+              <label class="label">Featured Image</label>
               <div class="image-upload">
                 <div class="image-upload__preview has-image" id="imagePreview">
                   <img src="/public/uploads/images/featured-posts.jpg" alt="Featured image" id="previewImg" />
@@ -57,10 +57,10 @@ export function postNewPage({ categories, tags, user }) {
             <div class="form__row form__row--2col">
               <!-- Title -->
               <div class="form__group">
-                <label class="form__label form__label--required">Post Title</label>
+                <label class="label label--required">Post Title</label>
                 <input
                   type="text"
-                  class="form__input"
+                  class="input"
                   id="postTitle"
                   name="title"
                   placeholder="Enter post title"
@@ -70,15 +70,15 @@ export function postNewPage({ categories, tags, user }) {
 
               <!-- Slug -->
               <div class="form__group">
-                <label class="form__label">Slug</label>
+                <label class="label">Slug</label>
                 <input
                   type="text"
-                  class="form__input"
+                  class="input"
                   name="slug"
                   id="postSlug"
                   placeholder="auto-generated-from-title"
                 />
-                <p class="form__hint">Auto-generated from title. Editable if needed.</p>
+                <p class="form-feedback form-feedback--hint">Auto-generated from title. Editable if needed.</p>
               </div>
             </div>
 
@@ -86,7 +86,7 @@ export function postNewPage({ categories, tags, user }) {
             <div class="form__row form__row--3col">
               <!-- Author -->
               <div class="form__group">
-                <label class="form__label form__label--required">Author</label>
+                <label class="label label--required">Author</label>
                 <select
                   name="authorId"
                   id="postAuthor"
@@ -104,7 +104,7 @@ export function postNewPage({ categories, tags, user }) {
 
               <!-- Category -->
               <div class="form__group">
-                <label class="form__label form__label--required">Category</label>
+                <label class="label label--required">Category</label>
                 <select
                   name="categoryId"
                   id="postCategory"
@@ -129,7 +129,7 @@ export function postNewPage({ categories, tags, user }) {
 
               <!-- Tags -->
               <div class="form__group">
-                <label class="form__label">Tags</label>
+                <label class="label">Tags</label>
                 <select
                   name="tagIds"
                   id="postTags"
@@ -155,9 +155,9 @@ export function postNewPage({ categories, tags, user }) {
 
             <!-- Short Description -->
             <div class="form__group">
-              <label class="form__label">Short Description</label>
+              <label class="label">Short Description</label>
               <textarea
-                class="form__input form__textarea"
+                class="textarea"
                 name="excerpt"
                 rows="3"
                 placeholder="Brief summary of the post (optional)"
@@ -166,7 +166,7 @@ export function postNewPage({ categories, tags, user }) {
 
             <!-- Content (Rich Text Editor) -->
             <div class="form__group">
-              <label class="form__label form__label--required">Content</label>
+              <label class="label label--required">Content</label>
               <div id="editor" class="post-editor"></div>
               <input type="hidden" name="content" id="contentInput" />
             </div>

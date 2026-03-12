@@ -46,7 +46,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             <i data-lucide="search" class="data-filter__search-icon"></i>
             <input
               type="text"
-              class="form-field__input form-field__input--icon-left"
+              class="input input--icon-left"
               placeholder="Search posts..."
               value="${filters.search || ''}"
               hx-get="/admin/posts"
@@ -174,11 +174,11 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
                 .join('')}
             </tbody>
           </table>
-
-          ${totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
         `
         }
         </div>
+
+        ${posts.length > 0 && totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
       </div>
     </div>
 

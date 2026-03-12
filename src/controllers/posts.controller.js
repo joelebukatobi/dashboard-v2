@@ -267,9 +267,7 @@ class PostsController {
       });
 
       reply.header('HX-Trigger', JSON.stringify({ "htmx:toast": { message: status === 'PUBLISHED' ? 'Post updated and published!' : 'Draft updated successfully!', type: 'success' } }));
-      return reply.type('text/html').send(successToast({
-        message: status === 'PUBLISHED' ? 'Post updated and published!' : 'Draft updated successfully!'
-      }));
+      return reply.type('text/html').send('');
 
     } catch (error) {
       request.log.error(error);
