@@ -21,7 +21,7 @@
   // Mobile Label
   &__label {
     @apply lg:hidden;
-    @apply text-[1rem] font-medium text-grey-500 min-w-[8rem];
+    @apply text-body-xs font-medium text-grey-500 min-w-[8rem];
 
     .dark & {
       @apply text-grey-400;
@@ -30,7 +30,7 @@
 
   // Name
   &__name {
-    @apply font-medium text-sm text-grey-900;
+    @apply font-medium text-body-sm text-grey-900;
 
     .dark & {
       @apply text-white;
@@ -48,7 +48,7 @@
 
   // Slug
   &__slug {
-    @apply text-sm text-grey-500;
+    @apply text-body-sm text-grey-500;
 
     .dark & {
       @apply text-grey-400;
@@ -64,7 +64,7 @@
   &__action {
     @apply flex items-center justify-center gap-[.4rem];
     @apply px-0 py-[.4rem] lg:p-[.4rem] rounded-md;
-    @apply text-[1.1rem] font-medium;
+    @apply text-body-xs font-medium;
     @apply cursor-pointer;
     @apply transition-all duration-200 lg:bg-blue-600/10;
 
@@ -98,6 +98,23 @@
 
       .dark & {
         @apply hover:text-red-400 hover:bg-red-900/20;
+      }
+    }
+  }
+}
+
+@media (max-width: 1023px) {
+  .tags__table-content {
+    overflow-x: auto;
+
+    .table {
+      .table__tr {
+        margin-bottom: 1.6rem;
+        border-radius: var(--radius-lg);
+      }
+
+      .table__tbody {
+        margin-bottom: 1.6rem;
       }
     }
   }
