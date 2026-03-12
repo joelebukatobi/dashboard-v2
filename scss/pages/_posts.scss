@@ -1,145 +1,59 @@
 // ============================================================================
-// Posts Page Styles
-// Styles specific to the Blog Posts page
+// Posts Page
 // ============================================================================
 
-// NOTE: All posts-table styles have been refactored to generic components.
-// - _table.scss (structure, labels, titles)
-// - _badge.scss (meta badges, status indicators)
-// - _button.scss (actions)
-
-// Sticky table layout for desktop
+// Sticky table header for desktop scrollable area
 .posts {
   .content {
-    display: flex;
-    flex-direction: column;
-    height: calc(100vh - 5.6rem); // Full viewport minus main navbar
-    
-    > .page-header,
-    > .data-filter {
-      flex-shrink: 0;
-    }
+    .posts__table-content {
+      .table__thead {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background-color: var(--color-white);
 
-    // This is the container we swap with HTMX
-    &__table-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 0; /* Important for flex-shrink/scroll */
-      
-      // The actual scrollable table component
-      .table {
-        flex: 1;
-        overflow-y: auto;
-        padding-right: 1.6rem;
-
-        // Sticky table header
-        .table__thead {
-          position: sticky;
-          top: 0;
-          z-index: 5;
-          background-color: var(--color-white);
-
-          .dark & {
-            background-color: var(--color-grey-900);
-          }
+        .dark & {
+          background-color: var(--color-grey-900);
         }
       }
     }
-    
-    // Pagination wrapper (page-footer) - now a child of table-wrapper
-    .page-footer {
-      flex-shrink: 0;
-      height: 8rem;
-      display: flex;
-      align-items: center;
-      border-top: 1px solid var(--color-grey-100);
-
-      .dark & {
-        border-top-color: var(--color-grey-800);
-      }
-    }
   }
 }
 
-// Edit/New Post Pages Sticky Layout (Desktop)
+// Edit/New post layout
 .content-main {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 5.6rem); // Full viewport minus main navbar
-  
   > .page-header {
     flex-shrink: 0;
   }
-  
+
   > .page-main {
     flex: 1;
     overflow-y: auto;
-    padding-right: 2.4rem; // Space between content and scrollbar
+    padding-right: 2.4rem;
   }
 }
 
-// CKEditor container
 .post-editor {
-  min-height: 32rem; // 320px
+  min-height: 32rem;
 }
 
-// Delete Modal - High z-index to appear above sticky headers
+// Above sticky headers
 #deleteModal {
   z-index: 100;
 }
 
-// Mobile: Normal scrolling for Edit/New pages
+// Mobile: card-style table rows
 @media (max-width: 1023px) {
-  .content-main {
-    height: auto;
-    
-    > .page-main {
-      overflow-y: visible;
-    }
-  }
-  
-  .posts {
-    .content {
-      height: auto;
-      overflow-y: auto; // Enable vertical scrolling
-      
-      > .table {
-        overflow-x: auto;
-        
-        // Add spacing between mobile cards
-        .table__tr {
-          margin-bottom: 1.2rem;
-        }
-        
-        // Add extra space after last card before footer
-        .table__tbody {
-          margin-bottom: 2rem;
-        }
-      }
-      
-      // Fixed footer at bottom on mobile
-      > .page-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: var(--color-white);
-        z-index: 100;
-        border-top: none; // Remove top border
-        padding: 2rem 1.6rem; // Increased padding for better height
-        box-shadow: 0 -2px 4px -1px rgba(0, 0, 0, 0.02); // Very subtle shadow
-        
-        .dark & {
-          background-color: var(--color-grey-900);
-          box-shadow: 0 -2px 4px -1px rgba(0, 0, 0, 0.1);
-        }
+  .posts__table-content {
+    overflow-x: auto;
+
+    .table {
+      .table__tr {
+        margin-bottom: 1.6rem;
+        margin-left: 0.8rem;
+        margin-right: 0.8rem;
+        border-radius: var(--radius-lg);
       }
     }
-  }
-  
-  // Add padding to posts page only to prevent content from being hidden behind fixed footer
-  body:has(.posts) {
-    padding-bottom: 7rem; // Increased for taller footer
   }
 }
