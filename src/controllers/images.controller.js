@@ -2,6 +2,7 @@
 // Images controller - handles image HTTP requests
 
 import { imagesService } from '../services/images.service.js';
+import { postsService } from '../services/posts.service.js';
 import { successToast, errorToast } from '../templates/admin/partials/alerts.js';
 
 /**
@@ -43,17 +44,16 @@ class ImagesController {
   async list(request, reply) {
     try {
       const user = request.user;
-      const { search, tag, page = 1, toast } = request.query;
+      const { search, page = 1, toast } = request.query;
 
       // Get images with pagination
       const { data: images, pagination } = await imagesService.getAll({
         search,
-        tag,
         page: parseInt(page, 10) || 1,
-        limit: 20,
+        limit: 10,
       });
 
-      // Get stats and tags for filter
+      // Get stats
       const stats = await imagesService.getStats();
 
       // Check if HTMX request
@@ -80,7 +80,7 @@ class ImagesController {
           })),
           pagination,
           stats,
-          filters: { search, tag },
+          filters: { search },
           toast,
         })
       );
@@ -94,6 +94,39 @@ class ImagesController {
   }
 
   /**
+   * GET /admin/media/images/new
+   * Show new image form
+   */
+  async showNewForm(request, reply) {
+    try {
+      const user = request.user;
+
+      // Get all posts for attachment dropdown
+      const posts = await imagesService.getAllPostsForAttachment();
+
+      // Import new image template
+      const { imagesNewPage } = await import('../templates/admin/pages/media/images/index.js');
+
+      return reply.type('text/html').send(
+        imagesNewPage({
+          user,
+          posts,
+        })
+      );
+    } catch (error) {
+      request.log.error(error);
+      reply.code(500);
+      return reply.type('text/html').send(errorToast({
+        message: 'Failed to load new image form.',
+      }));
+    }
+  }
+
+  /**
+   * POST /admin/media/images
+   * Upload new image(s)
+   */
+  /**
    * POST /admin/media/images
    * Upload new image(s)
    */
@@ -101,8 +134,23 @@ class ImagesController {
     try {
       const user = request.user;
       
-      // Get uploaded file from multipart form
-      const file = await request.file();
+      // Get all parts (file and fields)
+      const parts = request.parts();
+      let file = null;
+      let postId = null;
+      let title = null;
+      let altText = null;
+      
+      for await (const part of parts) {
+        if (part.type === 'file') {
+          file = part;
+        } else if (part.type === 'field') {
+          const value = await part.value;
+          if (part.fieldname === 'postId') postId = value;
+          if (part.fieldname === 'title') title = value;
+          if (part.fieldname === 'altText') altText = value;
+        }
+      }
       
       if (!file) {
         reply.code(400);
@@ -112,24 +160,19 @@ class ImagesController {
       }
 
       // Upload and process image
-      const image = await imagesService.upload(file, {}, user.id);
+      const image = await imagesService.upload(file, {
+        title: title || file.filename,
+        altText: altText || '',
+      }, user.id);
 
-      // Return success
-      const message = `Image "${image.originalName}" uploaded successfully`;
-      
-      // Check if HTMX request
-      const isHtmx = request.headers['hx-request'] === 'true';
-      
-      if (isHtmx) {
-        reply.header('HX-Trigger', JSON.stringify({
-          "htmx:toast": { message, type: 'success' },
-          "refreshImages": true
-        }));
-        return reply.type('text/html').send('');
+      // Attach to post if postId provided
+      if (postId) {
+        await imagesService.attachToPost(image.id, postId);
       }
 
-      // Redirect to list with toast
-      reply.header('HX-Redirect', `/admin/media/images?toast=${encodeURIComponent(message)}`);
+      // Return success with toast notification
+      reply.header('HX-Location', `/admin/media/images/${image.id}/edit`);
+      reply.header('HX-Trigger', JSON.stringify({ "htmx:toast": { message: 'Image uploaded successfully!', type: 'success' } }));
       return reply.type('text/html').send('');
     } catch (error) {
       request.log.error(error);
@@ -158,11 +201,8 @@ class ImagesController {
         }));
       }
 
-      // Get usage info
-      const usage = await imagesService.getUsage(id);
-
-      // Get all tags for dropdown
-      const allTags = await imagesService.getAllTags();
+      // Get all posts for attachment dropdown
+      const posts = await imagesService.getAllPostsForAttachment();
 
       // Import edit image template
       const { imagesEditPage } = await import('../templates/admin/pages/media/images/index.js');
@@ -175,8 +215,7 @@ class ImagesController {
             sizeFormatted: formatFileSize(image.size),
             dateFormatted: formatDate(image.createdAt),
           },
-          usage,
-          allTags,
+          posts,
         })
       );
     } catch (error) {
@@ -196,7 +235,7 @@ class ImagesController {
     try {
       const user = request.user;
       const { id } = request.params;
-      const { title, altText, caption, description, tag } = request.body;
+      const { title, altText } = request.body;
 
       // Check if image exists
       const existing = await imagesService.getById(id);
@@ -211,16 +250,11 @@ class ImagesController {
       await imagesService.update(id, {
         title,
         altText,
-        caption,
-        description,
-        tag: tag || null,
       });
 
-      // Return success
-      const message = 'Image updated successfully';
-      
+      // Return success with toast
       reply.header('HX-Trigger', JSON.stringify({
-        "htmx:toast": { message, type: 'success' }
+        "htmx:toast": { message: 'Image updated successfully', type: 'success' }
       }));
       return reply.type('text/html').send('');
     } catch (error) {
@@ -253,11 +287,8 @@ class ImagesController {
       // Delete image
       await imagesService.delete(id);
 
-      // Build success message
-      const message = `Image "${image.originalName}" deleted successfully`;
-
-      // Redirect to list with toast
-      reply.header('HX-Redirect', `/admin/media/images?toast=${encodeURIComponent(message)}`);
+      // Redirect to list with toast notification
+      reply.header('HX-Redirect', `/admin/media/images?toast=deleted`);
       return reply.type('text/html').send('');
     } catch (error) {
       request.log.error(error);
