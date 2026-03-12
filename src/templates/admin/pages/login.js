@@ -43,31 +43,31 @@ export function loginPage({ error = '', success = '' } = {}) {
               novalidate
             >
               <!-- Email -->
-              <div class="form-field">
-                <label class="form-field__label" for="email">Email address</label>
+              <div class="form__group">
+                <label class="label" for="email">Email address</label>
                 <input
                   type="email"
                   id="email"
                   name="email"
-                  class="form-field__input form-field__input--lg"
+                  class="input input--lg"
                   placeholder="you@example.com"
                   required
                 />
               </div>
 
               <!-- Password with visibility toggle -->
-              <div class="form-field">
-                <label class="form-field__label" for="password">Password</label>
-                <div class="form-field__wrapper">
+              <div class="form__group">
+                <label class="label" for="password">Password</label>
+                <div class="form__wrapper">
                   <input
                     type="password"
                     id="password"
                     name="password"
-                    class="form-field__input form-field__input--lg form-field__input--icon-right"
+                    class="input input--lg input--icon-right"
                     placeholder="Enter your password"
                     required
                   />
-                  <button type="button" class="form-field__addon" onclick="togglePassword()">
+                  <button type="button" class="input__addon" onclick="togglePassword()">
                     <i data-lucide="eye" id="password-icon"></i>
                   </button>
                 </div>
@@ -150,13 +150,13 @@ export function loginPage({ error = '', success = '' } = {}) {
                 hx-target="#forgot-password-response"
                 hx-swap="innerHTML"
               >
-                <div class="form-field">
-                  <label class="form-field__label" for="reset-email">Email address</label>
+                <div class="form__group">
+                  <label class="label" for="reset-email">Email address</label>
                   <input
                     type="email"
                     id="reset-email"
                     name="email"
-                    class="form-field__input form-field__input--lg"
+                    class="input input--lg"
                     placeholder="you@example.com"
                     required
                   />

@@ -35,39 +35,6 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
         <h1 class="page-header__title">Dashboard</h1>
         <p class="page-header__subtitle">Welcome back, ${user?.firstName || 'User'}! Here's what's happening with your blog today.</p>
       </div>
-      <div class="page-header__actions">
-        <!-- New Post Dropdown -->
-        <div class="hs-dropdown [--placement:bottom-right]">
-          <button id="hs-dropdown-new" type="button" class="hs-dropdown-toggle btn btn--primary">
-            <i data-lucide="plus"></i>
-            New Post
-            <i data-lucide="chevron-down" class="dropdown__chevron"></i>
-          </button>
-          <div
-            class="hs-dropdown-menu dropdown__menu dropdown__menu--md dropdown__menu--left"
-            role="menu"
-            aria-labelledby="hs-dropdown-new"
-          >
-            <a class="dropdown__item" href="/admin/posts/new">
-              <i data-lucide="file-edit"></i>
-              New Blog Post
-            </a>
-            <a class="dropdown__item" href="#">
-              <i data-lucide="newspaper"></i>
-              New Article
-            </a>
-            <a class="dropdown__item" href="#">
-              <i data-lucide="image"></i>
-              New Gallery
-            </a>
-            <div class="dropdown__divider"></div>
-            <a class="dropdown__item" href="#">
-              <i data-lucide="upload"></i>
-              Import Content
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Quick Stats -->
@@ -135,8 +102,8 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <div class="widget widget--traffic-overview">
         <div class="widget__header widget__header--traffic">
           <div>
-            <h3 class="widget__title">Traffic Overview</h3>
-            <p class="widget__subtitle">Page views and unique visitors</p>
+            <h5 class="widget__title">Traffic Overview</h5>
+            <h6 class="widget__subtitle">Page views and unique visitors</h6>
           </div>
           <!-- Chart Range Tabs -->
           <nav class="chart-range" aria-label="Chart range" role="tablist" id="traffic-tabs">
@@ -236,8 +203,8 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <!-- Recent Activity -->
       <div class="widget widget--recent-activity">
         <div class="widget__header">
-          <h3 class="widget__title">Recent Activity</h3>
-          <a href="#" class="widget__link">View all</a>
+          <h5 class="widget__title">Recent Activity</h5>
+          <h5><a href="#" class="widget__link">View all</a></h5>
         </div>
         <hr class="divider" />
         <div class="widget__body">
@@ -253,8 +220,8 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <!-- Recent Posts -->
       <div class="widget widget--flush">
         <div class="widget__header">
-          <h3 class="widget__title">Recent Posts</h3>
-          <a href="/admin/posts/new" class="widget__link">Add New</a>
+          <h5 class="widget__title">Recent Posts</h5>
+          <h5><a href="/admin/posts/new" class="widget__link">Add New</a></h5>
         </div>
         <hr class="divider" />
         <div class="widget__body">
@@ -267,8 +234,8 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <!-- Top Posts -->
       <div class="widget widget--flush">
         <div class="widget__header">
-          <h3 class="widget__title">Top Posts</h3>
-          <a href="#" class="widget__link">View all</a>
+          <h5 class="widget__title">Top Posts</h5>
+          <h5><a href="#" class="widget__link">View all</a></h5>
         </div>
         <hr class="divider" />
         <div class="widget__body">
@@ -328,9 +295,7 @@ function getRecentPosts(posts) {
 
   return posts.map(post => `
     <div class="recent-posts__item">
-      <div class="recent-posts__image">
-        <img src="${post.thumbnail || 'https://picsum.photos/seed/post1/200/150'}" alt="${post.title}" />
-      </div>
+    
       <div class="recent-posts__content">
         <h4 class="recent-posts__title">${post.title}</h4>
         <div class="recent-posts__meta">
@@ -360,7 +325,7 @@ function getTopPosts(posts) {
       <div class="top-list__left">
         <span class="top-list__rank top-list__rank--${post.categoryColor || 'primary'}">${index + 1}</span>
         <div class="top-list__info">
-          <p class="top-list__title">${post.title}</p>
+          <h6 class="top-list__title">${post.title}</h6>
           <span class="top-list__url">${post.url || '/blog/' + post.slug}</span>
         </div>
       </div>

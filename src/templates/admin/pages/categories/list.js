@@ -46,7 +46,7 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
             <i data-lucide="search" class="data-filter__search-icon"></i>
             <input
               type="text"
-              class="form-field__input form-field__input--icon-left"
+              class="input input--icon-left"
               placeholder="Search categories..."
               value="${filters.search || ''}"
               hx-get="/admin/categories"
@@ -97,7 +97,7 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
                       <div class="table__slug">${category.slug}</div>
                     </td>
                     <td class="table__td">
-                      <span class="table__label">Description</span>
+                      <span class="table__label">Desc</span>
                       <div class="table__title">${escapeHtml(category.description) || '-'}</div>
                     </td>
                     <td class="table__td">

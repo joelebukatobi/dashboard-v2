@@ -9,18 +9,19 @@ import { mainLayout } from '../../layouts/main.js';
  */
 export function tagNewPage({ user, errors = {} }) {
   const content = `
-    <div class="content">
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-header__left">
-          <h1 class="page-header__title">New Tag</h1>
-          <p class="page-header__subtitle">Create a new tag for your posts</p>
+    <div class="tags">
+      <div class="content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header__left">
+            <h1 class="page-header__title">New Tag</h1>
+            <p class="page-header__subtitle">Create a new tag for your posts</p>
+          </div>
+          <div class="page-header__toast-container"></div>
         </div>
-        <div class="page-header__toast-container"></div>
-      </div>
 
-      <!-- New Tag Form -->
-      <div class="card">
+        <!-- New Tag Form -->
+        <div class="card">
         <div class="card__header">
           <h2 class="card__title">Tag Details</h2>
         </div>
@@ -37,38 +38,38 @@ export function tagNewPage({ user, errors = {} }) {
             <!-- Name & Slug Row -->
             <div class="form__row form__row--2col">
               <!-- Name -->
-              <div class="form__group">
-                <label class="form__label form__label--required">Name</label>
+              <div class="form__group ${errors.name ? 'form__group--error' : ''}">
+                <label class="label label--required">Name</label>
                 <input
                   type="text"
-                  class="form__input ${errors.name ? 'form__input--error' : ''}"
+                  class="input"
                   id="tagName"
                   name="name"
                   placeholder="e.g. JavaScript"
                   required
                 />
-                ${errors.name ? `<p class="form__error">${errors.name}</p>` : ''}
+                ${errors.name ? `<p class="form-feedback form-feedback--error">${errors.name}</p>` : ''}
               </div>
               <!-- Slug -->
-              <div class="form__group">
-                <label class="form__label">Slug</label>
+              <div class="form__group ${errors.slug ? 'form__group--error' : ''}">
+                <label class="label">Slug</label>
                 <input
                   type="text"
-                  class="form__input ${errors.slug ? 'form__input--error' : ''}"
+                  class="input"
                   id="tagSlug"
                   name="slug"
                   placeholder="e.g. javascript"
                 />
-                <p class="form__hint">Leave blank to generate from name</p>
-                ${errors.slug ? `<p class="form__error">${errors.slug}</p>` : ''}
+                <p class="form-feedback form-feedback--hint">Leave blank to generate from name</p>
+                ${errors.slug ? `<p class="form-feedback form-feedback--error">${errors.slug}</p>` : ''}
               </div>
             </div>
 
             <!-- Description -->
             <div class="form__group">
-              <label class="form__label">Description</label>
+              <label class="label">Description</label>
               <textarea
-                class="form__input form__textarea"
+                class="textarea"
                 id="tagDescription"
                 name="description"
                 rows="4"
@@ -89,6 +90,7 @@ export function tagNewPage({ user, errors = {} }) {
           </div>
         </div>
       </div>
+    </div>
     </div>
 
     <script>

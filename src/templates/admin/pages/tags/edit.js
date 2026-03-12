@@ -9,18 +9,19 @@ import { mainLayout } from '../../layouts/main.js';
  */
 export function tagEditPage({ tag, user, errors = {} }) {
   const content = `
-    <div class="content">
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-header__left">
-          <h1 class="page-header__title">Edit Tag</h1>
-          <p class="page-header__subtitle">Update tag details</p>
+    <div class="tags">
+      <div class="content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header__left">
+            <h1 class="page-header__title">Edit Tag</h1>
+            <p class="page-header__subtitle">Update tag details</p>
+          </div>
+          <div class="page-header__toast-container"></div>
         </div>
-        <div class="page-header__toast-container"></div>
-      </div>
 
-      <!-- Edit Tag Form -->
-      <div class="card">
+        <!-- Edit Tag Form -->
+        <div class="card">
         <div class="card__header">
           <h2 class="card__title">Tag Details</h2>
         </div>
@@ -37,39 +38,39 @@ export function tagEditPage({ tag, user, errors = {} }) {
             <!-- Name & Slug Row -->
             <div class="form__row form__row--2col">
               <!-- Name -->
-              <div class="form__group">
-                <label class="form__label form__label--required">Name</label>
+              <div class="form__group ${errors.name ? 'form__group--error' : ''}">
+                <label class="label label--required">Name</label>
                 <input
                   type="text"
-                  class="form__input ${errors.name ? 'form__input--error' : ''}"
+                  class="input"
                   id="tagName"
                   name="name"
                   value="${escapeHtml(tag.name)}"
                   required
                 />
-                ${errors.name ? `<p class="form__error">${errors.name}</p>` : ''}
+                ${errors.name ? `<p class="form-feedback form-feedback--error">${errors.name}</p>` : ''}
               </div>
               <!-- Slug -->
-              <div class="form__group">
-                <label class="form__label">Slug</label>
+              <div class="form__group ${errors.slug ? 'form__group--error' : ''}">
+                <label class="label">Slug</label>
                 <input
                   type="text"
-                  class="form__input form__input--readonly ${errors.slug ? 'form__input--error' : ''}"
+                  class="input"
                   id="tagSlug"
                   name="slug"
                   value="${tag.slug}"
                   readonly
                 />
-                <p class="form__hint">Auto-generated from name. Contact admin to change.</p>
-                ${errors.slug ? `<p class="form__error">${errors.slug}</p>` : ''}
+                <p class="form-feedback form-feedback--hint">Auto-generated from name. Contact admin to change.</p>
+                ${errors.slug ? `<p class="form-feedback form-feedback--error">${errors.slug}</p>` : ''}
               </div>
             </div>
 
             <!-- Description -->
             <div class="form__group">
-              <label class="form__label">Description</label>
+              <label class="label">Description</label>
               <textarea
-                class="form__input form__textarea"
+                class="textarea"
                 id="tagDescription"
                 name="description"
                 rows="4"
@@ -89,6 +90,7 @@ export function tagEditPage({ tag, user, errors = {} }) {
           </div>
         </div>
       </div>
+    </div>
     </div>
 
     <script>

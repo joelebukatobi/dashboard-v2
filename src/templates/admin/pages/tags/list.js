@@ -45,7 +45,7 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user, toa
             <i data-lucide="search" class="data-filter__search-icon"></i>
             <input
               type="text"
-              class="form-field__input form-field__input--icon-left"
+              class="input input--icon-left"
               placeholder="Search tags..."
               value="${filters.search || ''}"
               hx-get="/admin/tags"
@@ -99,7 +99,7 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user, toa
                       <div class="table__slug">${tag.slug}</div>
                     </td>
                     <td class="table__td">
-                      <span class="table__label">Description</span>
+                      <span class="table__label">Desc</span>
                       <div class="table__title">${escapeHtml(tag.description) || '-'}</div>
                     </td>
                     <td class="table__td">

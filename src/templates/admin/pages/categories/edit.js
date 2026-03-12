@@ -10,18 +10,19 @@ import { mainLayout } from '../../layouts/main.js';
  */
 export function categoryEditPage({ category, user, errors = {} }) {
   const content = `
-    <div class="content">
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-header__left">
-          <h1 class="page-header__title">Edit Category</h1>
-          <p class="page-header__subtitle">Update category details</p>
+    <div class="categories">
+      <div class="content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header__left">
+            <h1 class="page-header__title">Edit Category</h1>
+            <p class="page-header__subtitle">Update category details</p>
+          </div>
+          <div class="page-header__toast-container"></div>
         </div>
-        <div class="page-header__toast-container"></div>
-      </div>
 
-      <!-- Edit Category Form -->
-      <div class="card">
+        <!-- Edit Category Form -->
+        <div class="card">
         <div class="card__header">
           <h2 class="card__title">Category Details</h2>
         </div>
@@ -38,39 +39,39 @@ export function categoryEditPage({ category, user, errors = {} }) {
             <!-- Title & Slug Row -->
             <div class="form__row form__row--2col">
               <!-- Title -->
-              <div class="form__group">
-                <label class="form__label form__label--required">Title</label>
+              <div class="form__group ${errors.title ? 'form__group--error' : ''}">
+                <label class="label label--required">Title</label>
                 <input
                   type="text"
-                  class="form__input ${errors.title ? 'form__input--error' : ''}"
+                  class="input"
                   id="categoryTitle"
                   name="title"
                   value="${escapeHtml(category.title)}"
                   required
                 />
-                ${errors.title ? `<p class="form__error">${errors.title}</p>` : ''}
+                ${errors.title ? `<p class="form-feedback form-feedback--error">${errors.title}</p>` : ''}
               </div>
               <!-- Slug -->
-              <div class="form__group">
-                <label class="form__label">Slug</label>
+              <div class="form__group ${errors.slug ? 'form__group--error' : ''}">
+                <label class="label">Slug</label>
                 <input
                   type="text"
-                  class="form__input form__input--readonly ${errors.slug ? 'form__input--error' : ''}"
+                  class="input"
                   id="categorySlug"
                   name="slug"
                   value="${category.slug}"
                   readonly
                 />
-                <p class="form__hint">Auto-generated from title. Contact admin to change.</p>
-                ${errors.slug ? `<p class="form__error">${errors.slug}</p>` : ''}
+                <p class="form-feedback form-feedback--hint">Auto-generated from title. Contact admin to change.</p>
+                ${errors.slug ? `<p class="form-feedback form-feedback--error">${errors.slug}</p>` : ''}
               </div>
             </div>
 
             <!-- Description -->
             <div class="form__group">
-              <label class="form__label">Description</label>
+              <label class="label">Description</label>
               <textarea
-                class="form__input form__textarea"
+                class="textarea"
                 id="categoryDescription"
                 name="description"
                 rows="4"
@@ -89,6 +90,7 @@ export function categoryEditPage({ category, user, errors = {} }) {
           </div>
         </div>
       </div>
+    </div>
     </div>
 
     <script>
