@@ -5,7 +5,7 @@ import { db, mediaItems, posts } from '../db/index.js';
 import { eq, like, desc, asc, sql } from 'drizzle-orm';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { Jimp } from 'jimp';
+import sharp from 'sharp';
 
 /**
  * Images Service
@@ -38,12 +38,11 @@ class ImagesService {
    * Get all images with pagination and filters
    * @param {Object} options - Query options
    * @param {string} [options.search] - Search by filename or title
-   * @param {string} [options.tag] - Filter by tag
    * @param {number} [options.page=1] - Page number
    * @param {number} [options.limit=20] - Items per page
    * @returns {Promise<Object>} - { data, pagination }
    */
-  async getAll({ search, tag, page = 1, limit = 20 } = {}) {
+  async getAll({ search, page = 1, limit = 20 } = {}) {
     // Build query conditions
     const conditions = [];
 
@@ -51,10 +50,6 @@ class ImagesService {
       conditions.push(
         sql`(${like(mediaItems.originalName, `%${search}%`)} OR ${like(mediaItems.title, `%${search}%`)})`
       );
-    }
-
-    if (tag) {
-      conditions.push(eq(mediaItems.tag, tag));
     }
 
     // Filter by type = IMAGE
@@ -142,17 +137,18 @@ class ImagesService {
     const buffer = await file.toBuffer();
     await fs.writeFile(filepath, buffer);
 
-    // Process image with Jimp
+    // Process image with Sharp
     let width, height;
     try {
-      const image = await Jimp.read(filepath);
-      width = image.getWidth();
-      height = image.getHeight();
+      const image = sharp(filepath);
+      const metadata = await image.metadata();
+      width = metadata.width;
+      height = metadata.height;
 
       // Create thumbnail (200x200, fit within bounds)
       await image
-        .resize(200, 200, Jimp.RESIZE_BEZIER)
-        .writeAsync(thumbpath);
+        .resize(200, 200, { fit: 'cover' })
+        .toFile(thumbpath);
     } catch (err) {
       // Clean up on error
       await fs.unlink(filepath).catch(() => {});
@@ -174,7 +170,6 @@ class ImagesService {
         altText: metadata.altText || '',
         caption: metadata.caption || '',
         description: metadata.description || '',
-        tag: metadata.tag || null,
         path: `/public/uploads/images/${filename}`,
         thumbnailPath: `/public/uploads/images/thumbs/${thumbFilename}`,
         uploadedBy: userId,
@@ -201,9 +196,6 @@ class ImagesService {
       .set({
         title: data.title,
         altText: data.altText,
-        caption: data.caption,
-        description: data.description,
-        tag: data.tag,
         updatedAt: new Date(),
       })
       .where(eq(mediaItems.id, id))
@@ -274,33 +266,42 @@ class ImagesService {
       .from(mediaItems)
       .where(eq(mediaItems.type, 'IMAGE'));
 
-    // Get all unique tags
-    const tagsResult = await db
-      .select({ tag: mediaItems.tag })
-      .from(mediaItems)
-      .where(sql`${mediaItems.type} = 'IMAGE' AND ${mediaItems.tag} IS NOT NULL`)
-      .groupBy(mediaItems.tag);
-
     return {
       total: Number(count),
       totalSize: Number(totalSize) || 0,
-      tags: tagsResult.map(t => t.tag),
     };
   }
 
   /**
-   * Get all unique tags used on images
-   * @returns {Promise<Array>} - Tags
+   * Get all posts for attachment dropdown
+   * @returns {Promise<Array>} - Posts with id and title
    */
-  async getAllTags() {
-    const result = await db
-      .select({ tag: mediaItems.tag })
-      .from(mediaItems)
-      .where(sql`${mediaItems.type} = 'IMAGE' AND ${mediaItems.tag} IS NOT NULL`)
-      .groupBy(mediaItems.tag)
-      .orderBy(asc(mediaItems.tag));
+  async getAllPostsForAttachment() {
+    const allPosts = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+      })
+      .from(posts)
+      .orderBy(desc(posts.createdAt));
 
-    return result.map(r => r.tag);
+    return allPosts;
+  }
+
+  /**
+   * Attach image to post as featured image
+   * @param {string} imageId - Image ID
+   * @param {string} postId - Post ID
+   * @returns {Promise<void>}
+   */
+  async attachToPost(imageId, postId) {
+    await db
+      .update(posts)
+      .set({
+        featuredImageId: imageId,
+        updatedAt: new Date(),
+      })
+      .where(eq(posts.id, postId));
   }
 }
 

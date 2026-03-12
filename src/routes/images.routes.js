@@ -2,6 +2,7 @@
 // Images routes - admin media library
 
 import { imagesController } from '../controllers/images.controller.js';
+import { requireAuthRedirect } from '../middleware/authenticate.js';
 
 /**
  * Register image routes
@@ -9,43 +10,39 @@ import { imagesController } from '../controllers/images.controller.js';
  * @param {Object} opts - Route options
  */
 export default async function imagesRoutes(fastify, opts) {
-  // Authentication middleware
-  const requireAuth = async (request, reply) => {
-    try {
-      await request.jwtVerify();
-      request.user = request.user || {};
-    } catch (err) {
-      reply.redirect('/admin/auth/login');
-    }
-  };
-
   // GET /admin/media/images - List all images
   fastify.get('/', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: imagesController.list.bind(imagesController),
+  });
+
+  // GET /admin/media/images/new - Show new image form
+  fastify.get('/new', {
+    preHandler: requireAuthRedirect('/admin/auth/login'),
+    handler: imagesController.showNewForm.bind(imagesController),
   });
 
   // POST /admin/media/images - Upload image
   fastify.post('/', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: imagesController.upload.bind(imagesController),
   });
 
   // GET /admin/media/images/:id/edit - Show edit form
   fastify.get('/:id/edit', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: imagesController.showEditForm.bind(imagesController),
   });
 
   // PUT /admin/media/images/:id - Update image
   fastify.put('/:id', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: imagesController.update.bind(imagesController),
   });
 
   // DELETE /admin/media/images/:id - Delete image
   fastify.delete('/:id', {
-    preHandler: requireAuth,
+    preHandler: requireAuthRedirect('/admin/auth/login'),
     handler: imagesController.delete.bind(imagesController),
   });
 }
