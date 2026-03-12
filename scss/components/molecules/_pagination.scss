@@ -9,7 +9,7 @@
 
   &__item {
     @apply flex items-center justify-center w-[2rem] h-[2rem];
-    @apply text-sm font-semibold text-grey-600 dark:text-grey-400;
+    @apply text-body-sm font-semibold text-grey-600 dark:text-grey-400;
     @apply bg-white dark:bg-grey-800;
     @apply border border-grey-200 dark:border-grey-700;
     @apply rounded-[0.24rem] shadow-sm;

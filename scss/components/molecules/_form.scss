@@ -1,166 +1,55 @@
 // ============================================================================
 // Form Component - Refactored (DRY/KISS/SOLID)
 // Using maximum Tailwind utilities
+// Molecules handle layout only - atoms define appearance
 // ============================================================================
 
 .form {
+  // Form Group - Layout container for label + input + feedback
   &__group {
     @apply mb-[1.6rem];
-  }
 
-  &__label {
-    @apply block text-sm font-medium mb-[0.8rem];
-    @apply text-grey-900;
-
-    .dark & {
-      @apply text-white;
+    // Layout within group
+    .label {
+      @apply block;
     }
 
-    &--required::after {
-      @apply content-['*'] ml-[0.4rem] text-red-500;
-    }
-  }
-  &__input,
-  &__select {
-    @apply w-full px-[1.2rem] rounded-md h-[3.2rem];
-    @apply text-sm;
-    @apply border border-grey-100/50;
-    @apply transition-colors duration-200;
-    @apply bg-white;
-
-    .dark & {
-      @apply border-grey-800 bg-grey-900;
+    .input,
+    .select,
+    textarea,
+    .textarea {
+      @apply w-full;
     }
 
-    &:focus {
-      @apply outline-none ring-2 ring-blue-500/20;
-      @apply border-blue-500;
-    }
-
-    &::placeholder {
-      @apply text-grey-400;
-
-      .dark & {
-        @apply text-grey-500;
-      }
-    }
-
-    &:disabled {
-      @apply bg-grey-100 cursor-not-allowed opacity-60;
-
-      .dark & {
-        @apply bg-grey-800;
-      }
-    }
-
-    &--readonly {
-      @apply bg-grey-50 text-grey-600 cursor-default;
-      .dark & {
-        @apply bg-grey-900/50 text-grey-400;
-      }
-    }
-
+    // Error state modifier
     &--error {
-      @apply border-red-500 ring-red-500/20;
-    }
-  }
+      .input,
+      .select,
+      textarea,
+      .textarea {
+        @apply border-red-500 bg-red-50;
 
-  &__textarea {
-    @apply w-full px-[1.2rem] py-[1.2rem] rounded-md;
-    @apply text-sm;
-    @apply border border-grey-100/50;
-    @apply transition-colors duration-200;
-    @apply bg-white;
-    @apply min-h-[100px] resize-y;
+        &:focus {
+          @apply ring-red-500/20;
+        }
 
-    .dark & {
-      @apply border-grey-800 bg-grey-900;
-    }
-
-    &:focus {
-      @apply outline-none ring-2 ring-blue-500/20;
-      @apply border-blue-500;
-    }
-
-    &::placeholder {
-      @apply text-grey-400;
-
-      .dark & {
-        @apply text-grey-500;
+        .dark & {
+          @apply border-red-500 bg-red-900/10;
+        }
       }
     }
   }
 
-  &__select {
-    @apply appearance-none bg-no-repeat pr-[3.2rem];
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-    background-position: right 0.8rem center;
-    background-size: 1.6rem 1.6rem;
-  }
+  // Input wrapper for icons/addons (positioning only)
+  &__wrapper {
+    @apply relative flex items-center;
 
-  &__checkbox,
-  &__radio {
-    @apply w-[0.96rem] h-[0.96rem] cursor-pointer; // Compact size
-    @apply rounded-[.8rem];
-    @apply border-grey-300 text-blue-600;
-    @apply transition-colors duration-200;
-    @apply focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-0;
-
-    .dark & {
-      @apply border-grey-600 bg-grey-800;
-    }
-
-    &--lg {
-      @apply w-[1.2rem] h-[1.2rem]; // Larger variant
+    .input__icon {
+      @apply absolute top-1/2 -translate-y-1/2;
     }
   }
 
-  &__control-group {
-    @apply flex items-center gap-[1.2rem] cursor-pointer; // Generic wrapper for checkbox/radio + label
-  }
-
-  &__check-group {
-    @apply flex items-center gap-[1.2rem] cursor-pointer; // Backward compatibility
-  }
-
-  &__check-label {
-    @apply text-sm text-grey-700;
-    .dark & {
-      @apply text-grey-300;
-    }
-  }
-
-  &__radio {
-    @apply rounded-full;
-  }
-
-  &__help {
-    @apply block text-xs mt-[0.4rem] text-grey-500;
-
-    .dark & {
-      @apply text-grey-400;
-    }
-  }
-
-  &__hint {
-    @apply block text-xs mt-[0.4rem] text-grey-500;
-
-    .dark & {
-      @apply text-grey-400;
-    }
-  }
-
-  &__error {
-    @apply block text-xs mt-[0.4rem] text-red-600;
-
-    .dark & {
-      @apply text-red-400;
-    }
-  }
-
-  // ========================================
   // Form Row Layouts (grid variants)
-  // ========================================
   &__row {
     @apply grid gap-[1.6rem];
 
@@ -174,11 +63,11 @@
   }
 
   &__stack {
-    @apply flex flex-col gap-[1.2rem]; // Equivalent to space-y-3
+    @apply flex flex-col gap-[1.2rem];
   }
 
   &__divider {
-    @apply w-full border-t border-grey-50 my-[2.4rem]; // Matches "border-grey-50 my-6"
+    @apply w-full border-t border-grey-50 my-[2.4rem];
     .dark & {
       @apply border-grey-700;
     }
@@ -188,6 +77,7 @@
     }
   }
 
+  // Info Box
   &__info-box {
     @apply p-[1.6rem] bg-blue-600/5 mb-[1.6rem];
     border-radius: var(--radius-md);
@@ -196,14 +86,14 @@
     }
 
     &-title {
-      @apply text-sm font-semibold text-grey-900 pb-[1.2rem] mb-0 border-b border-grey-100;
+      @apply text-body-sm font-semibold text-grey-900 pb-[1.2rem] mb-0 border-b border-grey-100;
       .dark & {
         @apply text-white border-grey-500;
       }
     }
 
     & .card__title {
-      @apply text-sm lg:text-base;
+      @apply text-body-sm lg:text-body;
     }
   }
 
@@ -225,7 +115,7 @@
   }
 
   &__details-list {
-    @apply flex flex-col gap-[0.8rem] text-sm;
+    @apply flex flex-col gap-[0.8rem] text-body-sm;
   }
 
   &__details-item {
@@ -247,63 +137,84 @@
   }
 
   &__field-group {
-    @apply flex items-center gap-[1.6rem]; // Generic horizontal group for inputs/controls
+    @apply flex items-center gap-[1.6rem];
   }
 
   &__avatar-group {
-    @apply flex items-center gap-[1.6rem]; // Specialized group for avatars + buttons
+    @apply flex items-center gap-[1.6rem];
   }
 
   &__item-group {
-    @apply flex items-center gap-[1.2rem]; // Specialized group for icons/badges + text
+    @apply flex items-center gap-[1.2rem];
   }
 
-  // ========================================
-  // Select Dropdown Trigger (for Preline dropdowns)
-  // ========================================
+  // Control groups for checkboxes/radios
+  &__control-group {
+    @apply flex items-center gap-[1.2rem] cursor-pointer;
+  }
+
+  &__check-group {
+    @apply flex items-center gap-[1.2rem] cursor-pointer;
+  }
+
+  &__check-label {
+    @apply text-body-sm text-grey-700;
+    .dark & {
+      @apply text-grey-300;
+    }
+  }
+
+  // Preline Select Custom Classes
   &__select {
     @apply w-full flex items-center justify-between;
-  }
 
-  // ========================================
-  // Account Info Box
-  // ========================================
-  &__account-info {
-    @apply bg-blue-600/5 p-4;
-    border-radius: var(--radius-md);
-
-    .dark & {
-      @apply bg-blue-50/5;
+    &-toggle {
+      @apply hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative w-full flex items-center justify-between cursor-pointer px-[1.2rem] bg-white border border-grey-100/50 text-body-sm text-grey-900 hover:border-grey-300 focus:outline-none dark:bg-grey-900 dark:border-grey-800 dark:text-white dark:hover:border-grey-600 h-[3.2rem] rounded-md;
     }
 
-    &-title {
-      @apply text-sm font-semibold text-grey-900 mb-3;
+    &-dropdown {
+      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 shadow-lg overflow-y-auto p-[0.4rem] dark:bg-grey-900 dark:border-grey-700;
+      border-radius: var(--radius-md);
+    }
 
-      .dark & {
-        @apply text-white;
+    &-search {
+      @apply sticky top-0 p-[0.8rem] bg-white border-b border-grey-100 mb-[0.4rem];
+      
+      &__input {
+        @apply w-full;
+        @apply text-body-sm placeholder:text-body-sm;
+        @apply bg-white text-grey-900 placeholder-grey-400;
+        @apply border border-grey-100/50 rounded-md;
+        @apply outline-none;
+        @apply transition-all duration-200;
+        @apply h-[3.2rem] px-[1.2rem];
+
+        &:focus {
+          @apply border-blue-600 ring-2 ring-blue-600/20;
+        }
+
+        .dark & {
+          @apply bg-grey-900 text-white placeholder-grey-500;
+          @apply border-grey-700;
+
+          &:focus {
+            @apply border-blue-600 ring-blue-600/20;
+          }
+        }
       }
     }
 
-    &-grid {
-      @apply grid grid-cols-1 md:grid-cols-3 gap-4 text-sm;
-    }
+    &-option {
+      @apply py-[0.64rem] px-[0.8rem] mb-[0.4rem] w-full text-body-sm text-grey-900 cursor-pointer transition-all duration-200 border-0 focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
+      border-radius: var(--radius-md);
 
-    &-label {
-      @apply text-grey-500;
-    }
-
-    &-value {
-      @apply font-medium text-grey-900;
-
-      .dark & {
-        @apply text-white;
+      &:last-child {
+        @apply mb-0;
       }
     }
   }
 
-  // ========================================
-  // Form Horizontal Divider
-  // ========================================
+  // Horizontal Divider
   &__hr {
     @apply border-grey-50 my-6;
 
@@ -356,7 +267,6 @@
         @apply opacity-100 bg-black/70;
       }
 
-      // Dark mode: lighter overlay so image remains visible
       .dark & {
         @apply bg-grey-900/40;
 
@@ -369,15 +279,9 @@
         }
       }
 
-      .image-upload__icon {
-        @apply text-white;
-
-        .dark & {
-          @apply text-white;
-        }
-      }
-
-      .image-upload__text {
+      .image-upload__icon,
+      .image-upload__text,
+      .image-upload__hint {
         @apply text-white;
 
         .dark & {
@@ -387,10 +291,6 @@
 
       .image-upload__hint {
         @apply text-white/70;
-
-        .dark & {
-          @apply text-white/70;
-        }
       }
     }
   }
@@ -401,7 +301,7 @@
   }
 
   &__text {
-    @apply text-sm text-grey-600 mb-[0.4rem];
+    @apply text-body-sm text-grey-600 mb-[0.4rem];
 
     .dark & {
       @apply text-grey-400;
@@ -409,7 +309,7 @@
   }
 
   &__hint {
-    @apply text-xs text-grey-400;
+    @apply text-body-xs text-grey-400;
 
     .dark & {
       @apply text-grey-500;
@@ -448,36 +348,13 @@
   }
 }
 
-// Preline Select Custom Classes (BEM children of .form)
-.form {
-  &__select {
-    // Toggle button styling
-    &-toggle {
-      @apply hs-select-disabled:pointer-events-none hs-select-disabled:opacity-50 relative w-full flex items-center justify-between cursor-pointer px-[1.2rem] bg-white border border-grey-100/50 text-sm text-grey-900 hover:border-grey-300 focus:outline-none dark:bg-grey-900 dark:border-grey-800 dark:text-white dark:hover:border-grey-600 h-[3.2rem] rounded-md;
-    }
-    
-    // Dropdown menu styling
-    &-dropdown {
-      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 shadow-lg overflow-hidden overflow-y-auto p-[0.4rem] scrollbar-hide dark:bg-grey-900 dark:border-grey-700;
-      border-radius: var(--radius-md);
-    }
-    
-    // Option items styling
-    &-option {
-      @apply py-[0.64rem] px-[0.8rem] w-full text-sm text-grey-900 cursor-pointer transition-all duration-200 border-0 focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
-      border-radius: var(--radius-md);
-    }
-  }
-}
-
-// CKEditor 5 Styling
+// CKEditor Styling
 .ck-editor {
   &__editable {
     min-height: 240px !important;
   }
 }
 
-// CKEditor Toolbar Styling
 .ck {
   &.ck-toolbar {
     .ck-toolbar__items {
@@ -491,9 +368,7 @@
   }
 }
 
-// CKEditor Dark Mode
 .dark {
-  // Target the toolbar wrapper border specifically
   .ck.ck-editor__top .ck-sticky-panel .ck-sticky-panel__content {
     border: 1px solid #404040 !important;
     border-bottom: 1px solid #404040 !important;
@@ -507,32 +382,31 @@
         border-color: #404040 !important;
       }
     }
-    
+
     &.ck-toolbar {
       background-color: #2a2a2a !important;
       border: none !important;
-      
+
       .ck-toolbar__items {
         .ck-button {
           color: #e5e5e5 !important;
-          
+
           &:hover {
             background-color: #404040 !important;
           }
-          
+
           &.ck-on {
             background-color: #505050 !important;
           }
         }
       }
     }
-    
+
     &.ck-dropdown__panel {
       background-color: #2a2a2a !important;
       border-color: #404040 !important;
     }
-    
-    // Target all CKEditor borders
+
     &.ck-editor {
       border: 1px solid #404040 !important;
     }

@@ -50,7 +50,7 @@
   }
 
   &__title {
-    @apply text-lg font-semibold text-grey-900 dark:text-white;
+    @apply text-body-lg font-semibold text-grey-900 dark:text-white;
   }
 
   &__close {
@@ -88,7 +88,7 @@
   }
 
   &__text {
-    @apply text-sm text-grey-500;
+    @apply text-body-sm text-grey-500;
     .dark & {
       @apply text-grey-400;
     }
@@ -134,7 +134,7 @@
 
 // Delete modal specific typography
 .modal__title {
-  @apply text-lg font-semibold text-grey-900 mb-2;
+  @apply text-body-lg font-semibold text-grey-900 mb-2;
 
   .dark & {
     @apply text-white;
@@ -142,7 +142,7 @@
 }
 
 .modal__description {
-  @apply text-sm text-grey-500;
+  @apply text-body-sm text-grey-500;
 
   .dark & {
     @apply text-grey-400;

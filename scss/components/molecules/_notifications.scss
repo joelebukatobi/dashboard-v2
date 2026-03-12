@@ -14,7 +14,7 @@
   }
 
   &__title {
-    @apply text-sm font-semibold;
+    @apply text-body-sm font-semibold;
     @apply text-grey-900;
 
     .dark & {
@@ -23,7 +23,7 @@
   }
 
   &__action {
-    @apply text-xs hover:underline;
+    @apply text-body-xs hover:underline;
     @apply text-blue-600;
 
     .dark & {
@@ -101,7 +101,7 @@
   }
 
   &__text {
-    @apply text-sm;
+    @apply text-body-sm;
     @apply text-grey-900;
 
     .dark & {
@@ -114,7 +114,7 @@
   }
 
   &__time {
-    @apply text-xs mt-[0.2rem] text-grey-500;
+    @apply text-body-xs mt-[0.2rem] text-grey-500;
 
     .dark & {
       @apply text-grey-400;
@@ -130,7 +130,7 @@
   }
 
   &__view-all {
-    @apply block text-center text-sm hover:underline;
+    @apply block text-center text-body-sm hover:underline;
     @apply text-blue-600;
 
     .dark & {

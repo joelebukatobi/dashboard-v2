@@ -8,7 +8,7 @@
 
   &__content {
     @apply absolute z-50 px-[1.2rem] py-[0.4rem];
-    @apply text-xs font-medium text-white;
+    @apply text-body-xs font-medium text-white;
     @apply bg-grey-900 dark:bg-grey-700 rounded-lg;
     @apply opacity-0 invisible transition-all duration-200;
     @apply whitespace-nowrap;
