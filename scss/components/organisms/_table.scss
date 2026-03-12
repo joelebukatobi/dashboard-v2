@@ -24,7 +24,7 @@
   // ========================================
   &__label {
     @apply lg:hidden;
-    @apply text-base font-medium text-grey-500 min-w-[8rem];
+    @apply text-body font-medium text-grey-500 lg:min-w-[8rem];
 
     .dark & {
       @apply text-grey-400;
@@ -47,8 +47,12 @@
 
     th {
       @apply text-left px-[1.6rem] py-[1rem];
-      @apply text-base font-semibold capitalize tracking-normal;
+      @apply text-body font-semibold capitalize tracking-normal;
       @apply text-grey-500 border-b border-grey-200;
+
+      &:first-child {
+        @apply pl-0;
+      }
 
       .dark & {
         @apply text-grey-300 border-grey-700 bg-grey-900;
@@ -104,13 +108,17 @@
   // ========================================
   &__td {
     // Mobile: Stack with labels
-    @apply flex items-center gap-[1rem];
+    @apply flex items-center gap-x-[.8rem];
     @apply mb-[1rem] last:mb-0;
 
     // Desktop: Table cell with vertical centering
     @apply lg:table-cell lg:px-[1.6rem] lg:py-[1.2rem];
     @apply lg:border-b lg:border-grey-100;
     @apply lg:mb-0;
+
+    &:first-child {
+      @apply lg:pl-0;
+    }
 
     // Critical: Force vertical-align middle on desktop
     @media (min-width: 1024px) {
@@ -139,7 +147,7 @@
   // Table Cell Title
   // ========================================
   &__title {
-    @apply font-medium text-sm text-grey-900;
+    @apply font-medium text-body text-grey-900;
 
     .dark & {
       @apply text-white;
@@ -155,7 +163,7 @@
   }
 
   &__subtitle {
-    @apply text-sm text-grey-500;
+    @apply text-body-sm text-grey-500;
     .dark & {
       @apply text-grey-400;
     }
@@ -163,7 +171,7 @@
 
   // Slug/code display
   &__slug {
-    @apply text-sm text-grey-500 font-mono;
+    @apply text-body text-grey-500 font-mono;
 
     .dark & {
       @apply text-grey-400;

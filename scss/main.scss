@@ -20,9 +20,15 @@
 @use 'components/atoms/avatar' as *;
 @use 'components/atoms/badge' as *;
 @use 'components/atoms/button' as *;
-@use 'components/atoms/tooltip' as *;
+@use 'components/atoms/checkbox' as *;
 @use 'components/atoms/divider' as *;
+@use 'components/atoms/form-feedback' as *;
 @use 'components/atoms/input' as *;
+@use 'components/atoms/label' as *;
+@use 'components/atoms/radio' as *;
+@use 'components/atoms/select' as *;
+@use 'components/atoms/textarea' as *;
+@use 'components/atoms/tooltip' as *;
 
 // Molecules - Simple groups of atoms
 @use 'components/molecules/breadcrumb' as *;

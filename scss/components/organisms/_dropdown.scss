@@ -8,7 +8,7 @@
   @apply relative inline-flex;
 
   & button {
-    @apply text-[.96rem];
+    @apply text-body-sm;
   }
 
   & svg {
@@ -92,7 +92,7 @@
 
 // Dropdown item
 .dropdown__item {
-  @apply flex items-center gap-[.64rem] py-[0.64rem] px-[.8rem] rounded-md text-sm w-full;
+  @apply flex items-center gap-[.64rem] py-[0.64rem] px-[.8rem] rounded-md text-body-sm w-full;
   @apply text-grey-900;
   .dark & {
     @apply text-white;
@@ -114,7 +114,7 @@
 
   // Description text within dropdown item
   &-description {
-    @apply text-sm;
+    @apply text-body-sm;
   }
 
   &--danger {
@@ -169,7 +169,7 @@
   }
 
   &-name {
-    @apply text-sm font-semibold;
+    @apply text-body-sm font-semibold;
     @apply text-grey-900;
     .dark & {
       @apply text-white;
@@ -177,8 +177,8 @@
   }
 
   &-email {
-    @apply text-xs;
-    @apply text-xs mt-[0.2rem] text-grey-500;
+    @apply text-body-xs;
+    @apply text-body-xs mt-[0.2rem] text-grey-500;
     .dark & {
       @apply text-grey-400;
     }

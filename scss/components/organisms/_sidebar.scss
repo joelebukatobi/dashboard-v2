@@ -143,7 +143,7 @@ $collapsed-item-size: 3.2rem;
   &__logo-icon {
     @apply flex items-center justify-center flex-shrink-0;
     @apply text-blue-700 dark:text-grey-900 bg-white rounded-md;
-    @apply font-bold text-sm;
+    @apply font-bold text-body-sm;
 
     & svg {
       @apply w-[2rem] h-[2rem] stroke-[1.2] stroke-blue-600 dark:stroke-grey-600;
@@ -151,7 +151,7 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__logo-text {
-    @apply text-lg  font-bold text-white whitespace-nowrap transition-opacity duration-200;
+    @apply text-body-lg font-bold text-white whitespace-nowrap transition-opacity duration-200;
   }
 
   &__toggle {
@@ -187,7 +187,7 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__group-title {
-    @apply pl-[.8rem] pr-[1.6rem] py-[0.8rem] text-xs font-semibold uppercase tracking-wider;
+    @apply pl-[.8rem] pr-[1.6rem] py-[0.8rem] text-body-xs font-semibold uppercase tracking-wider;
     @apply text-white/40 whitespace-nowrap transition-opacity duration-200;
   }
 
@@ -197,7 +197,7 @@ $collapsed-item-size: 3.2rem;
 
   &__item {
     @apply relative flex items-center  gap-[.8rem] cursor-pointer;
-    @apply pl-[.8rem] pr-[.4rem] py-[0.8rem] text-sm font-medium text-white/70;
+    @apply pl-[.8rem] pr-[.4rem] py-[0.8rem] text-body-sm font-medium text-white/70;
     @apply transition-all duration-200 no-underline;
 
     &:hover {
@@ -244,7 +244,7 @@ $collapsed-item-size: 3.2rem;
 
   &__item-badge {
     @apply inline-flex items-center justify-center min-w-[2.0rem] h-[2.0rem] px-[0.4rem];
-    @apply text-xs font-medium bg-white/20 text-white rounded-full;
+    @apply text-body-xs font-medium bg-white/20 text-white rounded-full;
     @apply transition-opacity duration-200;
 
     &--warning {
@@ -273,7 +273,7 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__submenu-item {
-    @apply block px-[1.6rem] py-[0.8rem] text-sm text-white/60 rounded-md no-underline;
+    @apply block px-[1.6rem] py-[0.8rem] text-body-sm text-white/60 rounded-md no-underline;
     @apply hover:text-white hover:bg-white/5 transition-colors duration-200;
   }
 
@@ -291,11 +291,11 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__user-name {
-    @apply block text-sm font-medium text-white truncate;
+    @apply block text-body-sm font-medium text-white truncate;
   }
 
   &__user-role {
-    @apply block text-xs text-white/60 truncate;
+    @apply block text-body-xs text-white/60 truncate;
   }
 
   &__user-menu {
@@ -308,8 +308,13 @@ $collapsed-item-size: 3.2rem;
 .sidebar-overlay {
   @apply fixed inset-0 bg-black/50 z-20 opacity-0 invisible;
   @apply transition-all duration-300;
+  pointer-events: none; // Prevent interaction when hidden
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 
   .layout--sidebar-open & {
     @apply opacity-100 visible;
+    pointer-events: auto; // Enable interaction when visible
   }
 }

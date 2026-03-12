@@ -9,7 +9,7 @@
   }
 
   &__trigger {
-    @apply px-[1.6rem] py-[0.8rem] text-sm font-medium;
+    @apply px-[1.6rem] py-[0.8rem] text-body-sm font-medium;
     @apply text-grey-500 dark:text-grey-400;
     @apply border-b-2 border-transparent -mb-px;
     @apply hover:text-grey-700 dark:hover:text-grey-200;

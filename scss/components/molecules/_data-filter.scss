@@ -26,7 +26,7 @@
 
     &-input {
       @apply w-full h-[3.2rem] pl-[4rem] pr-[1.2rem];
-      @apply text-[1.3rem];
+      @apply text-body-sm;
       @apply bg-white text-grey-900 placeholder-grey-400;
       @apply border border-grey-200 rounded-md;
       @apply outline-none;
@@ -107,7 +107,7 @@
     &-item {
       @apply flex items-center gap-[1.2rem];
       @apply w-full px-[1.6rem] py-[1rem];
-      @apply text-[1.4rem] text-left;
+      @apply text-body-sm text-left;
       @apply text-grey-700 hover:bg-grey-50;
       @apply cursor-pointer;
       @apply transition-colors duration-200;
@@ -200,7 +200,7 @@
   &__pill {
     @apply inline-flex items-center gap-[0.6rem];
     @apply px-[1rem] py-[0.4rem] rounded-full;
-    @apply text-[1.2rem] font-medium;
+      @apply text-body-sm font-medium;
     @apply bg-blue-100 text-blue-700;
 
     .dark & {

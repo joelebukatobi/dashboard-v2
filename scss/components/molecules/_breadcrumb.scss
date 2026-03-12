@@ -7,7 +7,7 @@
   @apply hidden sm:flex items-center flex-wrap gap-[0.8rem];
 
   &__item {
-    @apply inline-flex items-center gap-[0.4rem] text-[1.04rem] no-underline;
+    @apply inline-flex items-center gap-[0.4rem] text-body-xs no-underline;
     @apply text-black;
     @apply transition-colors duration-200;
     @apply hover:text-blue-600;

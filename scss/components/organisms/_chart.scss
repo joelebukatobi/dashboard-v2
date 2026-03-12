@@ -12,7 +12,7 @@
   }
 
   &__title {
-    @apply text-base font-semibold text-grey-900 dark:text-white;
+    @apply text-body font-semibold text-grey-900 dark:text-white;
   }
 
   &__legend {
@@ -20,7 +20,7 @@
   }
 
   &__legend-item {
-    @apply flex items-center gap-[0.8rem] text-sm text-grey-600 dark:text-grey-400;
+    @apply flex items-center gap-[0.8rem] text-body-sm text-grey-600 dark:text-grey-400;
 
     &::before {
       @apply content-[''] w-[1.2rem] h-[1.2rem] rounded-full;
@@ -64,11 +64,11 @@
   }
 
   &__stat-value {
-    @apply block text-xl font-bold text-grey-900 dark:text-white;
+    @apply block text-body-xl font-bold text-grey-900 dark:text-white;
   }
 
   &__stat-label {
-    @apply block text-xs text-grey-500 dark:text-grey-400 mt-[0.2rem];
+    @apply block text-body-xs text-grey-500 dark:text-grey-400 mt-[0.2rem];
   }
 
   // ApexCharts container - fills remaining space
@@ -85,7 +85,7 @@
 
   &__btn,
   &__item {
-    @apply py-[0.6rem] px-[1.2rem] text-sm font-medium rounded-md;
+    @apply py-[0.6rem] px-[1.2rem] text-body-sm font-medium rounded-md;
     @apply text-grey-600 dark:text-grey-400;
     @apply hover:text-grey-900 dark:hover:text-white transition-colors;
 
