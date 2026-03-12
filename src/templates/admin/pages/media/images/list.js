@@ -1,5 +1,4 @@
-// src/templates/admin/pages/media/images/list.js
-// Images list page template
+// Images list page template - Exact structure from images.html
 
 import { mainLayout } from '../../../layouts/main.js';
 
@@ -15,108 +14,120 @@ import { mainLayout } from '../../../layouts/main.js';
  * @returns {string} - HTML string
  */
 export function imagesListPage({ user, images, pagination, stats, filters, toast }) {
+  // Build toast script if toast param is present
+  const toastScript = toast ? `
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const toastMessages = {
+          deleted: 'Image deleted successfully!',
+        };
+        const message = toastMessages['${toast}'] || '${toast}';
+        document.body.dispatchEvent(new CustomEvent('htmx:toast', {
+          detail: { message: message, type: 'success' }
+        }));
+        // Clean up URL (remove toast param)
+        const url = new URL(window.location);
+        url.searchParams.delete('toast');
+        window.history.replaceState({}, '', url);
+      });
+    </script>
+  ` : '';
+
   const content = `
-    <div class="images-page">
-      <!-- Page Header -->
-      <div class="page-header">
-        <div class="page-header__left">
-          <h1 class="page-header__title">Images</h1>
-          <p class="page-header__subtitle">
-            ${stats.total} images (${formatFileSize(stats.totalSize)})
-          </p>
+    <div class="media">
+      <div class="content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header__left">
+            <h1 class="page-header__title">Images</h1>
+            <p class="page-header__subtitle">Manage your image library</p>
+          </div>
+          <div class="page-header__toast-container"></div>
         </div>
-        <div class="page-header__actions">
-          <!-- Upload Form -->
-          <form 
-            id="uploadForm"
-            hx-post="/admin/media/images"
-            hx-target="#uploadResponse"
-            hx-swap="innerHTML"
-            enctype="multipart/form-data"
-            class="upload-form"
-          >
-            <input 
-              type="file" 
-              name="image" 
-              id="imageInput"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              style="display: none;"
-              onchange="this.form.requestSubmit()"
-            />
-            <button 
-              type="button" 
-              class="btn btn--primary btn--icon"
-              onclick="document.getElementById('imageInput').click()"
-            >
-              <i data-lucide="upload"></i>
-              Upload
-            </button>
-          </form>
-        </div>
-      </div>
 
-      <!-- Upload Response Container -->
-      <div id="uploadResponse"></div>
-
-      <!-- Filters -->
-      <div class="data-filter">
-        <form 
-          class="data-filter__form"
-          hx-get="/admin/media/images"
-          hx-target=".images-grid-container"
-          hx-swap="innerHTML"
-          hx-trigger="submit, change from:select"
-        >
+        <!-- Data Filter -->
+        <div class="data-filter">
           <div class="data-filter__search">
             <i data-lucide="search" class="data-filter__search-icon"></i>
-            <input 
-              type="text" 
-              name="search" 
-              class="data-filter__input"
+            <input
+              type="text"
+              class="input input--icon-left"
               placeholder="Search images..."
               value="${filters.search || ''}"
+              hx-get="/admin/media/images"
+              hx-target=".media-grid"
+              hx-trigger="keyup changed delay:500ms"
+              name="search"
             />
           </div>
-          
-          ${stats.tags.length > 0 ? `
-            <div class="data-filter__select">
-              <select name="tag" class="data-filter__input">
-                <option value="">All Tags</option>
-                ${stats.tags.map(tag => `
-                  <option value="${tag}" ${filters.tag === tag ? 'selected' : ''}>${tag}</option>
-                `).join('')}
-              </select>
-            </div>
-          ` : ''}
-          
-          <button type="submit" class="btn btn--secondary">
-            <i data-lucide="filter"></i>
-            Filter
-          </button>
-        </form>
-      </div>
 
-      <!-- Images Grid -->
-      <div class="images-grid-container">
-        ${imagesGrid({ images, pagination })}
+          <div class="data-filter__controls">
+            <a href="/admin/media/images/new" class="btn btn--primary">
+              New Image
+            </a>
+          </div>
+        </div>
+
+        <!-- Media Grid -->
+        <div class="media-grid">
+          ${images && images.length > 0 ? images.map((image) => {
+            const extension = image.filename.split('.').pop().toUpperCase();
+            return `
+              <a href="/admin/media/images/${image.id}/edit" class="media-card group">
+                <div class="media-card__thumbnail">
+                  <img
+                    src="${(image.thumbnailPath || image.path).startsWith('/public') ? (image.thumbnailPath || image.path) : '/public' + (image.thumbnailPath || image.path)}"
+                    alt="${escapeHtml(image.altText || image.title)}"
+                  />
+                  <div class="media-card__details">
+                    <h3 class="media-card__title">${escapeHtml(image.originalName)}</h3>
+                    <span class="media-card__meta">${image.sizeFormatted} • ${extension}</span>
+                  </div>
+                  <div class="media-card__actions-overlay">
+                    <button 
+                      type="button"
+                      class="media-card__action-btn"
+                      onclick="event.preventDefault(); event.stopPropagation();"
+                    >
+                      <i data-lucide="pencil"></i>
+                    </button>
+                    <button 
+                      type="button"
+                      class="media-card__action-btn"
+                      data-image-id="${image.id}"
+                      data-image-name="${escapeHtml(image.originalName)}"
+                      onclick="event.preventDefault(); event.stopPropagation(); openDeleteModal(this)"
+                    >
+                      <i data-lucide="trash-2"></i>
+                    </button>
+                  </div>
+                </div>
+              </a>
+            `;
+          }).join('') : ''}
+        </div>
+
+        ${pagination && pagination.totalPages > 1 ? paginationHtml({ 
+          page: pagination.page, 
+          totalPages: pagination.totalPages, 
+          filters 
+        }) : ''}
       </div>
     </div>
+  </div>
 
-    <!-- Delete Modal -->
-    ${deleteModal(user)}
-
-    <!-- Toast Script -->
-    ${toast ? `
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          if (typeof showToast === 'function') {
-            showToast(${JSON.stringify(toast)}, 'success');
-          }
-        });
-      </script>
-    ` : ''}
-
+  <!-- Toast Script -->
+  ${toast ? `
     <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof showToast === 'function') {
+          showToast(${JSON.stringify(toast)}, 'success');
+        }
+      });
+    </script>
+  ` : ''}
+
+  <script>
       // Delete Modal Functions
       function openDeleteModal(button) {
         const imageId = button.getAttribute('data-image-id');
@@ -149,11 +160,14 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
 
       // Close modal on backdrop click
       document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
-          if (e.target === this || e.target.id === 'modalBackdrop') {
-            closeDeleteModal();
-          }
-        });
+        const modal = document.getElementById('deleteModal');
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target === this || e.target.id === 'modalBackdrop') {
+              closeDeleteModal();
+            }
+          });
+        }
       });
 
       // Close modal on escape key
@@ -163,19 +177,17 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
         }
       });
 
-      // Listen for refresh trigger after upload
-      document.body.addEventListener('refreshImages', function() {
-        if (typeof htmx !== 'undefined') {
-          htmx.ajax('GET', '/admin/media/images', { target: '.images-grid-container', swap: 'innerHTML' });
-        }
-      });
+
     </script>
   `;
+
+  // Delete Modal - Outside content for proper z-index
+  const modal = deleteModal(user);
 
   return mainLayout({
     title: 'Images',
     description: 'Manage your image library',
-    content,
+    content: content + modal + toastScript,
     user,
     activeRoute: '/admin/media/images',
     breadcrumbs: [
@@ -184,90 +196,6 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
       { label: 'Images', url: '/admin/media/images' },
     ],
   });
-}
-
-/**
- * Generate images grid
- * @param {Object} options - Options
- * @param {Array} options.images - Image list
- * @param {Object} options.pagination - Pagination data
- * @returns {string} - HTML string
- */
-function imagesGrid({ images, pagination }) {
-  if (!images || images.length === 0) {
-    return `
-      <div class="empty-state">
-        <div class="empty-state__icon">
-          <i data-lucide="image" class="w-16 h-16 text-grey-400"></i>
-        </div>
-        <h3 class="empty-state__title">No images yet</h3>
-        <p class="empty-state__description">Upload your first image to get started</p>
-      </div>
-    `;
-  }
-
-  const cards = images.map((image) => {
-    const extension = image.filename.split('.').pop().toUpperCase();
-    
-    return `
-      <div class="media-card group">
-        ${image.tag ? `<span class="media-card__tag">${escapeHtml(image.tag)}</span>` : ''}
-        <div class="media-card__thumbnail">
-          <img
-            src="${image.thumbnailPath || image.path}"
-            alt="${escapeHtml(image.altText || image.title)}"
-            loading="lazy"
-          />
-          <div class="media-card__actions">
-            <a href="/admin/media/images/${image.id}/edit" class="media-card__action-btn" title="Edit">
-              <i data-lucide="pencil" class="size-4"></i>
-            </a>
-            <button 
-              type="button"
-              class="media-card__action-btn media-card__action-btn--delete" 
-              title="Delete"
-              data-image-id="${image.id}"
-              data-image-name="${escapeHtml(image.originalName)}"
-              onclick="openDeleteModal(this)"
-            >
-              <i data-lucide="trash-2" class="size-4"></i>
-            </button>
-          </div>
-        </div>
-        <div class="media-card__details">
-          <h3 class="media-card__title">${escapeHtml(image.originalName)}</h3>
-          <span class="media-card__meta">${image.sizeFormatted} • ${extension}</span>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  // Build pagination
-  let paginationHtml = '';
-  if (pagination.totalPages > 1) {
-    const prevLink = pagination.hasPrevPage 
-      ? `<a href="?page=${pagination.page - 1}${pagination.tag ? '&tag=' + pagination.tag : ''}${pagination.search ? '&search=' + pagination.search : ''}" class="pagination__item"><i data-lucide="chevron-left"></i></a>`
-      : `<span class="pagination__item pagination__item--disabled"><i data-lucide="chevron-left"></i></span>`;
-    
-    const nextLink = pagination.hasNextPage
-      ? `<a href="?page=${pagination.page + 1}${pagination.tag ? '&tag=' + pagination.tag : ''}${pagination.search ? '&search=' + pagination.search : ''}" class="pagination__item"><i data-lucide="chevron-right"></i></a>`
-      : `<span class="pagination__item pagination__item--disabled"><i data-lucide="chevron-right"></i></span>`;
-
-    paginationHtml = `
-      <div class="pagination">
-        ${prevLink}
-        <span class="pagination__info">Page ${pagination.page} of ${pagination.totalPages}</span>
-        ${nextLink}
-      </div>
-    `;
-  }
-
-  return `
-    <div class="media-grid">
-      ${cards}
-    </div>
-    ${paginationHtml}
-  `;
 }
 
 /**
@@ -310,7 +238,7 @@ function deleteModal(user) {
           <form
             id="deleteImageForm"
             hx-delete=""
-            hx-target=".images-grid-container"
+            hx-target=".media-grid"
             hx-swap="innerHTML"
             class="px-6 pb-6 flex flex-col gap-3"
           >
@@ -339,6 +267,76 @@ function formatFileSize(bytes) {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+/**
+ * Generate pagination HTML
+ * @param {Object} options - Pagination options
+ * @param {number} options.page - Current page
+ * @param {number} options.totalPages - Total pages
+ * @param {Object} options.filters - Active filters
+ * @returns {string} - Pagination HTML
+ */
+function paginationHtml({ page, totalPages, filters }) {
+  const params = new URLSearchParams();
+  if (filters?.search) params.set('search', filters.search);
+
+  const baseQuery = params.toString();
+  const queryPrefix = baseQuery ? `&${baseQuery}` : '';
+
+  return `
+    <footer class="page-footer">
+      <div class="pagination">
+        ${generatePaginationLinks(page, totalPages, queryPrefix)}
+      </div>
+    </footer>
+  `;
+}
+
+/**
+ * Generate pagination link buttons
+ * @param {number} page - Current page
+ * @param {number} totalPages - Total pages
+ * @param {string} queryPrefix - Query string prefix
+ * @returns {string} - Pagination links HTML
+ */
+function generatePaginationLinks(page, totalPages, queryPrefix) {
+  let links = '';
+
+  // Previous button
+  const prevDisabled = page <= 1 ? 'pagination__item--disabled' : '';
+  const prevHref = page > 1 ? `?page=${page - 1}${queryPrefix}` : '#';
+  links += `<a href="${prevHref}" class="pagination__item ${prevDisabled}"><i data-lucide="chevron-left"></i></a>`;
+
+  // Page numbers
+  let pageNumbers = [];
+  const maxVisible = 5;
+
+  if (totalPages <= maxVisible) {
+    pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  } else if (page <= 3) {
+    pageNumbers = [1, 2, 3, 4, '...', totalPages];
+  } else if (page >= totalPages - 2) {
+    pageNumbers = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  } else {
+    pageNumbers = [1, '...', page - 1, page, page + 1, '...', totalPages];
+  }
+
+  pageNumbers.forEach((p) => {
+    if (p === '...') {
+      links += '<span class="pagination__ellipsis">...</span>';
+    } else {
+      const active = p === page ? 'pagination__item--active' : '';
+      links += `<a href="?page=${p}${queryPrefix}" class="pagination__item ${active}">${p}</a>`;
+    }
+  });
+
+  // Next button
+  const nextDisabled = page >= totalPages ? 'pagination__item--disabled' : '';
+  const nextHref = page < totalPages ? `?page=${page + 1}${queryPrefix}` : '#';
+  links += `<a href="${nextHref}" class="pagination__item ${nextDisabled}"><i data-lucide="chevron-right"></i></a>`;
+
+  return links;
 }
 
 /**
