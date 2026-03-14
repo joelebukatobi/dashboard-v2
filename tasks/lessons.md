@@ -1,0 +1,2 @@
+- When migrating SCSS BEM components to Tailwind-first markup, remove the component import and grep for leftover layout/selectors in the same slice.
+- Validate Tailwind-first migrations with both `npm run build:css` and a workspace search for deleted component class names.

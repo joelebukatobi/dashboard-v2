@@ -12,11 +12,9 @@
   // Left side - Image/branding panel
   &__branding {
     @apply hidden lg:flex lg:w-1/2;
-    @apply relative overflow-hidden;
-    z-index: 60; // Sit above modal backdrop
+    @apply relative overflow-hidden z-[60];
     background-image: url('https://images.unsplash.com/photo-1647559709298-c0e3dcb47092?q=80&w=988&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-    background-size: cover;
-    background-position: center;
+    @apply bg-cover bg-center;
   }
 
   // Right side - Form panel

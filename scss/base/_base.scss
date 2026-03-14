@@ -44,21 +44,17 @@
 // Hide scrollbars on mobile for cleaner UI
 @media (max-width: 1023px) {
   ::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
+    @apply hidden w-0 h-0;
   }
 
   * {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    @apply scrollbar-hide;
   }
 }
 
 html {
   // box-sizing: border-box; // Handled by Tailwind preflight
-  font-size: 62.5%; // 1rem = 10px (Default for < 1536px)
-  @apply h-full;
+  @apply h-full text-[62.5%]; // 1rem = 10px (Default for < 1536px)
 
   // Desktop: prevent body scroll, app handles scrolling
   @media (min-width: 1024px) {
@@ -67,7 +63,7 @@ html {
 
   // Standard laptops/desktops
   @media (min-width: 1440px) {
-    font-size: 87.5%; // 1rem = 14px
+    @apply text-[87.5%]; // 1rem = 14px
   }
 
   // Large screens with HiDPI (accounting for 150% system scaling)
@@ -95,10 +91,10 @@ body {
 // ============================================================================
 
 .htmx-indicator {
-  display: none;
+  @apply hidden;
 }
 
 .htmx-request .htmx-indicator,
 .htmx-indicator.htmx-request {
-  display: inline-block;
+  @apply inline-block;
 }

@@ -12,63 +12,51 @@
     // Ensure direct children (page wrappers like .posts, .users) fill the space
     // Excludes modals/overlays so they don't participate in flex sizing
     > div:not(.header):not(.mobile-search):not(.hs-overlay):not([id$="Modal"]) {
-      @apply flex-1 w-full flex flex-col;
-      min-height: 0; // Required: allows flex child to shrink for scroll chain
+      @apply flex-1 w-full flex flex-col min-h-0;
     }
 
     // Mobile: Natural scrolling without overflow restrictions
-    @apply ml-0 w-full;
-    overflow-x: hidden; // Prevent horizontal scroll on mobile
+    @apply ml-0 w-full overflow-x-hidden;
 
     // Desktop: App-like feel with overflow control
     @media (min-width: 1024px) {
-      margin-left: var(--sidebar-width);
-      width: calc(100% - var(--sidebar-width));
-      @apply overflow-hidden;
+      @apply ml-[var(--sidebar-width)] w-[calc(100%_-_var(--sidebar-width))] overflow-hidden;
     }
   }
 
   // Collapsed sidebar state - AFTER main rule for proper specificity
   &--sidebar-collapsed .main {
-    margin-left: var(--sidebar-width-collapsed);
-    width: calc(100% - var(--sidebar-width-collapsed));
+    @apply ml-[var(--sidebar-width-collapsed)] w-[calc(100%_-_var(--sidebar-width-collapsed))];
   }
 
   & .content {
-    @apply flex-1 w-full overflow-x-hidden;
-    min-height: 0; // Allow flex child to shrink below content size for scrolling
+    @apply flex-1 w-full overflow-x-hidden min-h-0;
     @apply p-[1.6rem] sm:p-[2.4rem] flex flex-col; 
 
     // Fixed elements - don't shrink
-    > .page-header,
-    > .data-filter {
-      flex-shrink: 0;
+    > .page-header {
+      @apply shrink-0;
     }
 
     // Generic scrollable table content area (desktop only)
     // Matches .posts__table-content, .categories__table-content, .tags__table-content, etc.
     > [class$="__table-content"] {
       @media (min-width: 1024px) {
-        flex: 1;
-        min-height: 0;
-        overflow-y: auto;
-        padding-right: 1.6rem; // Space between content and scrollbar
+        @apply flex-1 min-h-0 overflow-y-auto pr-[1.6rem];
       }
     }
     
     @media (min-width: 640px) {
-      padding-left: 2.4rem;
-
+      @apply pl-[2.4rem];
     }
     
     // Account for fixed page-footer (pagination) so last table row isn't hidden
-    padding-bottom: 6.4rem;
+    @apply pb-[6.4rem];
 
     // Height: fit between fixed header (5.6rem) and footer (6.4rem)
     // Mobile only - desktop uses flex-1 naturally
     @media (max-width: 1023px) {
-      height: 100vh;
-      margin-bottom: 1.6rem;
+      @apply h-screen mb-[1.6rem];
     }
     
  
@@ -77,7 +65,7 @@
       & tbody {
         & tr {
           & td {
-            @apply text-body;
+            @apply text-body-sm lg:text-body;
           }
         }
       }
@@ -108,36 +96,25 @@
 
     &__toast-container {
       @apply relative flex-1 flex items-center;
-      @apply min-h-[4rem] overflow-hidden;
-      pointer-events: none;
+      @apply min-h-[4rem] overflow-hidden pointer-events-none;
 
       > div {
-        pointer-events: auto;
+        @apply pointer-events-auto;
       }
     }
   }
 
   // Page Footer (Pagination) - fixed at bottom
   & .page-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100vw;
-    z-index: 20;
-    background-color: var(--color-white);
-    border-top: none;
-    padding: 1.6rem; // Mobile: match content padding
+    @apply fixed bottom-0 left-0 right-0 w-screen z-20 bg-white border-t-0 p-[1.6rem];
     
     .dark & {
-      background-color: var(--color-grey-900);
+      @apply bg-grey-900;
     }
     
     // Desktop: Account for sidebar width
     @media (min-width: 1024px) {
-      left: var(--sidebar-width);
-      width: calc(100vw - var(--sidebar-width));
-      padding-left: 2.4rem; // Mobile: match content padding
+      @apply left-[var(--sidebar-width)] w-[calc(100vw_-_var(--sidebar-width))] pl-[2.4rem];
     }
     
   }
@@ -145,8 +122,7 @@
   // Page footer alignment for collapsed sidebar
   &--sidebar-collapsed .page-footer {
     @media (min-width: 1024px) {
-      left: var(--sidebar-width-collapsed);
-      width: calc(100vw - var(--sidebar-width-collapsed));
+      @apply left-[var(--sidebar-width-collapsed)] w-[calc(100vw_-_var(--sidebar-width-collapsed))];
     }
   }
 
@@ -185,16 +161,15 @@
 
     // Main content area (2/3 width on large screens)
     &--main {
-      @apply grid-cols-1 lg:grid-cols-3;
-      align-items: start;
+      @apply grid-cols-1 lg:grid-cols-3 items-start;
 
       > * {
         // height: 37.6rem; // 376px fixed height for both widgets
       }
 
       > :first-child {
-        @media (min-width: theme('screens.lg')) {
-          grid-column: span 2 / span 2;
+        @media (min-width: 1024px) {
+          @apply col-span-2;
         }
       }
     }

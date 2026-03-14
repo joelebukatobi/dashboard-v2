@@ -10,13 +10,11 @@ $collapsed-item-size: 3.2rem;
 .sidebar {
   @apply fixed top-0 left-0 bottom-0 flex flex-col;
   @apply transition-all duration-300 ease-in-out;
-  @apply shadow-lg z-30;
-  width: var(--sidebar-width);
-  background-color: var(--color-bg-sidebar);
+  @apply shadow-lg z-30 w-[var(--sidebar-width)] bg-[var(--color-bg-sidebar)];
 
   // Collapsed state
   &--collapsed {
-    width: var(--sidebar-width-collapsed);
+    @apply w-[var(--sidebar-width-collapsed)];
 
     .sidebar__header {
       @apply justify-center p-0;
@@ -63,22 +61,18 @@ $collapsed-item-size: 3.2rem;
       height: $collapsed-item-size !important;
 
       &:hover {
-        background-color: var(--color-bg-sidebar-hover);
+        @apply bg-[var(--color-bg-sidebar-hover)];
       }
 
       &--active,
       &--has-submenu.sidebar__item--active {
-        @apply text-white;
-        background-color: transparent;
+        @apply text-white bg-transparent;
         width: $collapsed-item-size !important;
         height: $collapsed-item-size !important;
 
         &::before {
-          content: '';
-          @apply absolute left-0 top-1/2 -translate-y-1/2;
-          width: 2px;
-          height: 1.4rem;
-          background-color: white;
+          @apply content-[''] absolute left-0 top-1/2 -translate-y-1/2;
+          @apply w-[2px] h-[1.4rem] bg-white;
         }
       }
     }
@@ -133,7 +127,7 @@ $collapsed-item-size: 3.2rem;
   // Header
   &__header {
     @apply flex items-center justify-between px-[1.6rem] border-b border-white/10;
-    height: var(--header-height);
+    @apply h-[var(--header-height)];
   }
 
   &__logo {
@@ -178,8 +172,7 @@ $collapsed-item-size: 3.2rem;
   // Navigation
   &__nav {
     @apply flex-1 overflow-y-auto overflow-x-hidden p-[1.6rem];
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    @apply [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.2)_transparent];
   }
 
   &__group {
@@ -201,21 +194,16 @@ $collapsed-item-size: 3.2rem;
     @apply transition-all duration-200 no-underline;
 
     &:hover {
-      background-color: var(--color-bg-sidebar-hover);
-      @apply text-white rounded-md;
+      @apply bg-[var(--color-bg-sidebar-hover)] text-white rounded-md;
     }
 
     &--active {
-      @apply text-white;
-      background-color: transparent;
+      @apply text-white bg-transparent;
 
       // White left bar matching icon height
       &::before {
-        content: '';
-        @apply absolute left-0 top-1/2 -translate-y-1/2;
-        width: 2px;
-        height: 1.4rem;
-        background-color: white;
+        @apply content-[''] absolute left-0 top-1/2 -translate-y-1/2;
+        @apply w-[2px] h-[1.4rem] bg-white;
       }
     }
 
@@ -264,11 +252,10 @@ $collapsed-item-size: 3.2rem;
   // Submenu
   &__submenu {
     @apply overflow-hidden pl-[3.2rem] mb-0;
-    max-height: 0;
-    transition: max-height 0.3s ease;
+    @apply max-h-0 [transition:max-height_0.3s_ease];
 
     &--open {
-      max-height: 20rem;
+      @apply max-h-[20rem];
     }
   }
 
@@ -307,14 +294,9 @@ $collapsed-item-size: 3.2rem;
 // Sidebar overlay for mobile
 .sidebar-overlay {
   @apply fixed inset-0 bg-black/50 z-20 opacity-0 invisible;
-  @apply transition-all duration-300;
-  pointer-events: none; // Prevent interaction when hidden
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  @apply transition-all duration-300 pointer-events-none w-full h-full overflow-hidden;
 
   .layout--sidebar-open & {
-    @apply opacity-100 visible;
-    pointer-events: auto; // Enable interaction when visible
+    @apply opacity-100 visible pointer-events-auto;
   }
 }

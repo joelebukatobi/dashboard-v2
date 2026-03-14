@@ -24,8 +24,7 @@
     @apply h-full;
 
     .chart-container__chart {
-      min-height: auto;
-      height: auto;
+      @apply min-h-auto h-auto;
     }
   }
 
@@ -35,7 +34,7 @@
 
     .chart-container__chart {
       @apply h-full;
-      min-height: 0;
+      @apply min-h-0;
     }
   }
 
@@ -76,7 +75,7 @@
   // Traffic Overview mobile layout
   @media (max-width: 640px) {
     .widget__header--traffic {
-      @apply flex-col items-start gap-[0.5rem];
+      @apply flex-col items-start gap-2;
 
       .widget__title,
       .widget__subtitle {
@@ -84,7 +83,7 @@
       }
 
       .chart-range {
-        @apply w-full justify-start mt-[0.5rem];
+        @apply mt-2 w-full justify-start;
       }
     }
   }
@@ -102,14 +101,12 @@
   }
 
   &__dot {
-    @apply flex-shrink-0 flex items-center justify-center rounded-full;
-    width: 3.2rem;
-    height: 3.2rem;
+    @apply shrink-0 flex items-center justify-center rounded-full;
+    @apply size-[3.2rem];
     @apply mt-[0.2rem];
 
     svg {
-      @apply w-[1.6rem] h-[1.6rem];
-      stroke-width: 1;
+      @apply w-[1.6rem] h-[1.6rem] stroke-1;
     }
 
     &--post,
@@ -137,7 +134,7 @@
 
   &__text {
     @apply text-body-lg lg:text-body leading-tight;
-    margin: 0;
+    @apply m-0;
 
     strong {
       @apply font-semibold;
@@ -155,7 +152,7 @@
 
   &__time {
     @apply text-body-sm;
-    margin: 0;
+    @apply m-0;
   }
 }
 
@@ -174,12 +171,11 @@
   }
 
   &__icon {
-    @apply flex-shrink-0 flex items-center justify-center rounded-full;
-    width: 4rem;
-    height: 4rem;
+    @apply shrink-0 flex items-center justify-center rounded-full;
+    @apply size-16;
 
     svg {
-      @apply w-[2rem] h-[2rem];
+      @apply size-8;
     }
 
     &--post {
@@ -231,7 +227,7 @@
   @apply space-y-[0.8rem];
 
   .widget--flush & {
-    @apply px-[2rem] pb-[2rem];
+    @apply px-8 pb-8;
   }
 
   &__left {
@@ -239,11 +235,11 @@
   }
 
   &__right {
-    @apply flex items-start lg:justify-end lg:gap-[1.2rem] ml-[4rem] lg:ml-auto;
+    @apply ml-16 flex items-start lg:ml-auto lg:justify-end lg:gap-[1.2rem];
   }
 
   &__item {
-    @apply flex flex-col lg:flex-row lg:items-start justify-between gap-[1.2rem] px-[1.2rem] py-[1rem] rounded-lg;
+    @apply flex flex-col justify-between gap-[1.2rem] rounded-lg px-[1.2rem] py-4 lg:flex-row lg:items-start;
     @apply bg-blue-600/5;
 
     .dark & {
@@ -252,7 +248,7 @@
   }
 
   &__rank {
-    @apply flex-shrink-0 flex items-center justify-center rounded-full h-[2.8rem] w-[2.8rem];
+    @apply shrink-0 flex h-[2.8rem] w-[2.8rem] items-center justify-center rounded-full;
     @apply text-body font-bold;
     @apply bg-grey-100 text-grey-600;
 
@@ -264,18 +260,18 @@
 
   &__title {
     @apply text-body-sm lg:text-body;
-    margin: 0;
+    @apply m-0;
   }
 
   &__url {
     @apply text-body-sm truncate;
-    margin: 0;
+    @apply m-0;
   }
 
   &__value {
-    @apply flex-shrink-0 text-body-sm font-semibold tabular-nums lg:text-right;
+    @apply shrink-0 text-body-sm font-semibold tabular-nums lg:text-right;
     @apply text-grey-900;
-    min-width: 3.5rem;
+    @apply min-w-[3.5rem];
 
     .dark & {
       @apply text-white;
@@ -283,8 +279,8 @@
   }
 
   &__change {
-    @apply flex-shrink-0 flex items-center gap-[0.2rem] text-body-xs font-medium tabular-nums;
-    min-width: 3rem;
+    @apply shrink-0 flex items-center gap-[0.2rem] text-body-xs font-medium tabular-nums;
+    @apply min-w-12;
 
     svg {
       @apply w-[1.2rem] h-[1.2rem];
@@ -322,20 +318,20 @@
     @apply flex items-start gap-[1.6rem] py-[1.2rem] px-[1.6rem] first:pt-0 last:pb-0;
 
     .widget--flush & {
-      @apply px-[2rem];
+      @apply px-8;
 
       &:first-child {
         @apply pt-0;
       }
 
       &:last-child {
-        @apply pb-[2rem];
+        @apply pb-8;
       }
     }
   }
 
   &__image {
-    @apply flex-shrink-0 w-[4rem] h-[3rem] rounded-lg overflow-hidden;
+    @apply shrink-0 h-12 w-16 overflow-hidden rounded-lg;
     @apply bg-grey-100;
 
     .dark & {
@@ -366,6 +362,6 @@
   }
 
   &__status {
-    @apply flex-shrink-0 ml-auto;
+    @apply shrink-0 ml-auto;
   }
 }

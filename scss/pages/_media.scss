@@ -8,16 +8,11 @@
 .media-grid {
   @apply grid gap-x-[1.6rem] gap-y-[1.6rem];
   // Responsive grid: 2 cols mobile, 3 tablet, 5 desktop
-  @apply grid-cols-2 sm:grid-cols-3 lg:grid-cols-5;
-  align-content: start;
-  align-items: start;
-  
+  @apply grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 content-start items-start;
 
   // Desktop: scroll within content area above fixed footer
   @media (min-width: 1024px) {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
+    @apply flex-1 min-h-0 overflow-y-auto;
     // padding-right: 1.6rem;
   }
 }
@@ -27,12 +22,12 @@
   .layout--sidebar-collapsed {
     .media-grid {
       @apply lg:grid-cols-6;
-      grid-auto-flow: row;
+      @apply grid-flow-row;
       grid-auto-rows: max-content;
     }
 
     .media-card__thumbnail {
-      aspect-ratio: 1/1;
+      @apply aspect-square;
     }
   }
 }
@@ -70,23 +65,19 @@
   @apply min-h-[40rem];
   @apply border-2 border-dashed border-grey-300;
   @apply text-center;
-  @apply bg-grey-50;
-  border-radius: var(--radius-lg);
+  @apply bg-grey-50 rounded-lg;
   
   img {
     @apply w-full h-full;
-    @apply object-cover;
-    border-radius: var(--radius-md);
+    @apply object-cover rounded-md;
   }
   
   &__preview {
     @apply w-full h-full;
-    @apply object-cover;
-    border-radius: var(--radius-md);
-    max-height: 640px;
+    @apply object-cover rounded-md max-h-[640px];
     
     @media (min-width: 1024px) {
-      max-height: 640px;
+      @apply max-h-[640px];
     }
   }
   
@@ -100,8 +91,7 @@
 // ========================================
 .media-card {
   @apply relative flex flex-col bg-white shadow-sm border border-grey-100 overflow-hidden transition-all duration-200;
-  border-radius: var(--radius-lg);
-  @apply hover:shadow-md hover:border-blue-200;
+  @apply rounded-lg hover:shadow-md hover:border-blue-200;
 
   .dark & {
     @apply bg-grey-800 border-grey-700;
@@ -129,7 +119,7 @@
   // Thumbnail Container
   &__thumbnail {
     @apply relative w-full bg-grey-50 overflow-hidden;
-    aspect-ratio: 1/1;
+    @apply aspect-square;
 
     .dark & {
       @apply bg-grey-900;
@@ -164,7 +154,7 @@
   // Details Section
   &__details {
     @apply absolute inset-x-0 bottom-0 z-[2] p-[0.8rem] flex flex-col gap-[0.2rem] min-w-0;
-    background: linear-gradient(to top, rgba(17, 24, 39, 0.85), rgba(17, 24, 39, 0));
+    @apply bg-[linear-gradient(to_top,rgba(17,24,39,0.85),rgba(17,24,39,0))];
   }
 
   &__title {
@@ -235,8 +225,7 @@
 @media (max-width: 1023px) {
   .media {
     .content {
-      height: auto;
-      overflow-y: auto;
+      @apply h-auto overflow-y-auto;
     }
   }
 }

@@ -3,6 +3,19 @@
 
 import { mainLayout } from '../../layouts/main.js';
 
+const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-row items-center gap-[1.6rem]';
+const listToolbarSearchClass = 'relative min-w-0 flex-1';
+const listToolbarSearchIconClass = 'pointer-events-none absolute left-[1rem] top-1/2 h-[1.6rem] w-[1.6rem] -translate-y-1/2 text-grey-400 dark:text-grey-500';
+const listToolbarInputClass = 'h-[3.2rem] w-full rounded-md border border-grey-100/50 bg-white px-[1.2rem] pl-[4.4rem] text-body-sm text-grey-900 outline-none transition-all duration-200 placeholder:text-body-sm placeholder:text-grey-400 hover:border-grey-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 dark:border-grey-700 dark:bg-grey-900 dark:text-white dark:placeholder:text-grey-500 dark:hover:border-grey-600';
+const listToolbarControlsClass = 'flex shrink-0 items-center gap-[1.2rem]';
+const listToolbarButtonClass = 'inline-flex h-[3.2rem] items-center justify-center gap-[0.8rem] rounded-md bg-blue-600 px-[1.2rem] text-body-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:text-white focus:ring-[.08rem] focus:ring-blue-500 focus:ring-offset-2 dark:bg-white dark:text-grey-900 dark:hover:bg-grey-100';
+const rowActionGroupClass = 'flex items-center justify-end gap-[1.6rem] lg:gap-[0.64rem]';
+const rowActionBaseClass = 'flex cursor-pointer items-center justify-center gap-[0.8rem] rounded-md p-[0.4rem] text-body-sm font-medium text-grey-500 transition-all duration-200 lg:bg-blue-600/5 lg:text-body-xs dark:text-grey-400 dark:lg:bg-grey-50/10';
+const rowActionIconClass = 'h-[1.4rem] w-[1.4rem] lg:h-[1.2rem] lg:w-[1.2rem]';
+const rowActionTextClass = 'lg:hidden';
+const rowActionEditClass = `${rowActionBaseClass} hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-900/20 dark:hover:text-amber-400`;
+const rowActionDeleteClass = `${rowActionBaseClass} hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400`;
+
 /**
  * Categories List Page Template
  * Display all categories with filters and pagination
@@ -41,12 +54,12 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
         </div>
 
         <!-- Data Filter -->
-        <div class="data-filter">
-          <div class="data-filter__search">
-            <i data-lucide="search" class="data-filter__search-icon"></i>
+        <div class="${listToolbarClass}">
+          <div class="${listToolbarSearchClass}">
+            <i data-lucide="search" class="${listToolbarSearchIconClass}"></i>
             <input
               type="text"
-              class="input input--icon-left"
+              class="${listToolbarInputClass}"
               placeholder="Search categories..."
               value="${filters.search || ''}"
               hx-get="/admin/categories"
@@ -56,9 +69,9 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
             />
           </div>
 
-          <div class="data-filter__controls">
+          <div class="${listToolbarControlsClass}">
             <!-- Add New -->
-            <a href="/admin/categories/new" class="btn btn--primary">
+            <a href="/admin/categories/new" class="${listToolbarButtonClass}">
               <span>${categories.length === 0 ? 'Create First Category' : 'New Category'}</span>
             </a>
           </div>
@@ -105,21 +118,21 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
                       ${formatDate(category.updatedAt || category.createdAt)}
                     </td>
                     <td class="table__td table__td--actions">
-                      <div class="btn-group__actions">
-                        <a href="/admin/categories/${category.id}/edit" class="btn--action btn--action--edit">
-                          <i data-lucide="pencil"></i>
-                          <span class="btn--action__text">Edit</span>
+                      <div class="${rowActionGroupClass}">
+                        <a href="/admin/categories/${category.id}/edit" class="${rowActionEditClass}">
+                          <i data-lucide="pencil" class="${rowActionIconClass}"></i>
+                          <span class="${rowActionTextClass}">Edit</span>
                         </a>
                         <button
                           type="button"
-                          class="btn--action btn--action--delete"
+                          class="${rowActionDeleteClass}"
                           data-category-id="${category.id}"
                           data-category-title="${escapeHtml(category.title)}"
                           data-post-count="${category.postCount || 0}"
                           onclick="openDeleteModal(this)"
                         >
-                          <i data-lucide="trash-2"></i>
-                          <span class="btn--action__text">Delete</span>
+                          <i data-lucide="trash-2" class="${rowActionIconClass}"></i>
+                          <span class="${rowActionTextClass}">Delete</span>
                         </button>
                       </div>
                     </td>

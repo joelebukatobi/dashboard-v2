@@ -12,8 +12,7 @@
   }
 
   & svg {
-    @apply h-[.96rem] w-[.96rem] transition-transform duration-200;
-    stroke-width: 1.5;
+    @apply h-[.96rem] w-[.96rem] transition-transform duration-200 stroke-[1.5];
   }
 
   // Full-width variant for form dropdowns
