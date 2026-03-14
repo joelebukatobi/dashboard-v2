@@ -82,7 +82,7 @@
 // Status Indicator (Dot + Text, no background)
 // ============================================================================
 .status {
-  @apply inline-flex items-center gap-[0.5rem] text-body font-medium;
+  @apply inline-flex items-center gap-[0.5rem] text-body-sm lg:text-body font-medium;
 
   &__dot {
     @apply w-[0.6rem] h-[0.6rem] rounded-full;

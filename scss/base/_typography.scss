@@ -11,6 +11,7 @@
 
 html {
   @apply antialiased;
+  // font-feature-settings has no Tailwind equivalent
   font-feature-settings:
     'kern' 1,
     'liga' 1;
@@ -69,21 +70,28 @@ p {
 
 .lead {
   @apply text-grey-600 dark:text-grey-400 leading-relaxed;
-  font-size: 2rem; // 20px
+  @apply text-[2rem]; // 20px
 }
 
 // ============================================================================
 // Links
 // ============================================================================
 
+// Apply interaction styling to all anchors.
 a {
-  @apply text-blue-600 dark:text-white;
-  @apply hover:text-blue-700 dark:hover:text-grey-200;
   @apply transition-colors duration-200;
 
   &:focus-visible {
     @apply outline-none ring-2 ring-blue-500 ring-offset-2 rounded;
   }
+}
+
+// Only plain anchors should receive the default link color.
+// Component links like sidebar, pagination, breadcrumbs, and buttons define
+// their own color through their component classes.
+a:not([class]) {
+  @apply text-blue-600 dark:text-white;
+  @apply hover:text-blue-700 dark:hover:text-grey-200;
 }
 
 // Plain link (no color change)
@@ -142,7 +150,8 @@ strong,
 
 small,
 .text-small {
-  font-size: 0.8em; // Relative to parent
+  // Relative to parent - no Tailwind equivalent for 'em' units
+  @apply text-[.8rem];
 }
 
 // ============================================================================
@@ -153,18 +162,18 @@ code {
   @apply px-[0.6rem] py-[0.2rem] font-mono;
   @apply bg-grey-100 dark:bg-grey-800 rounded;
   @apply text-pink-600 dark:text-pink-400;
-  font-size: 0.9em;
+  @apply text-[.8rem];
 }
 
 pre {
   @apply p-[1.6rem] mb-[1.6rem] overflow-x-auto;
   @apply bg-grey-900 dark:bg-grey-900 rounded-lg;
   @apply leading-relaxed;
-  font-size: 1.4rem; // 14px
+  @apply text-[1.4rem]; // 14px
 
   code {
     @apply p-0 bg-transparent text-grey-100;
-    font-size: inherit;
+    @apply text-inherit;
   }
 }
 
@@ -176,7 +185,7 @@ blockquote {
   @apply pl-[1.6rem] py-[0.8rem] mb-[1.6rem];
   @apply border-l-4 border-grey-300 dark:border-grey-600;
   @apply text-grey-600 dark:text-grey-400 italic;
-  font-size: 1.8rem; // Slightly larger for emphasis
+  @apply text-[1.8rem]; // Slightly larger for emphasis
 }
 
 // ============================================================================

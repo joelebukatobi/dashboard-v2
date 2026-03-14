@@ -13,8 +13,7 @@
   i,
   svg {
     @apply hidden sm:inline-block;
-    @apply size-[1.4rem];
-    stroke-width: 1;
+    @apply size-[1.4rem] stroke-1;
   }
 
   // Primary
@@ -119,52 +118,6 @@
     }
   }
 
-  // Action Button (Generic)
-  &--action {
-    @apply flex items-center justify-center gap-[.8rem];
-    @apply p-[.4rem] transition-all duration-200 rounded-md;
-    @apply text-body lg:text-body-xs font-medium text-grey-500;
-    @apply lg:bg-blue-600/5;
-
-    .dark & {
-      @apply text-grey-400 lg:bg-grey-50/10;
-    }
-
-    // Icon sizing override if needed
-    i,
-    svg {
-      @apply w-[1.6rem] h-[1.6rem] lg:w-[1.2rem] lg:h-[1.2rem];
-    }
-
-    // Edit variation
-    &--edit {
-      @apply hover:text-amber-600 hover:bg-amber-50 cursor-pointer;
-      
-      .dark & {
-        @apply hover:text-amber-400 hover:bg-amber-900/20;
-      }
-    }
-
-    // Delete variation
-    &--delete {
-      @apply hover:text-red-600 hover:bg-red-50 cursor-pointer;
-      
-      .dark & {
-        @apply hover:text-red-400 hover:bg-red-900/20;
-      }
-    }
-
-    // Icon stroke for action buttons
-    &--edit svg,
-    &--delete svg {
-      stroke-width: 1;
-    }
-  }
-
-  // Full-width button
-  &--full {
-  }
-
   // Full-width button
   &--full {
     @apply w-full;
@@ -177,16 +130,6 @@
     .dark & {
       @apply hover:text-red-400 hover:bg-red-900/20;
     }
-  }
-
-  // Action text (hidden on desktop, shown on mobile)
-  &--action__text {
-    @apply lg:hidden;
-  }
-
-  // Action Button Group Container
-  &-group__actions {
-    @apply flex items-center justify-end space-x-[1.6rem] lg:space-x-[.64rem];
   }
 
   svg {
@@ -204,19 +147,3 @@
   @apply flex gap-[0.8rem];
 }
 
-// Anchor tag specific overrides for action buttons (higher specificity)
-a.btn--action--edit:hover {
-  color: var(--color-amber-600);
-}
-
-a.btn--action--delete:hover {
-  color: var(--color-red-600);
-}
-
-.dark a.btn--action--edit:hover {
-  color: var(--color-amber-400);
-}
-
-.dark a.btn--action--delete:hover {
-  color: var(--color-red-400);
-}

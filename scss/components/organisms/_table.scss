@@ -24,7 +24,7 @@
   // ========================================
   &__label {
     @apply lg:hidden;
-    @apply text-body font-medium text-grey-500 lg:min-w-[8rem];
+    @apply text-body-sm lg:text-body font-medium text-grey-500 lg:min-w-[8rem];
 
     .dark & {
       @apply text-grey-400;
@@ -147,7 +147,7 @@
   // Table Cell Title
   // ========================================
   &__title {
-    @apply font-medium text-body text-grey-900;
+    @apply font-medium text-body-sm lg:text-body text-body text-grey-900;
 
     .dark & {
       @apply text-white;
@@ -171,7 +171,7 @@
 
   // Slug/code display
   &__slug {
-    @apply text-body text-grey-500 font-mono;
+    @apply text-body-sm lg:text-body text-grey-500 font-mono;
 
     .dark & {
       @apply text-grey-400;

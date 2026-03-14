@@ -7,13 +7,10 @@
   .content {
     .posts__table-content {
       .table__thead {
-        position: sticky;
-        top: 0;
-        z-index: 5;
-        background-color: var(--color-white);
+        @apply sticky top-0 z-10 bg-white;
 
         .dark & {
-          background-color: var(--color-grey-900);
+          @apply bg-grey-900;
         }
       }
     }
@@ -23,36 +20,33 @@
 // Edit/New post layout
 .content-main {
   > .page-header {
-    flex-shrink: 0;
+    @apply shrink-0;
   }
 
   > .page-main {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 2.4rem;
+    @apply flex-1 overflow-y-auto pr-[2.4rem];
   }
 }
 
 .post-editor {
-  min-height: 32rem;
+  @apply min-h-[32rem];
 }
 
 // Above sticky headers
 #deleteModal {
-  z-index: 100;
+  @apply z-100;
 }
 
 // Mobile: card-style table rows
 @media (max-width: 1023px) {
   .posts__table-content {
-    overflow-x: auto;
+    @apply overflow-x-auto;
 
     .table {
       .table__tr {
-        margin-bottom: 1.6rem;
-        margin-left: 0.8rem;
-        margin-right: 0.8rem;
-        border-radius: var(--radius-lg);
+        @apply mb-[1.6rem] rounded-lg;
+        // margin-left: 0.8rem;
+        // margin-right: 0.8rem;
       }
     }
   }

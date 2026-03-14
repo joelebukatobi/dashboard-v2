@@ -79,8 +79,7 @@
 
   // Info Box
   &__info-box {
-    @apply p-[1.6rem] bg-blue-600/5 mb-[1.6rem];
-    border-radius: var(--radius-md);
+    @apply p-[1.6rem] bg-blue-600/5 mb-[1.6rem] rounded-md;
     .dark & {
       @apply bg-blue-500/20;
     }
@@ -173,8 +172,7 @@
     }
 
     &-dropdown {
-      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 shadow-lg overflow-y-auto p-[0.4rem] dark:bg-grey-900 dark:border-grey-700;
-      border-radius: var(--radius-md);
+      @apply mt-[0.8rem] z-50 w-full max-h-56 bg-white border border-grey-100 shadow-lg overflow-y-auto p-[0.4rem] rounded-md dark:bg-grey-900 dark:border-grey-700;
     }
 
     &-search {
@@ -205,8 +203,7 @@
     }
 
     &-option {
-      @apply py-[0.64rem] px-[0.8rem] mb-[0.4rem] w-full text-body-sm text-grey-900 cursor-pointer transition-all duration-200 border-0 focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
-      border-radius: var(--radius-md);
+      @apply py-[0.64rem] px-[0.8rem] mb-[0.4rem] w-full text-body-sm text-grey-900 cursor-pointer transition-all duration-200 border-0 rounded-md focus:outline-none hs-selected:bg-blue-600/10 hs-selected:border-0 dark:text-white dark:hs-selected:bg-grey-700/50;
 
       &:last-child {
         @apply mb-0;
@@ -229,8 +226,7 @@
   @apply flex flex-col gap-[1.2rem];
 
   &__dropzone {
-    @apply border border-dashed border-grey-100/50;
-    border-radius: var(--radius-md);
+    @apply border border-dashed border-grey-100/50 rounded-md;
     @apply py-[3.2rem] px-[2rem] text-center cursor-pointer;
     @apply transition-all duration-200;
     @apply bg-grey-50;
@@ -296,8 +292,7 @@
   }
 
   &__icon {
-    @apply w-[4.8rem] h-[4.8rem] mx-auto mb-[1.2rem] text-grey-500;
-    stroke-width: 1;
+    @apply w-[4.8rem] h-[4.8rem] mx-auto mb-[1.2rem] text-grey-500 stroke-1;
   }
 
   &__text {
@@ -317,9 +312,7 @@
   }
 
   &__preview {
-    @apply hidden relative rounded-md overflow-hidden max-w-full;
-    aspect-ratio: 32 / 9;
-    max-height: 16rem;
+    @apply hidden relative rounded-md overflow-hidden max-w-full aspect-[32/9] max-h-[16rem];
     @apply bg-grey-100;
 
     &.has-image {

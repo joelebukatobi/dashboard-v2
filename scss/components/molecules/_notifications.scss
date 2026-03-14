@@ -55,8 +55,7 @@
 
   &__icon {
     @apply flex-shrink-0 flex items-center justify-center rounded-full;
-    width: 3.6rem;
-    height: 3.6rem;
+    @apply size-[3.6rem];
 
     svg,
     i {

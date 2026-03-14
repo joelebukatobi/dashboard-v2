@@ -4,117 +4,30 @@
 
 // Delete Modal - High z-index to appear above sticky headers
 #deleteModal {
-  z-index: 100;
+  @apply z-100;
   
   // Backdrop covers sidebar/header
   > div:first-child {
-    z-index: 100 !important;
+    @apply z-100;
   }
   
   // Modal content above backdrop
   > div:nth-child(2) {
-    z-index: 101 !important;
-  }
-}
-
-.tag-table {
-  // Mobile Label
-  &__label {
-    @apply lg:hidden;
-    @apply text-body-xs font-medium text-grey-500 min-w-[8rem];
-
-    .dark & {
-      @apply text-grey-400;
-    }
-  }
-
-  // Name
-  &__name {
-    @apply font-medium text-body-sm text-grey-900;
-
-    .dark & {
-      @apply text-white;
-    }
-
-    a {
-      @apply hover:text-blue-600;
-      @apply transition-colors duration-200;
-
-      .dark & {
-        @apply hover:text-blue-400;
-      }
-    }
-  }
-
-  // Slug
-  &__slug {
-    @apply text-body-sm text-grey-500;
-
-    .dark & {
-      @apply text-grey-400;
-    }
-  }
-
-  // Actions Container
-  &__actions {
-    @apply flex items-center justify-end space-x-[1.6rem] lg:space-x-[.4rem];
-  }
-
-  // Action Button
-  &__action {
-    @apply flex items-center justify-center gap-[.4rem];
-    @apply px-0 py-[.4rem] lg:p-[.4rem] rounded-md;
-    @apply text-body-xs font-medium;
-    @apply cursor-pointer;
-    @apply transition-all duration-200 lg:bg-blue-600/10;
-
-    // Mobile: Flex grow
-    @apply flex-1 lg:flex-initial;
-
-    // Default style
-    @apply text-grey-500;
-    .dark & {
-      @apply text-grey-400 lg:bg-grey-50/10;
-    }
-
-    // Icon sizing
-    i,
-    svg {
-      @apply w-[1.4rem] h-[1.4rem];
-    }
-
-    // Edit action
-    &--edit {
-      @apply hover:text-amber-600;
-
-      .dark & {
-        @apply hover:text-amber-400;
-      }
-    }
-
-    // Delete action
-    &--delete {
-      @apply hover:text-red-600 hover:bg-red-50;
-
-      .dark & {
-        @apply hover:text-red-400 hover:bg-red-900/20;
-      }
-    }
+    @apply z-101;
   }
 }
 
 @media (max-width: 1023px) {
   .tags__table-content {
-    overflow-x: auto;
+    @apply overflow-x-auto;
 
     .table {
       .table__tr {
-        margin-bottom: 1.6rem;
-        border-radius: var(--radius-lg);
+        @apply mb-[1.6rem] rounded-lg;
       }
 
       .table__tbody {
-        margin-bottom: 1.6rem;
+        @apply mb-[1.6rem];
       }
     }
   }

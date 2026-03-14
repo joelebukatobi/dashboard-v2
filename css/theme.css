@@ -15,6 +15,11 @@
  * ============================================================================ */
 
 @theme {
+  /* Layout */
+  --sidebar-width: 24rem;
+  --sidebar-width-collapsed: 6.4rem;
+  --header-height: 5.6rem;
+
   /* Custom font family */
   --font-family-sans: 'Schibsted Grotesk', system-ui, sans-serif;
   
@@ -29,6 +34,11 @@
   --color-grey-700: #4d4d4d;
   --color-grey-800: #373737;
   --color-grey-900: #212121;
+
+  /* Sidebar theme colors */
+  --color-bg-sidebar: #1e3a8a;
+  --color-bg-sidebar-hover: #1d4ed8;
+  --color-bg-sidebar-active: #172554;
   
   /* Border radius (8-point scale) */
   --radius-1: 0.8rem;
@@ -173,6 +183,17 @@
   50% { opacity: 0.5; }
 }
 
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @utility animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
@@ -201,10 +222,17 @@
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+@utility animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
+
 /* ============================================================================
  * Dark Mode
  * ============================================================================ */
 
 .dark {
+  --color-bg-sidebar: #181818;
+  --color-bg-sidebar-hover: #373737;
+  --color-bg-sidebar-active: rgba(255, 255, 255, 0.1);
   color-scheme: dark;
 }

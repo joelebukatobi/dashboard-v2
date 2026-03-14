@@ -2,6 +2,13 @@
 
 import { mainLayout } from '../../../layouts/main.js';
 
+const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-row items-center gap-[1.6rem]';
+const listToolbarSearchClass = 'relative min-w-0 flex-1';
+const listToolbarSearchIconClass = 'pointer-events-none absolute left-[1rem] top-1/2 h-[1.6rem] w-[1.6rem] -translate-y-1/2 text-grey-400 dark:text-grey-500';
+const listToolbarInputClass = 'h-[3.2rem] w-full rounded-md border border-grey-100/50 bg-white px-[1.2rem] pl-[4.4rem] text-body-sm text-grey-900 outline-none transition-all duration-200 placeholder:text-body-sm placeholder:text-grey-400 hover:border-grey-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 dark:border-grey-700 dark:bg-grey-900 dark:text-white dark:placeholder:text-grey-500 dark:hover:border-grey-600';
+const listToolbarControlsClass = 'flex shrink-0 items-center gap-[1.2rem]';
+const listToolbarButtonClass = 'inline-flex h-[3.2rem] items-center justify-center gap-[0.8rem] rounded-md bg-blue-600 px-[1.2rem] text-body-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:text-white focus:ring-[.08rem] focus:ring-blue-500 focus:ring-offset-2 dark:bg-white dark:text-grey-900 dark:hover:bg-grey-100';
+
 /**
  * Generate images list page
  * @param {Object} options - Page options
@@ -46,12 +53,12 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
         </div>
 
         <!-- Data Filter -->
-        <div class="data-filter">
-          <div class="data-filter__search">
-            <i data-lucide="search" class="data-filter__search-icon"></i>
+        <div class="${listToolbarClass}">
+          <div class="${listToolbarSearchClass}">
+            <i data-lucide="search" class="${listToolbarSearchIconClass}"></i>
             <input
               type="text"
-              class="input input--icon-left"
+              class="${listToolbarInputClass}"
               placeholder="Search images..."
               value="${filters.search || ''}"
               hx-get="/admin/media/images"
@@ -61,8 +68,8 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
             />
           </div>
 
-          <div class="data-filter__controls">
-            <a href="/admin/media/images/new" class="btn btn--primary">
+          <div class="${listToolbarControlsClass}">
+            <a href="/admin/media/images/new" class="${listToolbarButtonClass}">
               New Image
             </a>
           </div>

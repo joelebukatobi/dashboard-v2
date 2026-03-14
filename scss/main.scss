@@ -7,7 +7,6 @@
 // ============================================================================
 // BASE - Variables, typography, and minimal base styles
 // ============================================================================
-@use 'base/variables' as *;
 @use 'base/typography' as *;
 @use 'base/base' as *;
 
@@ -35,7 +34,6 @@
 @use 'components/molecules/form' as *;
 @use 'components/molecules/notifications' as *;
 @use 'components/molecules/pagination' as *;
-@use 'components/molecules/data-filter' as *;
 
 @use 'components/molecules/toast' as *;
 

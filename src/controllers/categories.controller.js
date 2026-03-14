@@ -298,21 +298,21 @@ function categoriesTableFragment({ categories, pagination, counts }) {
           ${date}
         </td>
         <td class="table__td table__td--actions">
-          <div class="btn-group__actions">
-            <a href="/admin/categories/${category.id}/edit" class="btn--action btn--action--edit">
-              <i data-lucide="pencil"></i>
-              <span class="btn--action__text">Edit</span>
+          <div class="flex items-center justify-end gap-[1.6rem] lg:gap-[0.64rem]">
+            <a href="/admin/categories/${category.id}/edit" class="flex cursor-pointer items-center justify-center gap-[0.8rem] rounded-md p-[0.4rem] text-body-sm font-medium text-grey-500 transition-all duration-200 hover:bg-amber-50 hover:text-amber-600 lg:bg-blue-600/5 lg:text-body-xs dark:text-grey-400 dark:lg:bg-grey-50/10 dark:hover:bg-amber-900/20 dark:hover:text-amber-400">
+              <i data-lucide="pencil" class="h-[1.4rem] w-[1.4rem] lg:h-[1.2rem] lg:w-[1.2rem]"></i>
+              <span class="lg:hidden">Edit</span>
             </a>
             <button
               type="button"
-              class="btn--action btn--action--delete"
+              class="flex cursor-pointer items-center justify-center gap-[0.8rem] rounded-md p-[0.4rem] text-body-sm font-medium text-grey-500 transition-all duration-200 hover:bg-red-50 hover:text-red-600 lg:bg-blue-600/5 lg:text-body-xs dark:text-grey-400 dark:lg:bg-grey-50/10 dark:hover:bg-red-900/20 dark:hover:text-red-400"
               data-category-id="${category.id}"
               data-category-title="${category.title}"
               data-post-count="${category.postCount || 0}"
               onclick="openDeleteModal(this)"
             >
-              <i data-lucide="trash-2"></i>
-              <span class="btn--action__text">Delete</span>
+              <i data-lucide="trash-2" class="h-[1.4rem] w-[1.4rem] lg:h-[1.2rem] lg:w-[1.2rem]"></i>
+              <span class="lg:hidden">Delete</span>
             </button>
           </div>
         </td>

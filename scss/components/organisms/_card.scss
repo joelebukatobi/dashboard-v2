@@ -48,10 +48,10 @@
   }
 
   &__icon-box {
-    @apply w-[4.0rem] h-[4.0rem] rounded-lg flex items-center justify-center flex-shrink-0;
+    @apply h-16 w-16 rounded-lg flex items-center justify-center shrink-0;
 
     svg {
-      @apply w-[2.0rem] h-[2.0rem];
+      @apply h-8 w-8;
     }
 
     &--blue {
@@ -131,13 +131,11 @@
   }
 
   &__icon {
-    @apply flex-shrink-0 flex items-center justify-center rounded-md;
-    width: 4.4rem;
-    height: 4.4rem;
+    @apply shrink-0 flex items-center justify-center rounded-md;
+    @apply size-[4.4rem];
 
     svg {
-      @apply w-[2rem] h-[2rem];
-      stroke-width: 1;
+      @apply h-8 w-8 stroke-1;
     }
 
     &--posts,
@@ -180,8 +178,7 @@
     @apply inline-flex items-center gap-[0.4rem] text-body-xs lg:text-body font-bold lg:font-medium mt-[0.8rem];
 
     svg {
-      @apply w-[1.4rem] h-[1.4rem];
-      stroke-width: 1;
+      @apply w-[1.4rem] h-[1.4rem] stroke-1;
     }
 
     &--up {

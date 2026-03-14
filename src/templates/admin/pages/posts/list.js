@@ -3,6 +3,22 @@
 
 import { mainLayout } from '../../layouts/main.js';
 
+const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-col gap-[1.6rem] sm:flex-row sm:items-center';
+const listToolbarSearchClass = 'relative min-w-0 flex-1';
+const listToolbarSearchIconClass = 'pointer-events-none absolute left-[1rem] top-1/2 h-[1.6rem] w-[1.6rem] -translate-y-1/2 text-grey-400 dark:text-grey-500';
+const listToolbarInputClass = 'h-[3.2rem] w-full rounded-md border border-grey-100/50 bg-white px-[1.2rem] pl-[4.4rem] text-body-sm text-grey-900 outline-none transition-all duration-200 placeholder:text-body-sm placeholder:text-grey-400 hover:border-grey-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 dark:border-grey-700 dark:bg-grey-900 dark:text-white dark:placeholder:text-grey-500 dark:hover:border-grey-600';
+const listToolbarControlsClass = 'flex flex-wrap items-center gap-[1.2rem]';
+const listToolbarDropdownClass = 'relative';
+const listToolbarDropdownTriggerClass = 'inline-flex h-[3.2rem] items-center gap-[0.6rem] rounded-md border border-grey-200 bg-white px-[1.2rem] text-[1.3rem] font-medium text-grey-700 transition-all duration-200 hover:border-blue-600/30 hover:bg-blue-600/10 hover:text-blue-700 dark:border-grey-700 dark:bg-grey-900 dark:text-grey-300 dark:hover:border-grey-600 dark:hover:bg-grey-800 dark:hover:text-grey-200';
+const listToolbarButtonClass = 'inline-flex h-[3.2rem] items-center justify-center gap-[0.8rem] rounded-md bg-blue-600 px-[1.2rem] text-body-sm font-medium text-white transition-all duration-200 hover:bg-blue-700 hover:text-white focus:ring-[.08rem] focus:ring-blue-500 focus:ring-offset-2 dark:bg-white dark:text-grey-900 dark:hover:bg-grey-100';
+const listToolbarButtonIconClass = 'hidden h-[1.4rem] w-[1.4rem] sm:inline-block';
+const rowActionGroupClass = 'flex items-center justify-end gap-[1.6rem] lg:gap-[0.64rem]';
+const rowActionBaseClass = 'flex cursor-pointer items-center justify-center gap-[0.8rem] rounded-md p-[0.4rem] text-body-sm font-medium text-grey-500 transition-all duration-200 lg:bg-blue-600/5 lg:text-body-xs dark:text-grey-400 dark:lg:bg-grey-50/10';
+const rowActionIconClass = 'h-[1.4rem] w-[1.4rem] lg:h-[1.2rem] lg:w-[1.2rem]';
+const rowActionTextClass = 'lg:hidden';
+const rowActionEditClass = `${rowActionBaseClass} hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-900/20 dark:hover:text-amber-400`;
+const rowActionDeleteClass = `${rowActionBaseClass} hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400`;
+
 /**
  * Posts List Page Template
  * Display all posts with filters and pagination
@@ -41,12 +57,12 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
         </div>
 
         <!-- Data Filter -->
-        <div class="data-filter">
-          <div class="data-filter__search">
-            <i data-lucide="search" class="data-filter__search-icon"></i>
+        <div class="${listToolbarClass}">
+          <div class="${listToolbarSearchClass}">
+            <i data-lucide="search" class="${listToolbarSearchIconClass}"></i>
             <input
               type="text"
-              class="input input--icon-left"
+              class="${listToolbarInputClass}"
               placeholder="Search posts..."
               value="${filters.search || ''}"
               hx-get="/admin/posts"
@@ -56,13 +72,13 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             />
           </div>
 
-          <div class="data-filter__controls">
+          <div class="${listToolbarControlsClass}">
             <!-- Status Filter -->
-            <div class="hs-dropdown data-filter__dropdown">
+            <div class="hs-dropdown ${listToolbarDropdownClass}">
               <button
                 id="hs-dropdown-status"
                 type="button"
-                class="hs-dropdown-toggle data-filter__dropdown-trigger"
+                class="hs-dropdown-toggle ${listToolbarDropdownTriggerClass}"
               >
                 <span>${filters.status || 'Status'}</span>
                 <i data-lucide="chevron-down"></i>
@@ -77,11 +93,11 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             </div>
 
             <!-- Category Filter -->
-            <div class="hs-dropdown data-filter__dropdown">
+            <div class="hs-dropdown ${listToolbarDropdownClass}">
               <button
                 id="hs-dropdown-category"
                 type="button"
-                class="hs-dropdown-toggle data-filter__dropdown-trigger"
+                class="hs-dropdown-toggle ${listToolbarDropdownTriggerClass}"
               >
                 <span>${filters.categoryId ? categories.find((c) => c.id === filters.categoryId)?.title : 'Category'}</span>
                 <i data-lucide="chevron-down"></i>
@@ -99,13 +115,13 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             </div>
 
             <!-- Sort -->
-            <button class="btn btn-icon btn--primary">
-              <i data-lucide="arrow-up-down"></i>
+            <button class="${listToolbarButtonClass}">
+              <i data-lucide="arrow-up-down" class="${listToolbarButtonIconClass}"></i>
               <span>Sort</span>
             </button>
 
             <!-- Add New -->
-            <a href="/admin/posts/new" class="btn btn--primary">
+            <a href="/admin/posts/new" class="${listToolbarButtonClass}">
               <span>${posts.length === 0 ? 'Create First Post' : 'New Post'}</span>
             </a>
           </div>
@@ -151,20 +167,20 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
                     ${formatDate(post.publishedAt || post.createdAt)}
                   </td>
                   <td class="table__td table__td--actions">
-                    <div class="btn-group__actions">
-                      <a href="/admin/posts/${post.id}/edit" class="btn--action btn--action--edit">
-                        <i data-lucide="pencil"></i>
-                        <span class="btn--action__text">Edit</span>
+                    <div class="${rowActionGroupClass}">
+                      <a href="/admin/posts/${post.id}/edit" class="${rowActionEditClass}">
+                        <i data-lucide="pencil" class="${rowActionIconClass}"></i>
+                        <span class="${rowActionTextClass}">Edit</span>
                       </a>
                       <button 
                         type="button"
-                        class="btn--action btn--action--delete"
+                        class="${rowActionDeleteClass}"
                         data-post-id="${post.id}"
                         data-post-title="${escapeHtml(post.title)}"
                         onclick="openDeleteModal(this)"
                       >
-                        <i data-lucide="trash-2"></i>
-                        <span class="btn--action__text">Delete</span>
+                        <i data-lucide="trash-2" class="${rowActionIconClass}"></i>
+                        <span class="${rowActionTextClass}">Delete</span>
                       </button>
                     </div>
                   </td>
