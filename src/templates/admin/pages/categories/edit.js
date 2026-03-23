@@ -108,7 +108,7 @@ export function categoryEditPage({ category, user, errors = {} }) {
     user,
     activeRoute: '/admin/categories',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Categories', url: '/admin/categories' },
       { label: escapeHtml(category.title), url: `/admin/categories/${category.id}/edit` }
     ]

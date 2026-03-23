@@ -198,7 +198,7 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
     user,
     activeRoute: '/admin/media/images',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Media', url: '/admin/media/images' },
       { label: 'Images', url: '/admin/media/images' },
     ],

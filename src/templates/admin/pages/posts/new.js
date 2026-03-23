@@ -341,7 +341,7 @@ export function postNewPage({ categories, tags, user }) {
     user,
     activeRoute: '/admin/posts',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Blog Posts', url: '/admin/posts' },
       { label: 'New Post', url: '/admin/posts/new' },
     ],

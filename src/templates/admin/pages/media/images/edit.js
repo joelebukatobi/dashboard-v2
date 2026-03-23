@@ -220,7 +220,7 @@ export function imagesEditPage({ user, image, posts }) {
     user,
     activeRoute: '/admin/media/images',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Media', url: '/admin/media/images' },
       { label: 'Images', url: '/admin/media/images' },
       { label: image.title || 'Edit', url: `/admin/media/images/${image.id}/edit` },

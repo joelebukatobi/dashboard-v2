@@ -122,7 +122,7 @@ export function categoryNewPage({ user, errors = {} }) {
     user,
     activeRoute: '/admin/categories',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Categories', url: '/admin/categories' },
       { label: 'New Category', url: '/admin/categories/new' }
     ]

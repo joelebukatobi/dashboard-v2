@@ -108,7 +108,7 @@ export function tagEditPage({ tag, user, errors = {} }) {
     user,
     activeRoute: '/admin/tags',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Tags', url: '/admin/tags' },
       { label: escapeHtml(tag.name), url: `/admin/tags/${tag.id}/edit` }
     ]
