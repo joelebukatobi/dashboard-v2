@@ -314,7 +314,7 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
     user,
     activeRoute: '/admin/posts',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Blog Posts', url: '/admin/posts' },
     ],
   });

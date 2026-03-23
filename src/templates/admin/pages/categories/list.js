@@ -296,7 +296,7 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
     user,
     activeRoute: '/admin/categories',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Categories', url: '/admin/categories' },
     ],
   });

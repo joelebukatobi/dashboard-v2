@@ -314,7 +314,7 @@ export function postEditPage({ categories, tags, post, user }) {
     user,
     activeRoute: '/admin/posts',
     breadcrumbs: [
-      { label: 'Dashboard', url: '/admin/dashboard' },
+      { label: 'Dashboard', url: '/admin' },
       { label: 'Blog Posts', url: '/admin/posts' },
       { label: post.title.substring(0, 30) + (post.title.length > 30 ? '...' : ''), url: `/admin/posts/${post.id}/edit` }
     ]
