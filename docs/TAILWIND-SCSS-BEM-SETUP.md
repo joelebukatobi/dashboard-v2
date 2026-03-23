@@ -1,307 +1,242 @@
 # Tailwind CSS v4 + Preline UI + SCSS + BEM Setup Guide
 
-This document explains how to set up and use Tailwind CSS v4 with Preline UI components, SCSS preprocessing, and BEM methodology.
+This document explains the CSS build pipeline and architecture for the BlogCMS Admin Dashboard.
 
 ## Overview
 
-The build pipeline processes styles in this order:
+The project uses a **two-stage build pipeline** that combines SCSS with BEM methodology and Tailwind CSS v4:
 
 ```
-scss/*.scss → sass → .build/components.css → postcss (Tailwind v4) → dist/css/main.css
+Stage 1: SCSS Compilation
+scss/main.scss → sass → .build/components.css
+
+Stage 2: PostCSS Processing  
+css/index.css → postcss → dist/css/main.css
 ```
 
-## Directory Structure
+## Architecture
+
+### How It Works
+
+1. **SCSS files** (`scss/**/*.scss`) use BEM naming with `@apply` directives to pull in Tailwind utilities
+2. **Sass compiles** SCSS to `.build/components.css` (intermediate output)
+3. **CSS entry** (`css/index.css`) imports:
+   - Tailwind CSS v4 base
+   - Custom theme tokens (`theme.css`)
+   - Compiled SCSS components (`.build/components.css`)
+4. **PostCSS processes** the final CSS with Tailwind v4, nesting, and autoprefixer
+
+### Directory Structure
 
 ```
 project/
 ├── css/
-│   ├── index.css         # Tailwind v4 entry point
+│   ├── index.css         # Main entry point (imports Tailwind, theme, SCSS)
 │   └── theme.css         # Custom theme tokens (@theme block)
 ├── scss/
 │   ├── main.scss         # SCSS entry point
-│   ├── base/             # Reset, typography, variables
-│   ├── components/       # BEM components (atoms, molecules, organisms)
+│   ├── base/             # Typography, base styles
+│   │   ├── _typography.scss
+│   │   └── _base.scss
+│   ├── components/       # BEM components (atomic design)
+│   │   ├── atoms/        # Buttons, inputs, badges, etc.
+│   │   ├── molecules/    # Forms, breadcrumbs, etc.
+│   │   └── organisms/    # Sidebar, header, tables, etc.
 │   ├── layouts/          # Layout styles
-│   └── utilities/        # Helper classes
+│   └── pages/            # Page-specific styles
 ├── .build/               # Intermediate build output (gitignored)
-│   └── components.css    # Compiled SCSS
-├── dist/
-│   └── css/
-│       └── main.css      # Final output (Tailwind + SCSS combined)
+│   └── components.css    # Compiled SCSS from Stage 1
+├── dist/css/
+│   └── main.css          # Final output (Stage 2)
 └── postcss.config.cjs    # PostCSS configuration
 ```
 
-## Installation
-
-### Required Dependencies
-
-```bash
-# Tailwind CSS v4 and PostCSS
-npm install tailwindcss @tailwindcss/postcss postcss postcss-cli postcss-nesting
-
-# SCSS compiler
-npm install sass
-
-# Preline UI (optional, for interactive components)
-npm install preline
-```
-
-## Configuration Files
+## Configuration
 
 ### postcss.config.cjs
 
 ```javascript
 module.exports = {
   plugins: {
-    '@tailwindcss/postcss': {},
-    'postcss-nesting': {},
+    '@tailwindcss/postcss': {},  // Tailwind CSS v4
+    'postcss-nesting': {},        // CSS nesting support
+    'autoprefixer': {},           // Vendor prefixes
   },
 };
 ```
 
-> **Note**: Use `.cjs` extension for CommonJS compatibility with ESM projects.
-
-### css/index.css (Tailwind v4 Entry Point)
+### css/index.css (Main Entry Point)
 
 ```css
-/* Tailwind v4 base import */
-@import 'tailwindcss';
+/*
+ * Main CSS Entry Point
+ * Combines Tailwind CSS v4 with compiled SCSS components
+ */
 
-/* Custom theme tokens */
-@import './theme.css';
+/* Tailwind CSS v4 base, components, and utilities */
+@import "tailwindcss";
 
-/* Compiled SCSS components */
-@import '../.build/components.css';
+/* Enable class-based dark mode */
+@custom-variant dark (&:where(.dark, .dark *));
 
-/* Preline UI plugin (optional) */
-@plugin "preline/plugin";
+/* Custom theme tokens (colors, shadows, animations) */
+@import "./theme.css";
+
+/* Compiled SCSS components (BEM classes with @apply) */
+@import "../.build/components.css";
 ```
 
-### css/theme.css (Custom Theme Tokens)
-
-Tailwind v4 uses CSS-based configuration with `@theme` blocks instead of `tailwind.config.js`:
+### css/theme.css (Custom Theme)
 
 ```css
+/* Import Preline UI variants for Tailwind v4 */
+@import "preline/variants.css";
+
 @theme {
-  /* Colors */
-  --color-primary: #171717;
-  --color-secondary: #404040;
-  --color-accent: #f5f5f5;
-  --color-border: #e5e5e5;
-  --color-muted: #737373;
+  /* Layout */
+  --sidebar-width: 24rem;
+  --header-height: 5.6rem;
 
-  /* Typography */
+  /* Font family */
   --font-family-sans: 'Schibsted Grotesk', system-ui, sans-serif;
+  
+  /* Grey color palette */
+  --color-grey-50: #e9e9e9;
+  --color-grey-100: #d3d3d3;
+  --color-grey-500: #7a7a7a;
+  --color-grey-900: #212121;
 
-  /* Spacing */
-  --spacing-xs: 0.25rem;
-  --spacing-sm: 0.5rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
+  /* Sidebar theme colors */
+  --color-bg-sidebar: #1e3a8a;
+  --color-bg-sidebar-hover: #1d4ed8;
+  
+  /* Border radius (8-point scale) */
+  --radius-sm: 0.24rem;  /* 2.4px */
+  --radius-md: 0.4rem;   /* 4px */
+  --radius-lg: 0.8rem;   /* 8px */
+  --radius-xl: 1.6rem;   /* 16px */
+  
+  /* Box shadows */
+  --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07);
+  --shadow-card: 0 0 20px 0 rgba(76, 87, 125, 0.02);
+}
 
-  /* Border Radius */
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-full: 9999px;
+/* Custom utilities */
+@utility text-body-sm {
+  font-size: var(--font-size-body-sm);
+}
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-grey-300) var(--color-grey-100);
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-bg-sidebar: #181818;
+  color-scheme: dark;
 }
 ```
 
-## SCSS with BEM Methodology
+## SCSS with BEM + @apply
 
 ### BEM Naming Convention
 
 ```
-.block {}
-.block__element {}
-.block--modifier {}
+.block {}           // Block
+.block__element {}  // Element
+.block--modifier {} // Modifier
 ```
 
-### Example Component (scss/components/atoms/_button.scss)
+### Using @apply in SCSS
+
+**Important:** The codebase uses `@apply` extensively with Tailwind v4. It works perfectly fine:
 
 ```scss
-// Button Component - Atomic Design Pattern
-// Uses BEM methodology with Tailwind utilities
-
+// scss/components/atoms/_button.scss
 .btn {
-  // Base styles using CSS properties (not @apply)
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
-  cursor: pointer;
+  @apply inline-flex items-center justify-center gap-[0.8rem];
+  @apply px-[1.2rem] text-body-sm font-medium rounded-md cursor-pointer h-[3.2rem];
+  @apply transition-all duration-200;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
 
-  // Size modifiers
+  // Primary variant
+  &--primary {
+    @apply bg-blue-600 text-white;
+    @apply hover:bg-blue-700 active:bg-blue-800;
+    
+    .dark & {
+      @apply bg-white text-grey-900;
+    }
+  }
+
+  // Sizes
   &--sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    @apply px-[1.2rem] py-[0.4rem] text-body-xs;
   }
 
   &--lg {
-    padding: 1rem 2rem;
-    font-size: 1.125rem;
-  }
-
-  &--full {
-    width: 100%;
-  }
-
-  // Color modifiers
-  &--primary {
-    background-color: var(--color-primary);
-    color: white;
-
-    &:hover {
-      background-color: var(--color-secondary);
-    }
-  }
-
-  &--secondary {
-    background-color: transparent;
-    border: 1px solid var(--color-border);
-    color: var(--color-primary);
-
-    &:hover {
-      background-color: var(--color-accent);
-    }
-  }
-
-  // State modifiers
-  &--disabled,
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  // Elements
-  &__icon {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
-  &__text {
-    // Text content styling
+    @apply px-[2.4rem] py-[1.2rem] text-body;
   }
 }
 ```
 
-### Using Tailwind Classes in SCSS
+### Key Patterns
 
-**Avoid `@apply` in Tailwind v4** - it has limited support. Instead:
-
-1. **Use CSS custom properties** (defined in `@theme`):
-   ```scss
-   .card {
-     border-radius: var(--radius-md);
-     box-shadow: var(--shadow-md);
-   }
-   ```
-
-2. **Use standard CSS**:
-   ```scss
-   .card {
-     display: flex;
-     flex-direction: column;
-     gap: 1rem;
-   }
-   ```
-
-3. **Use Tailwind classes directly in HTML** for utility styles:
-   ```html
-   <div class="card flex flex-col gap-4 p-6">
-     <!-- content -->
-   </div>
-   ```
-
-### SCSS Main Entry Point (scss/main.scss)
-
-```scss
-// Base
-@use 'base/reset';
-@use 'base/typography';
-
-// Components - Atomic Design
-@use 'components/atoms/button';
-@use 'components/atoms/input';
-@use 'components/molecules/form-field';
-@use 'components/molecules/card';
-@use 'components/organisms/header';
-@use 'components/organisms/sidebar';
-
-// Layouts
-@use 'layouts/auth';
-@use 'layouts/dashboard';
-
-// Utilities
-@use 'utilities/helpers';
-```
+1. **Use `@apply` for Tailwind utilities** - It's fully supported in v4
+2. **CSS variables** for theme values: `var(--color-grey-500)`
+3. **Dark mode** with `.dark &` nesting
+4. **BEM modifiers** for component variants
 
 ## Build Scripts
 
-Add to `package.json`:
+### package.json scripts
 
 ```json
 {
   "scripts": {
-    "css:scss": "sass scss/main.scss .build/components.css --style=compressed",
-    "css:tailwind": "postcss css/index.css -o dist/css/main.css",
-    "css:build": "npm run css:scss && npm run css:tailwind",
-    "css:watch": "npm-run-all --parallel css:watch:*",
-    "css:watch:scss": "sass scss/main.scss .build/components.css --watch",
-    "css:watch:tailwind": "postcss css/index.css -o dist/css/main.css --watch"
+    "build:css": "sass scss/main.scss .build/components.css --no-source-map && postcss css/index.css -o dist/css/main.css",
+    "watch:css": "chokidar 'scss/**/*.scss' -c 'npm run build:css' --initial",
+    "dev": "concurrently \"npm run dev:server\" \"npm run watch:css\""
   }
 }
 ```
 
-## Using Preline UI Components
+### Commands
 
-### Include Preline JS
+```bash
+# Development (watch SCSS + run server)
+npm run dev
 
-```html
-<script src="/vendor/preline/preline.js"></script>
+# Build CSS once
+npm run build:css
+
+# Watch SCSS changes only
+npm run watch:css
+
+# Run server only
+npm run dev:server
 ```
 
-Or via CDN:
+## Using Preline UI
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/preline@latest/dist/preline.min.js"></script>
+Preline UI is included via CSS variants:
+
+```css
+/* In css/theme.css */
+@import "preline/variants.css";
 ```
 
-### Preline Components with BEM
-
-Preline uses data attributes for JavaScript functionality. Combine with BEM:
+Preline components use data attributes for JavaScript functionality:
 
 ```html
 <!-- Modal with BEM classes and Preline data attributes -->
 <div 
   id="my-modal" 
-  class="modal hs-overlay hidden"
-  tabindex="-1"
-  aria-labelledby="my-modal-title"
+  class="modal"
+  data-hs-overlay="true"
 >
-  <div class="modal__dialog">
-    <div class="modal__content">
-      <div class="modal__header">
-        <h3 id="my-modal-title" class="modal__title">Modal Title</h3>
-        <button type="button" class="modal__close" data-hs-overlay="#my-modal">
-          <span class="sr-only">Close</span>
-          <svg><!-- close icon --></svg>
-        </button>
-      </div>
-      <div class="modal__body">
-        <!-- Modal content -->
-      </div>
-    </div>
-  </div>
+  <!-- Modal content -->
 </div>
 
 <!-- Trigger button -->
@@ -310,97 +245,50 @@ Preline uses data attributes for JavaScript functionality. Combine with BEM:
 </button>
 ```
 
-### SCSS for Preline Components
-
-```scss
-// Modal Component
-.modal {
-  // Preline handles show/hide via hs-overlay classes
-  
-  &__dialog {
-    max-width: 32rem;
-    margin: 1.75rem auto;
-  }
-
-  &__content {
-    background-color: white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-  }
-
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  &__title {
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
-
-  &__body {
-    padding: 1.5rem;
-  }
-
-  &__close {
-    padding: 0.5rem;
-    border-radius: var(--radius-sm);
-    
-    &:hover {
-      background-color: var(--color-accent);
-    }
-  }
-}
-```
-
 ## Development Workflow
 
-1. **Start watchers** in separate terminals or use `npm-run-all`:
-   ```bash
-   npm run css:watch
+1. **Start dev server:** `npm run dev` (watches SCSS + starts server)
+
+2. **Write SCSS:** Add components in `scss/components/` using:
+   - BEM naming (`.btn`, `.btn--primary`)
+   - `@apply` for Tailwind utilities
+   - CSS variables from `@theme`
+
+3. **Use BEM classes in HTML:**
+   ```html
+   <button class="btn btn--primary">Submit</button>
    ```
 
-2. **Write SCSS** using BEM methodology in `scss/components/`
+4. **Build required:** CSS is NOT compiled automatically on save - use `npm run watch:css` or `npm run dev`
 
-3. **Use Tailwind utilities** directly in HTML for layout/spacing
+## Key Differences from Tailwind v3
 
-4. **Use custom theme tokens** for consistent design values
-
-5. **Test Preline components** by adding appropriate data attributes
+- **No `tailwind.config.js`** - Configuration is in `css/theme.css` via `@theme`
+- **`@import "tailwindcss"`** instead of `@tailwind` directives
+- **`@theme` block** for custom design tokens
+- **`@utility`** for custom utility classes
+- **CSS variables** used everywhere instead of `theme()`
 
 ## Troubleshooting
 
-### `@apply` Not Working
+### CSS Not Updating
 
-Tailwind v4 has limited `@apply` support. Use:
-- CSS custom properties from `@theme`
-- Standard CSS
-- Tailwind classes directly in HTML
+1. Check if build ran: `ls -la dist/css/main.css`
+2. Check intermediate output: `ls -la .build/components.css`
+3. Look for SCSS syntax errors in terminal
+4. Re-run build: `npm run build:css`
 
-### Styles Not Appearing
+### Missing Styles
 
-1. Check build output exists: `ls dist/css/main.css`
-2. Verify SCSS compiled: `ls .build/components.css`
-3. Check for SCSS syntax errors in terminal
-4. Ensure HTML imports the correct CSS file
+1. Verify component is imported in `scss/main.scss`
+2. Check for CSS specificity issues
+3. Ensure `.build/components.css` is being imported in `css/index.css`
 
 ### Preline Components Not Working
 
-1. Verify `preline.js` is loaded after DOM
-2. Check data attributes are correct (`hs-overlay`, `hs-collapse`, etc.)
-3. Ensure the target element IDs match
-
-## Migration from Tailwind v3
-
-1. **Remove** `tailwind.config.js`
-2. **Create** `css/index.css` with `@import 'tailwindcss'`
-3. **Move** theme config to `css/theme.css` using `@theme` block
-4. **Update** `postcss.config.js` to use `@tailwindcss/postcss`
-5. **Replace** `@apply` in SCSS with CSS custom properties or standard CSS
-6. **Update** build scripts for two-step pipeline
+1. Verify Preline JS is loaded
+2. Check data attributes match (`data-hs-overlay`, `data-hs-collapse`, etc.)
+3. Ensure target element IDs match
 
 ## Resources
 
