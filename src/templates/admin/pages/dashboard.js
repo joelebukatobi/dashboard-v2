@@ -114,7 +114,7 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
               aria-selected="${range === '7d' ? 'true' : 'false'}"
               data-range="7d"
               role="tab"
-              hx-get="/admin/dashboard/traffic?range=7d"
+              hx-get="/admin/traffic?range=7d"
               hx-target="#chart-container-wrapper"
               hx-swap="innerHTML"
               onclick="updateActiveTab('7d')"
@@ -128,7 +128,7 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
               aria-selected="${range === '30d' || !range ? 'true' : 'false'}"
               data-range="30d"
               role="tab"
-              hx-get="/admin/dashboard/traffic?range=30d"
+              hx-get="/admin/traffic?range=30d"
               hx-target="#chart-container-wrapper"
               hx-swap="innerHTML"
               onclick="updateActiveTab('30d')"
@@ -142,7 +142,7 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
               aria-selected="${range === '90d' ? 'true' : 'false'}"
               data-range="90d"
               role="tab"
-              hx-get="/admin/dashboard/traffic?range=90d"
+              hx-get="/admin/traffic?range=90d"
               hx-target="#chart-container-wrapper"
               hx-swap="innerHTML"
               onclick="updateActiveTab('90d')"
@@ -156,7 +156,7 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
               aria-selected="${range === '1y' ? 'true' : 'false'}"
               data-range="1y"
               role="tab"
-              hx-get="/admin/dashboard/traffic?range=1y"
+              hx-get="/admin/traffic?range=1y"
               hx-target="#chart-container-wrapper"
               hx-swap="innerHTML"
               onclick="updateActiveTab('1y')"
@@ -253,7 +253,7 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
     description: 'BlogCMS Dashboard - Overview',
     content,
     user,
-    activeRoute: '/admin/dashboard'
+    activeRoute: '/admin'
   });
 }
 

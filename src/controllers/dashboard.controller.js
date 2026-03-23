@@ -36,7 +36,7 @@ function formatDashboardDate(dateString) {
  */
 class DashboardController {
   /**
-   * GET /admin/dashboard
+   * GET /admin
    * Serve dashboard page
    */
   async showDashboard(request, reply) {
@@ -120,7 +120,7 @@ class DashboardController {
   }
 
   /**
-   * GET /admin/dashboard/stats
+   * GET /admin/stats
    * Get dashboard statistics (HTMX fragment)
    */
   async getStats(request, reply) {
@@ -149,7 +149,7 @@ class DashboardController {
   }
 
   /**
-   * GET /admin/dashboard/activity
+   * GET /admin/activity
    * Get recent activity feed (HTMX fragment)
    */
   async getActivity(request, reply) {
@@ -171,7 +171,7 @@ class DashboardController {
   }
 
   /**
-   * GET /admin/dashboard/top-posts
+   * GET /admin/top-posts
    * Get top performing posts (HTMX fragment)
    */
   async getTopPosts(request, reply) {
@@ -206,7 +206,7 @@ class DashboardController {
   }
 
   /**
-   * GET /admin/dashboard/traffic
+   * GET /admin/traffic
    * Get traffic chart data (HTMX fragment)
    */
   async getTraffic(request, reply) {
