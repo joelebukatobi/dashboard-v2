@@ -48,6 +48,9 @@
 @use 'components/organisms/tabs' as *;
 @use 'components/organisms/widgets' as *;
 
+// Components - Specific feature components
+@use 'components/video-preview' as *;
+
 // Layouts - Page layouts and structures
 @use 'layouts/layout' as *;
 
