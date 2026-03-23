@@ -1,11 +1,23 @@
 // scripts/seed-post-tags.js
 // Assign tags to existing posts for testing
 
-import { db, posts, tags, postTags } from '../src/db/index.js';
-import { eq, sql } from 'drizzle-orm';
+// Load environment variables FIRST before any other imports
+import { config } from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Configure dotenv BEFORE importing anything that uses env vars
+config({ path: join(__dirname, '..', '.env.development') });
 
 async function seedPostTags() {
   console.log('Assigning tags to existing posts...\n');
+
+  // Dynamic imports after env is loaded
+  const { db, posts, tags, postTags } = await import('../src/db/index.js');
+  const { eq, sql } = await import('drizzle-orm');
 
   // Get all posts
   const allPosts = await db.select({ id: posts.id, title: posts.title }).from(posts);
