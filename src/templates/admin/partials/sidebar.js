@@ -18,7 +18,7 @@ export function sidebar({ activeRoute = '/', user } = {}) {
     <aside class="sidebar">
       <!-- Sidebar Header / Logo -->
       <div class="sidebar__header">
-        <a href="/admin/dashboard" class="sidebar__logo">
+          <a href="/admin" class="sidebar__logo">
           <div class="sidebar__logo-icon">
             <i data-lucide="square-library"></i>
           </div>
@@ -41,7 +41,7 @@ export function sidebar({ activeRoute = '/', user } = {}) {
           <div class="sidebar__group-title">Main Menu</div>
           <ul class="sidebar__menu">
             <li>
-              <a href="/admin/dashboard" class="sidebar__item ${isActive('/dashboard')}">
+              <a href="/admin" class="sidebar__item ${isActive('/admin')}">
                 <span class="sidebar__item-icon">
                   <i data-lucide="layout-dashboard"></i>
                 </span>

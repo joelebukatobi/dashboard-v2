@@ -31,7 +31,7 @@ export function header({ user, breadcrumbs = [] }) {
             return `${separator}<a href="${crumb.url}" class="breadcrumb__item ${isLast ? 'breadcrumb__item--current' : ''}">${crumb.label}</a>`;
           })
           .join('')
-      : '<a href="/admin/dashboard" class="breadcrumb__item breadcrumb__item--current">Dashboard</a>';
+      : '<a href="/admin" class="breadcrumb__item breadcrumb__item--current">Dashboard</a>';
 
   return `
     <header class="header">

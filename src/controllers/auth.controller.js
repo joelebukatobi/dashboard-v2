@@ -88,7 +88,7 @@ class AuthController {
       });
       
       // Return success with redirect
-      reply.header('HX-Redirect', '/admin/dashboard');
+      reply.header('HX-Redirect', '/admin');
       return reply.type('text/html').send(successToast({
         message: 'Login successful! Redirecting...'
       }));

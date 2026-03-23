@@ -25,7 +25,7 @@ export default async function authRoutes(fastify) {
       if (token) {
         try {
           await request.jwtVerify(token);
-          return reply.redirect('/admin/dashboard');
+          return reply.redirect('/admin');
         } catch {
           // Token invalid, show login page
         }
