@@ -22,7 +22,7 @@ import { header } from '../partials/header.js';
  * @param {string} [options.activeRoute] - Currently active route for sidebar highlighting
  * @returns {string} Complete HTML page
  */
-export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboard', content, user, activeRoute = '/', breadcrumbs = [] }) {
+export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboard', content, user, activeRoute = '/', breadcrumbs = [], modals = '' }) {
   return `<!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
@@ -72,6 +72,9 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
     <!-- Mobile Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- Modals - Rendered at body level to cover all content including sidebar -->
+    ${modals}
+
     <!-- ApexCharts CSS & JS -->
     <link rel="stylesheet" href="/vendor/apexcharts/apexcharts.css">
     <script src="/vendor/apexcharts/apexcharts.min.js"></script>
@@ -120,10 +123,12 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
         html.classList.add('dark');
       }
 
-      themeToggle?.addEventListener('click', () => {
-        html.classList.toggle('dark');
-        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-      });
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          html.classList.toggle('dark');
+          localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+      }
 
       // Sidebar Toggle (Desktop)
       const sidebarToggle = document.getElementById('sidebarToggle');
@@ -264,6 +269,13 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
       };
 
       // Handle HTMX trigger events for Preline toasts
+      // Convert HTMX 'toast' events (from HX-Trigger header) to htmx:toast custom events
+      document.body.addEventListener('toast', function(evt) {
+        if (evt.detail) {
+          document.body.dispatchEvent(new CustomEvent('htmx:toast', { detail: evt.detail }));
+        }
+      });
+
       document.body.addEventListener('htmx:toast', function(evt) {
         if (evt.detail) {
           // Store toast info for later
@@ -358,6 +370,7 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
           window.location.href = redirectUrl;
         }
       });
+
     </script>
 
     <!-- Preline Toast Container -->
