@@ -438,6 +438,13 @@
   }
 }
 
+// Lighter dropdown chevron (appears thinner)
+.ck.ck-dropdown.ck-heading-dropdown {
+  .ck-dropdown__arrow {
+    opacity: 0.5 !important;
+  }
+}
+
 .dark {
   .ck.ck-editor__top .ck-sticky-panel .ck-sticky-panel__content {
     border: 1px solid #404040 !important;

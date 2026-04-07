@@ -199,7 +199,7 @@ export function postNewPage({ categories, tags, user }) {
       const { ClassicEditor, Essentials, Bold, Italic, Underline, Strikethrough, Heading,
               List, Link, SourceEditing, Paragraph, BlockQuote, Image, ImageToolbar,
               ImageCaption, ImageStyle, ImageResize, ImageUpload, SimpleUploadAdapter,
-              Alignment, SpecialCharacters, MediaEmbed } = CKEDITOR;
+              Alignment, SpecialCharacters, MediaEmbed, Code } = CKEDITOR;
 
       let editor;
 
@@ -209,16 +209,18 @@ export function postNewPage({ categories, tags, user }) {
           plugins: [Essentials, Bold, Italic, Underline, Strikethrough, Heading,
                     List, Link, SourceEditing, Paragraph, BlockQuote, Image, ImageToolbar,
                     ImageCaption, ImageStyle, ImageResize, ImageUpload, SimpleUploadAdapter,
-                    Alignment, SpecialCharacters, MediaEmbed],
+                    Alignment, SpecialCharacters, MediaEmbed, Code],
           toolbar: {
             items: [
               'heading',
               '|',
               'bold', 'italic', 'underline', 'strikethrough',
               '|',
-              'alignment',
+              'alignment:left', 'alignment:center', 'alignment:right', 'alignment:justify',
               '|',
               'bulletedList', 'numberedList', 'blockQuote',
+              '|',
+              'code',
               '|',
               'link', 'imageUpload', 'mediaEmbed',
               '|',
