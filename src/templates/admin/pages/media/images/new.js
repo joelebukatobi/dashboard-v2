@@ -38,8 +38,8 @@ export function imagesNewPage({ user, posts }) {
                 onchange="handleFileSelect(this)"
               />
               <div class="upload-placeholder" id="uploadPlaceholder">
-                <p style="color: var(--color-grey-600); margin-bottom: 0.5rem; font-size: 1rem;">Drag & Drop or Click to Upload</p>
-                <p style="color: var(--color-grey-400); font-size: 0.875rem;">JPEG, PNG, WebP, GIF up to 10MB</p>
+                <p class="upload-placeholder__title">Drag & Drop or Click to Upload</p>
+                <p class="upload-placeholder__hint">JPEG, PNG, WebP, GIF up to 10MB</p>
               </div>
               <img id="imagePreview" class="upload-zone__preview hidden" />
             </div>
@@ -84,7 +84,7 @@ export function imagesNewPage({ user, posts }) {
                 </div>
 
                 <!-- Attach to Post -->
-                <div class="form__group" style="margin-top: 1.6rem;">
+                <div class="form__group form__group--spaced">
                   <label class="label">Attach to Post (Optional)</label>
                   <select 
                     name="postId" 

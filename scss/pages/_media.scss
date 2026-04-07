@@ -66,23 +66,47 @@
   @apply border-2 border-dashed border-grey-300;
   @apply text-center;
   @apply bg-grey-50 rounded-lg;
-  
+
   img {
     @apply w-full h-full;
     @apply object-cover rounded-md;
   }
-  
+
   &__preview {
     @apply w-full h-full;
     @apply object-cover rounded-md max-h-[640px];
-    
+
     @media (min-width: 1024px) {
       @apply max-h-[640px];
     }
   }
-  
+
   &--dragover {
     @apply border-blue-500 bg-blue-50;
+  }
+
+  // Non-interactive preview mode (for edit pages)
+  &--preview {
+    @apply cursor-default;
+  }
+}
+
+// Upload placeholder text styles
+.upload-placeholder {
+  &__title {
+    @apply text-grey-600 mb-[0.5rem] text-body;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+
+  &__hint {
+    @apply text-grey-400 text-body-sm;
+
+    .dark & {
+      @apply text-grey-500;
+    }
   }
 }
 

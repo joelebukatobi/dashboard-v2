@@ -53,6 +53,11 @@
     // Account for fixed page-footer (pagination) so last table row isn't hidden
     @apply pb-[6.4rem];
 
+    // Remove padding for admin/dashboard route
+    .route-admin & {
+      @apply pb-0;
+    }
+
     // Height: fit between fixed header (5.6rem) and footer (6.4rem)
     // Mobile only - desktop uses flex-1 naturally
     @media (max-width: 1023px) {

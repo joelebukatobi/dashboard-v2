@@ -155,14 +155,13 @@ export function postCommentsPage({ user, post, comments, pagination, toast }) {
     <!-- Delete Confirmation Modal -->
     <div
       id="deleteCommentModal"
-      class="hs-overlay hidden"
+      class="hs-overlay hidden z-[100]"
       role="dialog"
       tabindex="-1"
       aria-labelledby="deleteCommentModalLabel"
-      style="display: none; z-index: 100;"
     >
       <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="commentModalBackdrop" style="z-index: 100;"></div>
+      <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0 z-[100]" id="commentModalBackdrop"></div>
 
       <!-- Modal Container -->
       <div
@@ -282,7 +281,7 @@ function renderComment(comment, currentUser, depth = 0) {
           </div>
           
           <!-- Edit Form (hidden by default) -->
-          <div class="comment__edit-form" id="edit-form-${comment.id}" style="display: none;">
+          <div class="comment__edit-form hidden" id="edit-form-${comment.id}">
             <form
               hx-put="/admin/posts/${comment.postId}/comments/${comment.id}"
               hx-target="#comment-body-${comment.id}"
@@ -308,7 +307,7 @@ function renderComment(comment, currentUser, depth = 0) {
           </div>
 
           <!-- Reply Form (hidden by default) -->
-          <div class="comment__reply-form" id="reply-form-${comment.id}" style="display: none;">
+          <div class="comment__reply-form hidden" id="reply-form-${comment.id}">
             <form
               hx-post="/admin/posts/${comment.postId}/comments/reply"
               hx-target="#replies-${comment.id}"

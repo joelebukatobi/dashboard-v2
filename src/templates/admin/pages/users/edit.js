@@ -212,7 +212,6 @@ export function usersEditPage({ editUser, user, userStats = {}, errors = {} }) {
       role="dialog"
       tabindex="-1"
       aria-labelledby="deleteModalLabel"
-      style="display: none;"
     >
       <!-- Backdrop -->
       <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
@@ -267,37 +266,35 @@ export function usersEditPage({ editUser, user, userStats = {}, errors = {} }) {
 
       function confirmDelete(userId, userName) {
         document.getElementById('deleteUserName').textContent = userName;
-        
+
         // Set up the form for HTMX
         const form = document.getElementById('deleteUserForm');
         form.setAttribute('hx-delete', '/admin/users/' + userId);
-        
+
         // Re-initialize HTMX on the form
         if (typeof htmx !== 'undefined') {
           htmx.process(form);
         }
-        
+
         // Show modal
         const modal = document.getElementById('deleteModal');
-        modal.style.display = 'block';
         modal.classList.remove('hidden');
-        
+
         // Animate backdrop
         setTimeout(() => {
           document.getElementById('modalBackdrop').classList.remove('opacity-0');
           modal.querySelector('.modal__content').classList.add('hs-overlay-open:scale-100');
         }, 10);
       }
-      
+
       function closeDeleteModal() {
         const modal = document.getElementById('deleteModal');
         const backdrop = document.getElementById('modalBackdrop');
-        
+
         backdrop.classList.add('opacity-0');
-        
+
         setTimeout(() => {
           modal.classList.add('hidden');
-          modal.style.display = 'none';
         }, 200);
       }
     </script>

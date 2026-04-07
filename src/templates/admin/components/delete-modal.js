@@ -39,10 +39,10 @@ export class DeleteModal {
       const { messageWithItems, messageWithoutItems } = this.config.conditionalConfig;
       messageHtml = `
         <div id="conditionalMessages">
-          <p class="modal__description" id="deleteWithItems" style="display: none;">
+          <p class="modal__description hidden" id="deleteWithItems">
             ${messageWithItems.replace('{count}', '<span id="deleteItemCount"></span>')}
           </p>
-          <p class="modal__description" id="deleteNoItems" style="display: none;">
+          <p class="modal__description hidden" id="deleteNoItems">
             ${messageWithoutItems}
           </p>
         </div>
@@ -52,7 +52,7 @@ export class DeleteModal {
     }
 
     return `
-      <div id="${this.config.id}" class="hs-overlay hidden" role="dialog" tabindex="-1" style="display: none;">
+      <div id="${this.config.id}" class="hs-overlay hidden" role="dialog" tabindex="-1">
         <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
         <div class="fixed inset-0 z-50 flex min-h-full items-center justify-center p-4">
           <div class="modal__content modal__content--confirm">
@@ -102,8 +102,8 @@ export class DeleteModal {
         withItemsMsg.innerHTML = withItemsMsg.innerHTML.replace(/\\{name\\}/g, entityDisplayName);
         noItemsMsg.innerHTML = noItemsMsg.innerHTML.replace(/\\{name\\}/g, entityDisplayName);
         
-        withItemsMsg.style.display = hasItems ? 'block' : 'none';
-        noItemsMsg.style.display = hasItems ? 'none' : 'block';
+        withItemsMsg.classList.toggle('hidden', !hasItems);
+        noItemsMsg.classList.toggle('hidden', hasItems);
         if (hasItems) {
           document.getElementById('deleteItemCount').textContent = itemCount;
         }
@@ -132,7 +132,6 @@ export class DeleteModal {
           ${conditionalLogic}
           
           // Show modal with animation
-          modal.style.display = 'block';
           modal.classList.remove('hidden');
           
           setTimeout(() => {
@@ -149,7 +148,6 @@ export class DeleteModal {
           
           setTimeout(() => {
             modal.classList.add('hidden');
-            modal.style.display = 'none';
           }, 200);
         }
         

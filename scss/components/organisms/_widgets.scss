@@ -31,11 +31,6 @@
   // Traffic Overview: Fill the grid row to match Recent Activity
   &--traffic-overview {
     @apply h-full;
-
-    .chart-container__chart {
-      @apply h-full;
-      @apply min-h-0;
-    }
   }
 
   &__link {

@@ -27,7 +27,7 @@ export function videosEditPage({ user, video, posts }) {
         <div class="media-layout items-start">
           <!-- Left: Video Preview -->
           <div class="media-layout__content flex items-start">
-            <div class="upload-zone w-full video-preview-container" style="cursor: default;">
+            <div class="upload-zone upload-zone--preview w-full video-preview-container">
               <!-- Background video (blurred backdrop) -->
               <video 
                 id="videoBg"
@@ -90,9 +90,9 @@ export function videosEditPage({ user, video, posts }) {
                 </div>
 
                 <!-- Video Info -->
-                <div class="form__group" style="margin-top: 1.6rem;">
+                <div class="form__group form__group--spaced">
                   <label class="label">Video Information</label>
-                  <div class="card card__panel" style="background: var(--color-grey-50); padding: 1rem;">
+                  <div class="card card__panel bg-grey-50 dark:bg-grey-800 p-[1rem]">
                     <p class="text-body-sm text-grey-600">
                       <strong>Duration:</strong> ${video.durationFormatted}<br>
                       <strong>Dimensions:</strong> ${video.width || 'N/A'} x ${video.height || 'N/A'}<br>
@@ -103,7 +103,7 @@ export function videosEditPage({ user, video, posts }) {
                 </div>
 
                 <!-- Attach to Post -->
-                <div class="form__group" style="margin-top: 1.6rem;">
+                <div class="form__group form__group--spaced">
                   <label class="label">Attach to Post (Optional)</label>
                   <select 
                     name="postId" 
@@ -154,7 +154,6 @@ export function videosEditPage({ user, video, posts }) {
       class="hs-overlay hidden"
       role="dialog"
       tabindex="-1"
-      style="display: none;"
     >
       <!-- Backdrop -->
       <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
@@ -170,7 +169,7 @@ export function videosEditPage({ user, video, posts }) {
           </div>
 
           <!-- Body -->
-          <div class="px-6" style="padding-bottom: 16px;">
+          <div class="px-6 modal__body--padded-bottom">
             <h3 class="modal__title">Are you sure you want to delete?</h3>
             <p class="modal__description">
               Are you sure you want to delete "<span id="deleteVideoName">${escapeHtml(video.originalName)}</span>"?

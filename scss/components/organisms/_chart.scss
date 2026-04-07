@@ -40,10 +40,10 @@
   }
 
   &__chart {
-    @apply w-full bg-gradient-to-b from-blue-600/10 dark:bg-gradient-to-b dark:from-grey-800/10 to-transparent rounded-xl flex items-center justify-center text-grey-500 dark:text-grey-400;
+    @apply w-full bg-gradient-to-b from-blue-600/10 dark:bg-gradient-to-b dark:from-grey-800/10 to-transparent rounded-md flex items-center justify-center text-grey-500 dark:text-grey-400;
 
     // Default height when not in a constrained widget
-    @apply min-h-[30rem] h-[28rem];
+    @apply min-h-[28rem] h-[28rem];
   }
 }
 
@@ -74,6 +74,16 @@
   & > div[id^="traffic-chart-"] {
     @apply w-full flex-1;
     @apply min-h-0 relative;
+  }
+
+  // Chart element with min-height for ApexCharts
+  &__chart-element {
+    @apply min-h-[32rem] w-full;
+  }
+
+  // Tooltip date styling (for ApexCharts tooltip formatter)
+  &__tooltip-date {
+    @apply text-body-xs opacity-70;
   }
 }
 

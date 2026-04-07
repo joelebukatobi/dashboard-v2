@@ -494,7 +494,7 @@ function chartFragment({ range, data }) {
             <span class="traffic-chart__stat-label">Avg/Day</span>
           </div>
         </div>
-        <div id="traffic-chart-${range}-${timestamp}" style="min-height: 320px; width: 100%;"></div>
+        <div id="traffic-chart-${range}-${timestamp}" class="traffic-chart__chart-element"></div>
       </div>
     </div>
     <script>
@@ -594,7 +594,7 @@ function chartFragment({ range, data }) {
                     const index = opts.dataPointIndex;
                     const label = ${JSON.stringify(categories)}[index];
                     const dateRange = dateRanges[index];
-                    return label + '<br><span style="font-size: 11px; opacity: 0.7;">' + dateRange + '</span>';
+                    return label + '<br><span class="traffic-chart__tooltip-date">' + dateRange + '</span>';
                   }
                 },
                 y: {

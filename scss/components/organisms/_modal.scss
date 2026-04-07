@@ -147,6 +147,13 @@
   }
 }
 
+// Modal body padding variants
+.modal__body {
+  &--padded-bottom {
+    @apply pb-[1.6rem];
+  }
+}
+
 // Delete modal layout (used by DeleteModal component)
 .modal__content--confirm {
   @apply flex flex-col;

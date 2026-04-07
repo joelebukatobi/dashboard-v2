@@ -27,12 +27,11 @@ export function imagesEditPage({ user, image, posts }) {
         <div class="media-layout items-start">
           <!-- Left: Image Preview -->
           <div class="media-layout__content flex items-start">
-            <div class="upload-zone w-full" style="cursor: default;">
+            <div class="upload-zone upload-zone--preview w-full">
               <img 
-                class="upload-zone__preview" 
+                class="upload-zone__preview block" 
                 src="${image.path}"
                 alt="${escapeHtml(image.altText || image.title || '')}"
-                style="display: block;"
               />
             </div>
           </div>
@@ -77,7 +76,7 @@ export function imagesEditPage({ user, image, posts }) {
                 </div>
 
                 <!-- Attach to Post -->
-                <div class="form__group" style="margin-top: 1.6rem;">
+                <div class="form__group form__group--spaced">
                   <label class="label">Attach to Post (Optional)</label>
                   <select 
                     name="postId" 
@@ -128,7 +127,6 @@ export function imagesEditPage({ user, image, posts }) {
       class="hs-overlay hidden"
       role="dialog"
       tabindex="-1"
-      style="display: none;"
     >
       <!-- Backdrop -->
       <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
@@ -144,7 +142,7 @@ export function imagesEditPage({ user, image, posts }) {
           </div>
 
           <!-- Body -->
-          <div class="px-6" style="padding-bottom: 16px;">
+          <div class="px-6 modal__body--padded-bottom">
             <h3 class="modal__title">Are you sure you want to delete?</h3>
             <p class="modal__description">
               Are you sure you want to delete "<span id="deleteImageName">${escapeHtml(image.originalName)}</span>"?

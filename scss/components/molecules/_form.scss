@@ -38,6 +38,11 @@
         }
       }
     }
+
+    // Spacing modifier for additional top margin
+    &--spaced {
+      @apply mt-[1.6rem];
+    }
   }
 
   // Input wrapper for icons/addons (positioning only)

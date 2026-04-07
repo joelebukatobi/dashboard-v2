@@ -23,6 +23,9 @@ import { header } from '../partials/header.js';
  * @returns {string} Complete HTML page
  */
 export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboard', content, user, activeRoute = '/', breadcrumbs = [], modals = '' }) {
+  // Determine route class for body based on activeRoute
+  const routeClass = activeRoute === '/admin' || activeRoute === '/admin/' ? 'route-admin' : '';
+  
   return `<!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
@@ -53,9 +56,9 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   </head>
-  <body class="app">
+  <body class="app ${routeClass}">
     <!-- Layout wrapper -->
-    <div class="layout">
+    <div class="layout ${routeClass}">
       <!-- Sidebar -->
       ${sidebar({ activeRoute, user })}
 
