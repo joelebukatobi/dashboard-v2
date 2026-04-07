@@ -72,6 +72,9 @@ cookies.txt
 .opencode/
 .tmp/
 
+# Session exports from AI assistants
+session*.json
+
 # Generated media uploads/cache
 public/uploads/images/image-*
 public/uploads/images/thumbs/
