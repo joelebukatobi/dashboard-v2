@@ -118,13 +118,14 @@ export default async function app(fastify, opts) {
    await fastify.register(import('./routes/auth.routes.js'), { prefix: '/admin/auth' });
    await fastify.register(import('./routes/dashboard.routes.js'), { prefix: '/admin' });
    await fastify.register(import('./routes/posts.routes.js'), { prefix: '/admin/posts' });
+   await fastify.register(import('./routes/comments.routes.js'), { prefix: '/admin/posts/:postId/comments' });
    await fastify.register(import('./routes/categories.routes.js'), { prefix: '/admin/categories' });
    await fastify.register(import('./routes/tags.routes.js'), { prefix: '/admin/tags' });
-  // await fastify.register(import('./routes/users.routes.js'), { prefix: '/admin/users' });
-   await fastify.register(import('./routes/images.routes.js'), { prefix: '/admin/media/images' });
+    await fastify.register(import('./routes/users.routes.js'), { prefix: '/admin/users' });
+    await fastify.register(import('./routes/subscribers.routes.js'), { prefix: '/admin/subscribers' });
+    await fastify.register(import('./routes/images.routes.js'), { prefix: '/admin/media/images' });
    await fastify.register(import('./routes/videos.routes.js'), { prefix: '/admin/media/videos' });
-  // await fastify.register(import('./routes/settings.routes.js'), { prefix: '/admin/settings' });
-  // await fastify.register(import('./routes/notifications.routes.js'), { prefix: '/admin/notifications' });
+    await fastify.register(import('./routes/settings.routes.js'), { prefix: '/admin/settings' });
 
   // 404 handler
   fastify.setNotFoundHandler(async (request, reply) => {
