@@ -69,6 +69,8 @@ cookies.txt
 
 # Local agent workspace files
 .serena/
+.opencode/
+.tmp/
 
 # Generated media uploads/cache
 public/uploads/images/image-*
