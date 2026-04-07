@@ -351,7 +351,7 @@ class PostsController {
 
   /**
    * POST /admin/posts/upload-image
-   * Upload featured image
+   * Upload featured image with hash-based deduplication
    */
   async uploadImage(request, reply) {
     try {
@@ -377,6 +377,39 @@ class PostsController {
         return reply.send({ error: 'File too large. Max size: 10MB' });
       }
 
+      // Read file buffer
+      const fs = await import('fs/promises');
+      const path = await import('path');
+      const crypto = await import('crypto');
+      const fileBuffer = await file.toBuffer();
+
+      // Calculate SHA-256 hash of file content
+      const hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+
+      // Check if image with this hash already exists
+      const { db, mediaItems } = await import('../db/index.js');
+      const { eq } = await import('drizzle-orm');
+      
+      const existingImage = await db
+        .select({
+          id: mediaItems.id,
+          path: mediaItems.path,
+          filename: mediaItems.filename,
+        })
+        .from(mediaItems)
+        .where(eq(mediaItems.hash, hash))
+        .limit(1);
+
+      // If duplicate found, return existing image
+      if (existingImage.length > 0) {
+        return reply.send({
+          id: existingImage[0].id,
+          url: `/${existingImage[0].path}`,
+          filename: existingImage[0].filename,
+          deduplicated: true,
+        });
+      }
+
       // Generate unique filename
       const timestamp = Date.now();
       const extension = file.filename.split('.').pop();
@@ -384,8 +417,6 @@ class PostsController {
       const filepath = `public/uploads/posts/${filename}`;
 
       // Ensure uploads directory exists
-      const fs = await import('fs/promises');
-      const path = await import('path');
       const uploadsDir = path.join(process.cwd(), 'public/uploads/posts');
       
       try {
@@ -396,10 +427,9 @@ class PostsController {
 
       // Save file
       const fullPath = path.join(process.cwd(), filepath);
-      await fs.writeFile(fullPath, await file.toBuffer());
+      await fs.writeFile(fullPath, fileBuffer);
 
-      // Create media record in database
-      const { db, mediaItems } = await import('../db/index.js');
+      // Create media record in database with hash
       const [mediaItem] = await db
         .insert(mediaItems)
         .values({
@@ -409,6 +439,7 @@ class PostsController {
           mimeType: file.mimetype,
           size: file.file.bytesRead,
           path: filepath,
+          hash, // Store the hash for future deduplication
           uploadedBy: request.user.id,
         })
         .returning();
@@ -417,6 +448,7 @@ class PostsController {
         id: mediaItem.id,
         url: `/${filepath}`,
         filename,
+        deduplicated: false,
       });
 
     } catch (error) {

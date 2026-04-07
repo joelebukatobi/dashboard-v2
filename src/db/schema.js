@@ -257,6 +257,7 @@ export const mediaItems = pgTable('media_items', {
   tag: varchar('tag', { length: 50 }),
   path: varchar('path', { length: 500 }).notNull(),
   thumbnailPath: varchar('thumbnail_path', { length: 500 }),
+  hash: varchar('hash', { length: 64 }),
   uploadedBy: uuid('uploaded_by').notNull().references(() => users.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
