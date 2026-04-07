@@ -31,7 +31,7 @@
 // Dropdown menu (Preline compatible)
 .dropdown__menu {
   @apply transition-[opacity,margin] duration-200;
-  @apply opacity-0 invisible z-50;
+  @apply opacity-0 hidden z-50;
   @apply bg-white;
   .dark & {
     @apply bg-grey-900;
@@ -44,6 +44,7 @@
   }
   @apply absolute inset-auto top-full left-0 mt-[0.8rem] transform-none;
   @apply p-[.4rem] w-auto space-y-[.4rem];
+  @apply max-h-[32rem] overflow-y-auto;
 
   // Override inline styles from Preline JS (default: right-aligned)
   &[style] {
@@ -86,12 +87,12 @@
 
 // Preline active state for dropdown menu
 .hs-dropdown.open .dropdown__menu {
-  @apply opacity-100 visible;
+  @apply opacity-100 block;
 }
 
 // Dropdown item
 .dropdown__item {
-  @apply flex items-center gap-[.64rem] py-[0.64rem] px-[.8rem] rounded-md text-body-sm w-full;
+  @apply flex items-center gap-[.64rem] py-[.4rem] px-[.8rem] rounded-md text-body-sm w-full;
   @apply text-grey-900;
   .dark & {
     @apply text-white;
@@ -160,7 +161,7 @@
 
 // Dropdown header (user info, etc.)
 .dropdown__header {
-  @apply px-[1.2rem] py-[0.8rem] mb-[0.8rem];
+  @apply px-[.8rem] py-[.8rem] mb-[.8rem];
   @apply border-b;
   @apply border-grey-100;
   .dark & {
@@ -168,7 +169,7 @@
   }
 
   &-name {
-    @apply text-body-sm font-semibold;
+    @apply text-body-sm font-semibold leading-tight mb-[.48rem];
     @apply text-grey-900;
     .dark & {
       @apply text-white;
@@ -176,8 +177,7 @@
   }
 
   &-email {
-    @apply text-body-xs;
-    @apply text-body-xs mt-[0.2rem] text-grey-500;
+    @apply text-body-xs leading-tight text-grey-500;
     .dark & {
       @apply text-grey-400;
     }
