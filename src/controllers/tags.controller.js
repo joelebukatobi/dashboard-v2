@@ -50,10 +50,9 @@ class TagsController {
         tagsListPage({
           user,
           tags,
-          pagination: {
-            ...pagination,
-            page: parseInt(page, 10) || 1
-          },
+          total: pagination.total,
+          page: pagination.page,
+          totalPages: pagination.totalPages,
           filters: { search },
           toast,
         })

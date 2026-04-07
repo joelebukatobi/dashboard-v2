@@ -505,7 +505,7 @@ function postsTableFragment({ posts, page, totalPages, filters }) {
         </td>
         <td class="table__td">
           <span class="table__label">Category</span>
-          ${post.category ? `<span class="badge ${post.category.colorClass || 'badge--primary'}">${post.category.title}</span>` : '<span class="badge badge--neutral">Uncategorized</span>'}
+          ${post.category ? `<span class="text-grey-700">${post.category.title}</span>` : '<span class="text-grey-500">Uncategorized</span>'}
         </td>
         <td class="table__td">
           <span class="table__label">Status</span>

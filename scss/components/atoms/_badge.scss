@@ -76,6 +76,19 @@
       @apply content-[''] w-[0.4rem] h-[0.4rem] rounded-full bg-current;
     }
   }
+
+  // Post count - blue with opacity, box matching action button size exactly
+  // Desktop action buttons: 0.4rem padding + 1.2rem icon + 0.4rem padding = 2.0rem
+  &--count {
+    @apply bg-blue-600/10 text-blue-600;
+    @apply w-[2.0rem] h-[2.0rem] p-0;
+    @apply justify-center text-body-xs;
+    @apply rounded-md;
+
+    .dark & {
+      @apply bg-blue-400/10 text-blue-400;
+    }
+  }
 }
 
 // ============================================================================

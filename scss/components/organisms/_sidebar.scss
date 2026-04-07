@@ -4,7 +4,7 @@
 // ============================================================================
 
 // Collapsed state token set
-$collapsed-icon-size: 1.8rem;
+$collapsed-icon-size: 1.6rem;
 $collapsed-item-size: 3.2rem;
 
 .sidebar {
@@ -176,7 +176,7 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__group {
-    @apply mb-[2.4rem] last:mb-0;
+    @apply mb-[0.8rem] last:mb-0;
   }
 
   &__group-title {
@@ -219,10 +219,10 @@ $collapsed-item-size: 3.2rem;
   }
 
   &__item-icon {
-    @apply flex-shrink-0  flex items-center justify-center w-[2.0rem] h-[2.0rem];
+    @apply flex-shrink-0  flex items-center justify-center w-[1.6rem] h-[1.6rem];
 
     svg {
-      @apply w-[2.0rem] h-[2.0rem] stroke-[1];
+      @apply w-[1.6rem] h-[1.6rem] stroke-[1];
     }
   }
 

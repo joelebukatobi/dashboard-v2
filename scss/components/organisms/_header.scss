@@ -166,8 +166,10 @@
 // Theme toggle icons
 .theme-icon-light {
   @apply block dark:hidden;
+  stroke-width: 1;
 }
 
 .theme-icon-dark {
   @apply hidden dark:block;
+  stroke-width: 1;
 }

@@ -106,7 +106,6 @@ class CategoriesService {
    * @param {string} data.title - Category title
    * @param {string} [data.slug] - Category slug (auto-generated if not provided)
    * @param {string} [data.description] - Category description
-   * @param {string} [data.colorClass='badge--primary'] - Badge color class
    * @param {string} userId - User creating the category
    * @returns {Promise<Object>} - Created category
    */
@@ -129,7 +128,6 @@ class CategoriesService {
         title: data.title,
         slug,
         description: data.description,
-        colorClass: data.colorClass || 'badge--primary',
         postCount: 0,
       })
       .returning();

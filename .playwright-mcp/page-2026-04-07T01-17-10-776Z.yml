@@ -1,0 +1,349 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "BlogCMS" [ref=e5] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e409]
+        - generic [ref=e10]: BlogCMS
+      - button "Toggle sidebar" [ref=e11] [cursor=pointer]:
+        - img [ref=e412]
+    - navigation [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: Main Menu
+        - list [ref=e17]:
+          - listitem [ref=e18]:
+            - link "Dashboard" [ref=e19] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e414]
+              - generic [ref=e26]: Dashboard
+          - listitem [ref=e27]:
+            - link "Posts" [ref=e28] [cursor=pointer]:
+              - /url: /admin/posts
+              - img [ref=e419]
+              - generic [ref=e33]: Posts
+          - listitem [ref=e34]:
+            - link "Categories" [ref=e35] [cursor=pointer]:
+              - /url: /admin/categories
+              - img [ref=e422]
+              - generic [ref=e39]: Categories
+          - listitem [ref=e40]:
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /admin/tags
+              - img [ref=e424]
+              - generic [ref=e47]: Tags
+      - generic [ref=e48]:
+        - generic [ref=e49]: Media
+        - list [ref=e50]:
+          - listitem [ref=e51]:
+            - link "Images" [ref=e52] [cursor=pointer]:
+              - /url: /admin/media/images
+              - img [ref=e428]
+              - generic [ref=e58]: Images
+          - listitem [ref=e59]:
+            - link "Videos" [ref=e60] [cursor=pointer]:
+              - /url: /admin/media/videos
+              - img [ref=e432]
+              - generic [ref=e65]: Videos
+      - generic [ref=e66]:
+        - generic [ref=e67]: Management
+        - list [ref=e68]:
+          - listitem [ref=e69]:
+            - link "Users" [ref=e70] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e435]
+              - generic [ref=e84]: Users
+          - listitem [ref=e85]:
+            - link "Subscribers" [ref=e86] [cursor=pointer]:
+              - /url: /admin/subscribers
+              - img [ref=e447]
+              - generic [ref=e91]: Subscribers
+          - listitem [ref=e92]:
+            - link "Settings" [ref=e93] [cursor=pointer]:
+              - /url: /admin/settings
+              - img [ref=e450]
+              - generic [ref=e98]: Settings
+  - main [ref=e99]:
+    - generic [ref=e100]:
+      - navigation [ref=e102]:
+        - link "Dashboard":
+          - /url: /admin
+      - generic [ref=e103]:
+        - generic [ref=e105]:
+          - img
+          - textbox "Search..." [ref=e106]
+        - button "Toggle theme" [ref=e107]:
+          - img [ref=e453]
+        - generic [ref=e110]:
+          - button "12" [active] [ref=e111]:
+            - img [ref=e455]
+            - text: "12"
+          - menu "12" [ref=e458]:
+            - generic [ref=e459]:
+              - link "Mark all as read" [ref=e460] [cursor=pointer]:
+                - /url: "#"
+              - button "Refresh notifications" [ref=e461]:
+                - img [ref=e462]
+            - generic [ref=e467]:
+              - link "Post published successfully 4h ago Docker for Beginners has been published" [ref=e468] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e469]:
+                  - generic [ref=e470]:
+                    - paragraph [ref=e471]: Post published successfully
+                    - paragraph [ref=e472]: 4h ago
+                  - paragraph [ref=e473]: Docker for Beginners has been published
+              - link "Traffic spike detected 4h ago Your post REST API Design is getting 3x more views" [ref=e474] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e475]:
+                  - generic [ref=e476]:
+                    - paragraph [ref=e477]: Traffic spike detected
+                    - paragraph [ref=e478]: 4h ago
+                  - paragraph [ref=e479]: Your post REST API Design is getting 3x more views
+              - link "New subscriber 4h ago jane@example.com just subscribed to your newsletter" [ref=e480] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e481]:
+                  - generic [ref=e482]:
+                    - paragraph [ref=e483]: New subscriber
+                    - paragraph [ref=e484]: 4h ago
+                  - paragraph [ref=e485]: jane@example.com just subscribed to your newsletter
+              - link "New comment on your post 4h ago John Doe commented on Getting Started with Node.js" [ref=e486] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e487]:
+                  - generic [ref=e488]:
+                    - paragraph [ref=e489]: New comment on your post
+                    - paragraph [ref=e490]: 4h ago
+                  - paragraph [ref=e491]: John Doe commented on Getting Started with Node.js
+              - link "System maintenance scheduled 4h ago Scheduled maintenance on Sunday 2:00 AM UTC" [ref=e492] [cursor=pointer]:
+                - /url: "#"
+                - generic [ref=e493]:
+                  - generic [ref=e494]:
+                    - paragraph [ref=e495]: System maintenance scheduled
+                    - paragraph [ref=e496]: 4h ago
+                  - paragraph [ref=e497]: Scheduled maintenance on Sunday 2:00 AM UTC
+        - button "AU Admin User" [ref=e116] [cursor=pointer]:
+          - generic [ref=e117]: AU
+          - generic [ref=e118]: Admin User
+          - img [ref=e498]
+    - generic [ref=e121]:
+      - generic [ref=e123]:
+        - heading "Dashboard" [level=1] [ref=e124]
+        - paragraph [ref=e125]: Welcome back, Admin! Here's what's happening with your blog today.
+      - generic [ref=e126]:
+        - generic [ref=e127]:
+          - img [ref=e500]
+          - generic [ref=e132]:
+            - generic [ref=e133]: Total Posts
+            - generic [ref=e134]: "20"
+            - generic [ref=e135]:
+              - img [ref=e503]
+              - text: 0% from last month
+        - generic [ref=e139]:
+          - img [ref=e506]
+          - generic [ref=e144]:
+            - generic [ref=e145]: Page Views
+            - generic [ref=e146]: 2,892
+            - generic [ref=e147]:
+              - img [ref=e509]
+              - text: 100% from last month
+        - generic [ref=e151]:
+          - img [ref=e512]
+          - generic [ref=e155]:
+            - generic [ref=e156]: Comments
+            - generic [ref=e157]: "35"
+            - generic [ref=e158]:
+              - img [ref=e514]
+              - text: 100% from last month
+        - generic [ref=e162]:
+          - img [ref=e517]
+          - generic [ref=e169]:
+            - generic [ref=e170]: Subscribers
+            - generic [ref=e171]: "19"
+            - generic [ref=e172]:
+              - img [ref=e522]
+              - text: 100% from last month
+      - generic [ref=e176]:
+        - generic [ref=e177]:
+          - generic [ref=e178]:
+            - generic [ref=e179]:
+              - heading "Traffic Overview" [level=5] [ref=e180]
+              - heading "Page views and unique visitors" [level=6] [ref=e181]
+            - tablist "Chart range" [ref=e182]:
+              - tab "7 Days" [ref=e183]
+              - tab "30 Days" [selected] [ref=e184]
+              - tab "90 Days" [ref=e185]
+              - tab "1 Year" [ref=e186]
+          - separator [ref=e187]
+          - tabpanel "30 Days" [ref=e190]:
+            - generic [ref=e191]:
+              - generic [ref=e192]:
+                - generic [ref=e193]:
+                  - generic [ref=e194]: 2,773
+                  - generic [ref=e195]: Total Views
+                - generic [ref=e196]:
+                  - generic [ref=e197]: 1,626
+                  - generic [ref=e198]: Unique Visitors
+                - generic [ref=e199]:
+                  - generic [ref=e200]: "396"
+                  - generic [ref=e201]: Avg/Day
+              - generic [ref=e203]:
+                - img [ref=e204]:
+                  - generic [ref=e207]:
+                    - generic "500" [ref=e208]
+                    - generic "400" [ref=e209]
+                    - generic "300" [ref=e210]
+                    - generic "200" [ref=e211]
+                    - generic "100" [ref=e212]
+                  - generic [ref=e236]:
+                    - generic "Mon" [ref=e237]
+                    - generic "Tue" [ref=e238]
+                    - generic "Wed" [ref=e239]
+                    - generic "Thu" [ref=e240]
+                    - generic "Fri" [ref=e241]
+                    - generic "Sat" [ref=e242]
+                    - generic "Mon" [ref=e243]
+                - generic [ref=e244]:
+                  - generic [ref=e245] [cursor=pointer]:
+                    - generic [ref=e246]:
+                      - img
+                    - generic [ref=e247]: Page Views
+                  - generic [ref=e248] [cursor=pointer]:
+                    - generic [ref=e249]:
+                      - img
+                    - generic [ref=e250]: Unique Visitors
+                - generic: ● ●
+        - generic [ref=e251]:
+          - heading "Recent Activity" [level=5] [ref=e253]
+          - separator [ref=e254]
+          - generic [ref=e256]:
+            - generic [ref=e257]:
+              - img [ref=e525]
+              - generic [ref=e262]:
+                - paragraph [ref=e263]: Robert Taylor subscribed to the newsletter
+                - generic [ref=e264]: 3 hours ago
+            - generic [ref=e265]:
+              - img [ref=e528]
+              - generic [ref=e270]:
+                - paragraph [ref=e271]: Linda Clark subscribed to the newsletter
+                - generic [ref=e272]: 3 hours ago
+            - generic [ref=e273]:
+              - img [ref=e531]
+              - generic [ref=e277]:
+                - paragraph [ref=e278]: Linda Clark commented on "UI Design Principles for Developers"
+                - generic [ref=e279]: 3 hours ago
+            - generic [ref=e280]:
+              - img [ref=e533]
+              - generic [ref=e284]:
+                - paragraph [ref=e285]: Maria Anderson commented on "REST API Design Guidelines"
+                - generic [ref=e286]: 3 hours ago
+            - generic [ref=e287]:
+              - img [ref=e535]
+              - generic [ref=e291]:
+                - paragraph [ref=e292]: John Smith commented on "Web Accessibility Guide"
+                - generic [ref=e293]: 3 hours ago
+      - generic [ref=e294]:
+        - generic [ref=e295]:
+          - generic [ref=e296]:
+            - heading "Recent Posts" [level=5] [ref=e297]
+            - heading "Add New" [level=5] [ref=e298]:
+              - link "Add New" [ref=e299] [cursor=pointer]:
+                - /url: /admin/posts/new
+          - separator [ref=e300]
+          - generic [ref=e302]:
+            - generic [ref=e303]:
+              - generic [ref=e304]:
+                - heading "Getting Started with React Hooks" [level=4] [ref=e305]
+                - generic [ref=e306]:
+                  - generic [ref=e307]: Admin User
+                  - generic [ref=e308]: •
+                  - generic [ref=e309]: 02/04/2026 3:45 PM
+              - generic [ref=e310]: Published
+            - generic [ref=e311]:
+              - generic [ref=e312]:
+                - heading "Building Scalable APIs with Fastify" [level=4] [ref=e313]
+                - generic [ref=e314]:
+                  - generic [ref=e315]: Admin User
+                  - generic [ref=e316]: •
+                  - generic [ref=e317]: 02/03/2026 3:45 PM
+              - generic [ref=e318]: Published
+            - generic [ref=e319]:
+              - generic [ref=e320]:
+                - 'heading "CSS Grid Layout: A Complete Guide" [level=4] [ref=e321]'
+                - generic [ref=e322]:
+                  - generic [ref=e323]: Admin User
+                  - generic [ref=e324]: •
+                  - generic [ref=e325]: 02/03/2026 3:45 PM
+              - generic [ref=e326]: Published
+            - generic [ref=e327]:
+              - generic [ref=e328]:
+                - heading "UI Design Principles for Developers" [level=4] [ref=e329]
+                - generic [ref=e330]:
+                  - generic [ref=e331]: Admin User
+                  - generic [ref=e332]: •
+                  - generic [ref=e333]: 02/02/2026 3:45 PM
+              - generic [ref=e334]: Published
+            - generic [ref=e335]:
+              - generic [ref=e336]:
+                - heading "Advanced TypeScript Patterns" [level=4] [ref=e337]
+                - generic [ref=e338]:
+                  - generic [ref=e339]: Admin User
+                  - generic [ref=e340]: •
+                  - generic [ref=e341]: 02/02/2026 3:45 PM
+              - generic [ref=e342]: Published
+        - generic [ref=e343]:
+          - heading "Top Posts" [level=5] [ref=e345]
+          - separator [ref=e346]
+          - generic [ref=e348]:
+            - generic [ref=e349]:
+              - generic [ref=e350]:
+                - generic [ref=e351]: "1"
+                - generic [ref=e352]:
+                  - heading "Advanced TypeScript Patterns" [level=6] [ref=e353]
+                  - generic [ref=e354]: /blog/advanced-typescript-patterns
+              - generic [ref=e355]:
+                - generic [ref=e356]: 346 Views
+                - generic [ref=e357]:
+                  - img [ref=e537]
+                  - text: 79%
+            - generic [ref=e361]:
+              - generic [ref=e362]:
+                - generic [ref=e363]: "2"
+                - generic [ref=e364]:
+                  - heading "Getting Started with React Hooks" [level=6] [ref=e365]
+                  - generic [ref=e366]: /blog/getting-started-with-react-hooks
+              - generic [ref=e367]:
+                - generic [ref=e368]: 337 Views
+                - generic [ref=e369]:
+                  - img [ref=e540]
+                  - text: 76%
+            - generic [ref=e373]:
+              - generic [ref=e374]:
+                - generic [ref=e375]: "3"
+                - generic [ref=e376]:
+                  - 'heading "CSS Grid Layout: A Complete Guide" [level=6] [ref=e377]'
+                  - generic [ref=e378]: /blog/css-grid-layout-complete-guide
+              - generic [ref=e379]:
+                - generic [ref=e380]: 335 Views
+                - generic [ref=e381]:
+                  - img [ref=e543]
+                  - text: 75%
+            - generic [ref=e385]:
+              - generic [ref=e386]:
+                - generic [ref=e387]: "4"
+                - generic [ref=e388]:
+                  - heading "Frontend Testing Strategies" [level=6] [ref=e389]
+                  - generic [ref=e390]: /blog/frontend-testing-strategies
+              - generic [ref=e391]:
+                - generic [ref=e392]: 154 Views
+                - generic [ref=e393]:
+                  - img [ref=e546]
+                  - text: 14%
+            - generic [ref=e397]:
+              - generic [ref=e398]:
+                - generic [ref=e399]: "5"
+                - generic [ref=e400]:
+                  - heading "Color Theory for Web Designers" [level=6] [ref=e401]
+                  - generic [ref=e402]: /blog/color-theory-web-designers
+              - generic [ref=e403]:
+                - generic [ref=e404]: 152 Views
+                - generic [ref=e405]:
+                  - img [ref=e549]
+                  - text: 30%

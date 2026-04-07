@@ -2,6 +2,7 @@
 // Categories List Page - Exact structure from categories.html
 
 import { mainLayout } from '../../layouts/main.js';
+import { DeleteModal } from '../../components/delete-modal.js';
 
 const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-row items-center gap-[1.6rem]';
 const listToolbarSearchClass = 'relative min-w-0 flex-1';
@@ -40,6 +41,20 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
       });
     </script>
   ` : '';
+
+  // Initialize delete modal with conditional message config
+  const deleteModal = new DeleteModal({
+    entityName: 'Category',
+    entityLabel: 'title',
+    deleteUrlPath: '/admin/categories',
+    csrfToken: user?.csrfToken || '',
+    hasConditionalMessage: true,
+    conditionalConfig: {
+      messageWithItems: 'The {name} category has {count} post(s). They will be moved to Uncategorized.',
+      messageWithoutItems: 'This action cannot be undone. The {name} category will be permanently deleted.',
+      countAttribute: 'data-post-count'
+    }
+  });
 
   const content = `
     <div class="categories">
@@ -150,149 +165,13 @@ export function categoriesListPage({ categories, total, page, totalPages, filter
       </div>
     </div>
 
-    <script>
-      // Delete Modal Functions
-      function openDeleteModal(button) {
-        const categoryId = button.getAttribute('data-category-id');
-        const categoryTitle = button.getAttribute('data-category-title');
-        const postCount = parseInt(button.getAttribute('data-post-count') || '0', 10);
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteCategoryForm');
-
-        // Update form action and re-process for HTMX
-        form.setAttribute('hx-delete', '/admin/categories/' + categoryId);
-        if (typeof htmx !== 'undefined') {
-          htmx.process(form);
-        }
-
-        // Show appropriate message based on post count
-        const withPostsMsg = document.getElementById('deleteWithPosts');
-        const noPostsMsg = document.getElementById('deleteNoPosts');
-        
-        if (withPostsMsg && noPostsMsg) {
-          if (postCount > 0) {
-            // Show "with posts" message, hide "no posts" message
-            withPostsMsg.style.display = 'block';
-            noPostsMsg.style.display = 'none';
-            // Update category name
-            withPostsMsg.querySelector('.category-name').textContent = categoryTitle;
-            // Update post count
-            withPostsMsg.querySelector('.post-count').textContent = postCount;
-            // Handle pluralization
-            withPostsMsg.querySelector('.post-plural').textContent = postCount === 1 ? '' : 's';
-          } else {
-            // Show "no posts" message, hide "with posts" message
-            withPostsMsg.style.display = 'none';
-            noPostsMsg.style.display = 'block';
-          }
-        }
-
-        // Show modal
-        modal.style.display = 'block';
-        document.getElementById('modalBackdrop').style.opacity = '1';
-      }
-      
-      function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.style.display = 'none';
-        document.getElementById('modalBackdrop').style.opacity = '0';
-      }
-      
-      // Close modal on backdrop click
-      document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this || e.target.id === 'modalBackdrop') {
-          closeDeleteModal();
-        }
-      });
-      
-      // Close modal on escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeDeleteModal();
-        }
-      });
-      
-      // Close modal after HTMX swap (successful delete)
-      document.body.addEventListener('htmx:afterSwap', function(evt) {
-        if (evt.detail.target.classList.contains('table')) {
-          closeDeleteModal();
-        }
-      });
-    </script>
-  `;
-
-  // Delete Confirmation Modal - Outside .categories wrapper for proper z-index stacking
-  const modal = `
-    <!-- Delete Confirmation Modal -->
-    <div
-      id="deleteModal"
-      class="hs-overlay hidden"
-      role="dialog"
-      tabindex="-1"
-      aria-labelledby="deleteCategoryTitle"
-      style="display: none;"
-    >
-      <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
-
-      <!-- Modal Container -->
-      <div
-        class="fixed inset-0 z-50 flex min-h-full items-center justify-center p-4"
-      >
-        <div class="modal__content modal__content--confirm">
-          <!-- Icon -->
-          <div class="pt-8 pb-4">
-            <div class="modal__icon modal__icon--danger mx-auto">
-              <i data-lucide="alert-triangle" class="size-6"></i>
-            </div>
-          </div>
-
-          <!-- Body -->
-          <div class="px-6" style="padding-bottom: 16px;">
-            <h3 class="modal__title">Are you sure you want to delete?</h3>
-            <!-- Message shown when category has posts -->
-            <p id="deleteWithPosts" class="modal__description" style="display: none; margin-bottom: 0;">
-              The <strong><span class="category-name"></span> category</strong> has <strong><span class="post-count">0</span> post<span class="post-plural">s</span></strong>. 
-              They will be moved to <strong>Uncategorized</strong>.
-            </p>
-            <!-- Message shown when category has no posts -->
-            <p id="deleteNoPosts" class="modal__description" style="margin-bottom: 0;">
-              This action cannot be undone. The category will be permanently deleted.
-            </p>
-          </div>
-
-          <!-- Buttons (stacked, full-width) -->
-          <form 
-            id="deleteCategoryForm"
-            hx-delete=""
-            hx-target=".table"
-            hx-swap="innerHTML"
-            class="px-6 pb-6 flex flex-col gap-3"
-          >
-            <input type="hidden" name="_csrf" value="${user?.csrfToken || ''}" />
-            <button 
-              type="submit" 
-              class="btn btn--danger btn--full"
-            >
-              Delete Category
-            </button>
-            <button 
-              type="button" 
-              class="btn btn--outline btn--full"
-              onclick="closeDeleteModal()"
-            >
-              Cancel
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    ${toastScript}
   `;
 
   return mainLayout({
     title: 'Categories',
     description: 'Manage your blog categories',
-    content: content + modal + toastScript,
+    content: content + deleteModal.render(),
     user,
     activeRoute: '/admin/categories',
     breadcrumbs: [

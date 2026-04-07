@@ -32,7 +32,6 @@
 // Molecules - Simple groups of atoms
 @use 'components/molecules/breadcrumb' as *;
 @use 'components/molecules/form' as *;
-@use 'components/molecules/notifications' as *;
 @use 'components/molecules/pagination' as *;
 
 @use 'components/molecules/toast' as *;
@@ -61,3 +60,5 @@
 @use 'pages/categories' as *;
 @use 'pages/tags' as *;
 @use 'pages/media' as *;
+@use 'pages/comments' as *;
+@use 'pages/subscribers' as *;

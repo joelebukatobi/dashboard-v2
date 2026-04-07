@@ -54,7 +54,9 @@ class CategoriesController {
         categoriesListPage({
           user,
           categories,
-          pagination,
+          total: pagination.total,
+          page: pagination.page,
+          totalPages: pagination.totalPages,
           counts,
           filters: { search },
           toast,
@@ -99,7 +101,7 @@ class CategoriesController {
   async create(request, reply) {
     try {
       const user = request.user;
-      const { title, slug, description, colorClass } = request.body;
+      const { title, slug, description } = request.body;
 
       // Validate required fields
       if (!title) {
@@ -114,7 +116,6 @@ class CategoriesController {
         title,
         slug,
         description,
-        colorClass: colorClass || 'badge--primary',
       }, user.id);
 
       // Redirect to edit page with toast notification
@@ -171,7 +172,7 @@ class CategoriesController {
     try {
       const user = request.user;
       const { id } = request.params;
-      const { title, slug, description, colorClass } = request.body;
+      const { title, slug, description } = request.body;
 
       // Check if category exists
       const existing = await categoriesService.getById(id);
@@ -187,7 +188,6 @@ class CategoriesController {
         title,
         slug,
         description,
-        colorClass,
       }, user.id);
 
       // Return success with toast notification

@@ -4,6 +4,8 @@
 import { postsService } from '../services/posts.service.js';
 import { activityService } from '../services/activity.service.js';
 import { analyticsService } from '../services/analytics.service.js';
+import { subscribersService } from '../services/subscribers.service.js';
+import { commentsService } from '../services/comments.service.js';
 
 /**
  * Format date for dashboard display
@@ -48,12 +50,29 @@ class DashboardController {
       const publishedPosts = await postsService.getPostsCount({ status: 'PUBLISHED' });
       const draftPosts = await postsService.getPostsCount({ status: 'DRAFT' });
       const totalViews = await postsService.getTotalViews();
+      const totalComments = await commentsService.getTotalComments();
+
+      // Get subscriber count
+      const totalSubscribers = await subscribersService.getSubscriberCount();
+
+      // Get growth data for all stats (30 days vs previous 30 days)
+      const [postsGrowth, viewsGrowth, commentsGrowth, subscribersGrowth] = await Promise.all([
+        postsService.getPostsGrowth(30),
+        analyticsService.getTrafficSummary({ days: 30 }),
+        commentsService.getCommentsGrowth(30),
+        subscribersService.getSubscriberGrowth(30),
+      ]);
 
       const stats = {
         totalPosts,
         totalViews: totalViews.toLocaleString(),
-        totalComments: 0, // TODO: Implement comments service
-        totalSubscribers: 0, // TODO: Implement subscribers service
+        totalComments,
+        totalSubscribers,
+        // Growth percentages
+        postsGrowth: postsGrowth.trend,
+        viewsGrowth: viewsGrowth.trend,
+        commentsGrowth: commentsGrowth.trend,
+        subscribersGrowth: subscribersGrowth.trend,
       };
 
       // Get recent posts from database (last 5)
@@ -66,22 +85,22 @@ class DashboardController {
         thumbnail: post.featuredImageUrl || 'https://picsum.photos/seed/post' + post.id + '/200/150',
       }));
 
-      // Get top posts by view count
+      // Get top posts by view count with trend data
       const topPostsData = await postsService.getTopPosts(5);
-      const topPosts = topPostsData.map((post) => {
-        // Strip 'badge--' prefix from category color class
-        const colorClass = post.category?.colorClass || 'badge--primary';
-        const categoryColor = colorClass.replace('badge--', '');
+      const topPosts = await Promise.all(
+        topPostsData.map(async (post) => {
+          // Get post's recent views (last 7 days vs previous 7 days)
+          const postTrend = await analyticsService.getPostTrend(post.id, 7);
 
-        return {
-          title: post.title,
-          url: `/blog/${post.slug}`,
-          views: post.viewCount,
-          trend: 'up', // TODO: Calculate trend from analytics
-          change: 0,
-          categoryColor,
-        };
-      });
+          return {
+            title: post.title,
+            url: `/blog/${post.slug}`,
+            views: post.viewCount,
+            trend: postTrend.trend,
+            change: Math.abs(Math.round(postTrend.change)),
+          };
+        })
+      );
 
       // Get recent activity from database
       const activityData = await activityService.getRecent({ limit: 5, days: 7 });
@@ -128,12 +147,13 @@ class DashboardController {
       // Get real stats from database
       const totalPosts = await postsService.getPostsCount();
       const totalViews = await postsService.getTotalViews();
+      const totalSubscribers = await subscribersService.getSubscriberCount();
 
       const stats = {
         totalPosts,
         totalViews: totalViews.toLocaleString(),
         totalComments: 0, // TODO: Implement comments service
-        totalSubscribers: 0, // TODO: Implement subscribers service
+        totalSubscribers,
       };
 
       return reply.type('text/html').send(statsFragment(stats));
@@ -179,17 +199,12 @@ class DashboardController {
       // Get real top posts from database
       const topPostsData = await postsService.getTopPosts(5);
       const topPosts = topPostsData.map((post, index) => {
-        // Strip 'badge--' prefix from category color class
-        const colorClass = post.category?.colorClass || 'badge--primary';
-        const categoryColor = colorClass.replace('badge--', '');
-
         return {
           title: post.title,
           url: `/blog/${post.slug}`,
           views: post.viewCount,
           trend: 'up', // TODO: Calculate trend from analytics
           change: 0,
-          categoryColor,
         };
       });
 
@@ -261,6 +276,8 @@ function formatActivityItem(item) {
     POST_DELETED: { icon: 'trash-2', type: 'post' },
     LOGIN: { icon: 'log-in', type: 'user' },
     LOGOUT: { icon: 'log-out', type: 'user' },
+    COMMENT_CREATED: { icon: 'message-square', type: 'comment' },
+    SUBSCRIBER_CREATED: { icon: 'user-plus', type: 'subscriber' },
   };
 
   const config = typeConfig[item.type] || { icon: 'activity', type: 'post' };

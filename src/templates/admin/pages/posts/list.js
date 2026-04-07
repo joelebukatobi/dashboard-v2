@@ -2,6 +2,7 @@
 // Posts List Page - Exact structure from posts.html
 
 import { mainLayout } from '../../layouts/main.js';
+import { DeleteModal } from '../../components/delete-modal.js';
 
 const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-col gap-[1.6rem] sm:flex-row sm:items-center';
 const listToolbarSearchClass = 'relative min-w-0 flex-1';
@@ -134,15 +135,16 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
             : `
           <!-- Data List (Table) -->
           <table class="table">
-            <thead class="table__thead">
-              <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+             <thead class="table__thead">
+               <tr>
+                 <th>Title</th>
+                 <th>Category</th>
+                 <th>Status</th>
+                 <th>Comments</th>
+                 <th>Date</th>
+                 <th>Actions</th>
+               </tr>
+             </thead>
             <tbody class="table__tbody">
               ${posts
                 .map(
@@ -154,18 +156,25 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
                       <a href="/admin/posts/${post.id}/edit">${escapeHtml(post.title)}</a>
                     </div>
                   </td>
-                  <td class="table__td">
-                    <span class="table__label">Category</span>
-                    ${post.category ? `<span class="badge ${post.category.colorClass || 'badge--primary'}">${post.category.title}</span>` : '<span class="badge badge--neutral">Uncategorized</span>'}
-                  </td>
-                  <td class="table__td">
-                    <span class="table__label">Status</span>
-                    ${getStatusBadge(post.status)}
-                  </td>
-                  <td class="table__td">
-                    <span class="table__label">Date</span>
-                    ${formatDate(post.publishedAt || post.createdAt)}
-                  </td>
+                   <td class="table__td">
+                     <span class="table__label">Category</span>
+                     ${post.category ? `<span class="text-grey-700">${post.category.title}</span>` : '<span class="text-grey-500">Uncategorized</span>'}
+                   </td>
+                    <td class="table__td">
+                      <span class="table__label">Status</span>
+                      ${getStatusBadge(post.status)}
+                    </td>
+                   <td class="table__td">
+                     <span class="table__label">Comments</span>
+                     <a href="/admin/posts/${post.id}/comments" class="table__comments-link">
+                       <i data-lucide="message-circle" class="w-4 h-4"></i>
+                       <span>${post.commentsCount || 0}</span>
+                     </a>
+                   </td>
+                   <td class="table__td">
+                     <span class="table__label">Date</span>
+                     ${formatDate(post.publishedAt || post.createdAt)}
+                   </td>
                   <td class="table__td table__td--actions">
                     <div class="${rowActionGroupClass}">
                       <a href="/admin/posts/${post.id}/edit" class="${rowActionEditClass}">
@@ -190,127 +199,31 @@ export function postsListPage({ posts, total, page, totalPages, categories, filt
                 .join('')}
             </tbody>
           </table>
+
+          ${posts.length > 0 && totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
         `
         }
         </div>
-
-        ${posts.length > 0 && totalPages > 1 ? paginationHtml({ page, totalPages, filters }) : ''}
       </div>
     </div>
 
-    <script>
-      // Delete Modal Functions
-      function openDeleteModal(button) {
-        const postId = button.getAttribute('data-post-id');
-        const postTitle = button.getAttribute('data-post-title');
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deletePostForm');
-        const titleElement = document.getElementById('deletePostTitle');
-        
-        // Update form action
-        form.setAttribute('hx-delete', '/admin/posts/' + postId);
-        
-        // Tell HTMX to re-process the form with the new attribute
-        if (typeof htmx !== 'undefined') {
-          htmx.process(form);
-        }
-        
-        // Update title display
-        if (titleElement) {
-          titleElement.textContent = postTitle;
-        }
-        
-        // Show modal
-        modal.style.display = 'block';
-        document.getElementById('modalBackdrop').style.opacity = '1';
-      }
-      
-      function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.style.display = 'none';
-        document.getElementById('modalBackdrop').style.opacity = '0';
-      }
-      
-      // Close modal on backdrop click
-      document.getElementById('deleteModal').addEventListener('click', function(e) {
-        if (e.target === this || e.target.id === 'modalBackdrop') {
-          closeDeleteModal();
-        }
-      });
-      
-      // Close modal on escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeDeleteModal();
-        }
-      });
-    </script>
   `;
 
-  // Delete Modal - Outside .posts wrapper for proper z-index stacking
-  const modal = `
-    <!-- Delete Confirmation Modal -->
-    <div
-      id="deleteModal"
-      class="hs-overlay hidden"
-      role="dialog"
-      tabindex="-1"
-      aria-labelledby="deleteModalLabel"
-      style="display: none;"
-    >
-      <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
-
-      <!-- Modal Container -->
-      <div
-        class="fixed inset-0 z-50 flex min-h-full items-center justify-center p-4"
-      >
-        <div class="modal__content modal__content--confirm">
-          <!-- Icon -->
-          <div class="pt-8 pb-4">
-            <div class="modal__icon modal__icon--danger mx-auto">
-              <i data-lucide="alert-triangle" class="size-6"></i>
-            </div>
-          </div>
-
-          <!-- Body -->
-          <div class="px-6 pb-6">
-            <h3 id="deleteModalLabel" class="modal__title">Are you sure?</h3>
-            <p class="modal__description">This action cannot be undone. The post will be permanently deleted.</p>
-          </div>
-
-          <!-- Buttons (stacked, full-width) -->
-          <form 
-            id="deletePostForm"
-            hx-delete=""
-            hx-target=".table"
-            hx-swap="innerHTML"
-            class="px-6 pb-6 flex flex-col gap-3"
-          >
-            <input type="hidden" name="_csrf" value="${user?.csrfToken || ''}" />
-            <button 
-              type="submit" 
-              class="btn btn--danger btn--full"
-            >
-              Delete Post
-            </button>
-            <button 
-              type="button" 
-              class="btn btn--outline btn--full"
-              onclick="closeDeleteModal()"
-            >
-              Cancel
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  `;
+  // Create delete modal using reusable component
+  const deleteModal = new DeleteModal({
+    entityName: 'Post',
+    entityLabel: 'title',
+    deleteUrlPath: '/admin/posts',
+    targetSelector: '.table',
+    swapMode: 'innerHTML',
+    title: 'Are you sure?',
+    csrfToken: user?.csrfToken
+  });
 
   return mainLayout({
     title: 'Blog Posts',
     description: 'Manage your blog posts',
-    content: content + modal + toastScript,
+    content: content + deleteModal.render() + toastScript,
     user,
     activeRoute: '/admin/posts',
     breadcrumbs: [
@@ -335,20 +248,15 @@ function emptyState() {
 
 function getStatusBadge(status) {
   const statusConfig = {
-    PUBLISHED: { class: 'status--success', label: 'Published' },
-    DRAFT: { class: 'status--warning', label: 'Draft' },
-    SCHEDULED: { class: 'status--info', label: 'Scheduled' },
-    ARCHIVED: { class: 'status--neutral', label: 'Archived' },
+    PUBLISHED: { class: 'badge--success', label: 'Published' },
+    DRAFT: { class: 'badge--warning', label: 'Draft' },
+    SCHEDULED: { class: 'badge--info', label: 'Scheduled' },
+    ARCHIVED: { class: 'badge--neutral', label: 'Archived' },
   };
 
   const config = statusConfig[status] || statusConfig['DRAFT'];
 
-  return `
-    <span class="status ${config.class}">
-      <span class="status__dot"></span>
-      ${config.label}
-    </span>
-  `;
+  return `<span class="badge ${config.class}">${config.label}</span>`;
 }
 
 function formatDate(dateString) {

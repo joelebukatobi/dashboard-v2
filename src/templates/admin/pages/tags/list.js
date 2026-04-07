@@ -2,6 +2,7 @@
 // Tags List Page
 
 import { mainLayout } from '../../layouts/main.js';
+import { DeleteModal } from '../../components/delete-modal.js';
 
 const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-row items-center gap-[1.6rem]';
 const listToolbarSearchClass = 'relative min-w-0 flex-1';
@@ -40,6 +41,20 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user, toa
       });
     </script>
   ` : '';
+
+  // Initialize delete modal with conditional message config
+  const deleteModal = new DeleteModal({
+    entityName: 'Tag',
+    entityLabel: 'name',
+    deleteUrlPath: '/admin/tags',
+    csrfToken: user?.csrfToken || '',
+    hasConditionalMessage: true,
+    conditionalConfig: {
+      messageWithItems: 'The {name} tag has {count} post(s). They will be affected.',
+      messageWithoutItems: 'This action cannot be undone. The {name} tag will be permanently deleted.',
+      countAttribute: 'data-post-count'
+    }
+  });
 
   const content = `
     <div class="tags">
@@ -118,7 +133,7 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user, toa
                     </td>
                     <td class="table__td">
                       <span class="table__label">Posts</span>
-                      <span class="badge badge--neutral">${tag.postCount || 0}</span>
+                      <span class="badge badge--count">${tag.postCount || 0}</span>
                     </td>
                     <td class="table__td">
                       <span class="table__label">Date</span>
@@ -158,144 +173,13 @@ export function tagsListPage({ tags, total, page, totalPages, filters, user, toa
       </div>
     </div>
 
-    <script>
-      // Delete Modal Functions
-      function openDeleteModal(button) {
-        const tagId = button.getAttribute('data-tag-id');
-        const tagName = button.getAttribute('data-tag-name');
-        const postCount = parseInt(button.getAttribute('data-post-count') || '0', 10);
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteTagForm');
-
-        // Update form action and re-process for HTMX
-        form.setAttribute('hx-delete', '/admin/tags/' + tagId);
-        if (typeof htmx !== 'undefined') {
-          htmx.process(form);
-        }
-
-        // Show appropriate message based on post count
-        const withPostsMsg = document.getElementById('deleteWithPosts');
-        const noPostsMsg = document.getElementById('deleteNoPosts');
-        
-        if (withPostsMsg && noPostsMsg) {
-          if (postCount > 0) {
-            // Show "with posts" message, hide "no posts" message
-            withPostsMsg.style.display = 'block';
-            noPostsMsg.style.display = 'none';
-            // Update tag name
-            withPostsMsg.querySelector('.tag-name').textContent = tagName;
-            // Update post count
-            withPostsMsg.querySelector('.post-count').textContent = postCount;
-            // Handle pluralization
-            withPostsMsg.querySelector('.post-plural').textContent = postCount === 1 ? '' : 's';
-          } else {
-            // Show "no posts" message, hide "with posts" message
-            withPostsMsg.style.display = 'none';
-            noPostsMsg.style.display = 'block';
-          }
-        }
-
-        // Show modal
-        modal.style.display = 'block';
-        document.getElementById('modalBackdrop').style.opacity = '1';
-      }
-      
-      function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.style.display = 'none';
-        document.getElementById('modalBackdrop').style.opacity = '0';
-      }
-      
-      // Close modal on backdrop click - using event delegation after DOM is ready
-      document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('deleteModal').addEventListener('click', function(e) {
-          if (e.target === this || e.target.id === 'modalBackdrop') {
-            closeDeleteModal();
-          }
-        });
-      });
-      
-      // Close modal on escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeDeleteModal();
-        }
-      });
-    </script>
-  `;
-
-  // Delete Confirmation Modal
-  const modal = `
-    <!-- Delete Confirmation Modal -->
-    <div
-      id="deleteModal"
-      class="hs-overlay hidden"
-      role="dialog"
-      tabindex="-1"
-      aria-labelledby="deleteModalLabel"
-      style="display: none;"
-    >
-      <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
-
-      <!-- Modal Container -->
-      <div
-        class="fixed inset-0 z-50 flex min-h-full items-center justify-center p-4"
-      >
-        <div class="modal__content modal__content--confirm">
-          <!-- Icon -->
-          <div class="pt-8 pb-4">
-            <div class="modal__icon modal__icon--danger mx-auto">
-              <i data-lucide="alert-triangle" class="size-6"></i>
-            </div>
-          </div>
-
-          <!-- Body -->
-          <div class="px-6" style="padding-bottom: 16px;">
-            <h3 class="modal__title">Are you sure you want to delete?</h3>
-            <!-- Message shown when tag has posts -->
-            <p id="deleteWithPosts" class="modal__description" style="display: none; margin-bottom: 0;">
-              The <strong><span class="tag-name"></span> tag</strong> has <strong><span class="post-count">0</span> post<span class="post-plural">s</span></strong>. 
-              They will be affected.
-            </p>
-            <!-- Message shown when tag has no posts -->
-            <p id="deleteNoPosts" class="modal__description" style="margin-bottom: 0;">
-              This action cannot be undone. The tag will be permanently deleted.
-            </p>
-          </div>
-
-          <!-- Buttons -->
-          <form
-            id="deleteTagForm"
-            hx-delete=""
-            hx-target=".table"
-            hx-swap="innerHTML"
-            class="px-6 pb-6 flex flex-col gap-3"
-          >
-            <input type="hidden" name="_csrf" value="${user?.csrfToken || ''}" />
-            <button 
-              type="submit" 
-              class="btn btn--danger btn--full"
-            >
-              Delete Tag
-            </button>
-            <button 
-              type="button" 
-              class="btn btn--outline btn--full"
-              onclick="closeDeleteModal()"
-            >
-              Cancel
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+    ${toastScript}
   `;
 
   return mainLayout({
     title: 'Tags',
     description: 'Manage your blog tags',
-    content: content + modal + toastScript,
+    content: content + deleteModal.render(),
     user,
     activeRoute: '/admin/tags',
     breadcrumbs: [

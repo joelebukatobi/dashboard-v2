@@ -1,0 +1,292 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "BlogCMS" [ref=e5] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e7]
+        - generic [ref=e10]: BlogCMS
+      - button "Toggle sidebar" [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+    - navigation [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: Main Menu
+        - list [ref=e17]:
+          - listitem [ref=e18]:
+            - link "Dashboard" [ref=e19] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e21]
+              - generic [ref=e26]: Dashboard
+          - listitem [ref=e27]:
+            - link "Posts" [ref=e28] [cursor=pointer]:
+              - /url: /admin/posts
+              - img [ref=e30]
+              - generic [ref=e33]: Posts
+          - listitem [ref=e34]:
+            - link "Categories" [ref=e35] [cursor=pointer]:
+              - /url: /admin/categories
+              - img [ref=e37]
+              - generic [ref=e39]: Categories
+          - listitem [ref=e40]:
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /admin/tags
+              - img [ref=e43]
+              - generic [ref=e47]: Tags
+      - generic [ref=e48]:
+        - generic [ref=e49]: Media
+        - list [ref=e50]:
+          - listitem [ref=e51]:
+            - link "Images" [ref=e52] [cursor=pointer]:
+              - /url: /admin/media/images
+              - img [ref=e54]
+              - generic [ref=e58]: Images
+          - listitem [ref=e59]:
+            - link "Videos" [ref=e60] [cursor=pointer]:
+              - /url: /admin/media/videos
+              - img [ref=e62]
+              - generic [ref=e65]: Videos
+      - generic [ref=e66]:
+        - generic [ref=e67]: Management
+        - list [ref=e68]:
+          - listitem [ref=e69]:
+            - link "Users" [ref=e70] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e72]
+              - generic [ref=e84]: Users
+          - listitem [ref=e85]:
+            - link "Subscribers" [ref=e86] [cursor=pointer]:
+              - /url: /admin/subscribers
+              - img [ref=e88]
+              - generic [ref=e91]: Subscribers
+          - listitem [ref=e92]:
+            - link "Settings" [ref=e93] [cursor=pointer]:
+              - /url: /admin/settings
+              - img [ref=e95]
+              - generic [ref=e98]: Settings
+  - main [ref=e99]:
+    - generic [ref=e100]:
+      - navigation [ref=e102]:
+        - link "Dashboard" [ref=e103] [cursor=pointer]:
+          - /url: /admin
+        - img [ref=e105]
+        - link "Subscribers":
+          - /url: /admin/subscribers
+      - generic [ref=e107]:
+        - generic [ref=e109]:
+          - img
+          - textbox "Search..." [ref=e110]
+        - button "Toggle theme" [ref=e111]:
+          - img [ref=e112]
+        - button "12" [ref=e119]:
+          - img [ref=e120]
+          - text: "12"
+        - button "AU Admin User" [ref=e124] [cursor=pointer]:
+          - generic [ref=e125]: AU
+          - generic [ref=e126]: Admin User
+          - img [ref=e127]
+    - generic [ref=e130]:
+      - generic [ref=e132]:
+        - heading "Subscribers" [level=1] [ref=e133]
+        - paragraph [ref=e134]: Manage newsletter subscribers (19 total)
+      - generic [ref=e135]:
+        - generic [ref=e136]:
+          - img
+          - textbox "Search subscribers..." [ref=e137]
+        - generic [ref=e138]:
+          - button "Status" [ref=e140]:
+            - generic [ref=e141]: Status
+            - img [ref=e142]
+          - link "Add Subscriber" [ref=e144] [cursor=pointer]:
+            - /url: /admin/subscribers/new
+            - img [ref=e145]
+            - generic [ref=e146]: Add Subscriber
+      - table [ref=e148]:
+        - rowgroup [ref=e149]:
+          - row "Name Email Status Confirmed Subscribed Actions" [ref=e150]:
+            - columnheader "Name" [ref=e151]
+            - columnheader "Email" [ref=e152]
+            - columnheader "Status" [ref=e153]
+            - columnheader "Confirmed" [ref=e154]
+            - columnheader "Subscribed" [ref=e155]
+            - columnheader "Actions" [ref=e156]
+        - rowgroup [ref=e157]:
+          - row "Joel Onwuanaku joel.onwuanaku@example.com ACTIVE 20 Minutes Ago 3 Hours Ago" [ref=e158]:
+            - cell "Joel Onwuanaku" [ref=e159]:
+              - generic [ref=e160]: Joel Onwuanaku
+            - cell "joel.onwuanaku@example.com" [ref=e161]:
+              - link "joel.onwuanaku@example.com" [ref=e163] [cursor=pointer]:
+                - /url: mailto:joel.onwuanaku@example.com
+            - cell "ACTIVE" [ref=e164]:
+              - generic [ref=e165]: ACTIVE
+            - cell "20 Minutes Ago" [ref=e166]
+            - cell "3 Hours Ago" [ref=e167]
+            - cell [ref=e168]:
+              - generic [ref=e169]:
+                - link [ref=e170] [cursor=pointer]:
+                  - /url: /admin/subscribers/ae57595c-9115-476b-b1f1-31aa769df5fe/edit
+                  - img [ref=e171]
+                - button [ref=e174] [cursor=pointer]:
+                  - img [ref=e175]
+          - row "Linda Clark linda.clark.819@example.com ACTIVE - 3 Hours Ago" [ref=e178]:
+            - cell "Linda Clark" [ref=e179]:
+              - generic [ref=e180]: Linda Clark
+            - cell "linda.clark.819@example.com" [ref=e181]:
+              - link "linda.clark.819@example.com" [ref=e183] [cursor=pointer]:
+                - /url: mailto:linda.clark.819@example.com
+            - cell "ACTIVE" [ref=e184]:
+              - generic [ref=e185]: ACTIVE
+            - cell "-" [ref=e186]
+            - cell "3 Hours Ago" [ref=e187]
+            - cell [ref=e188]:
+              - generic [ref=e189]:
+                - link [ref=e190] [cursor=pointer]:
+                  - /url: /admin/subscribers/10038c68-76e8-4b5e-8ad0-b3ba71b10c74/edit
+                  - img [ref=e191]
+                - button [ref=e194] [cursor=pointer]:
+                  - img [ref=e195]
+          - row "Thomas Robinson thomas.robinson.890@example.com ACTIVE - 3 Hours Ago" [ref=e198]:
+            - cell "Thomas Robinson" [ref=e199]:
+              - generic [ref=e200]: Thomas Robinson
+            - cell "thomas.robinson.890@example.com" [ref=e201]:
+              - link "thomas.robinson.890@example.com" [ref=e203] [cursor=pointer]:
+                - /url: mailto:thomas.robinson.890@example.com
+            - cell "ACTIVE" [ref=e204]:
+              - generic [ref=e205]: ACTIVE
+            - cell "-" [ref=e206]
+            - cell "3 Hours Ago" [ref=e207]
+            - cell [ref=e208]:
+              - generic [ref=e209]:
+                - link [ref=e210] [cursor=pointer]:
+                  - /url: /admin/subscribers/d78a7d1e-f434-4409-901f-628504c8ab1c/edit
+                  - img [ref=e211]
+                - button [ref=e214] [cursor=pointer]:
+                  - img [ref=e215]
+          - row "Sarah Davis sarah.davis.90@example.com ACTIVE - 3 Hours Ago" [ref=e218]:
+            - cell "Sarah Davis" [ref=e219]:
+              - generic [ref=e220]: Sarah Davis
+            - cell "sarah.davis.90@example.com" [ref=e221]:
+              - link "sarah.davis.90@example.com" [ref=e223] [cursor=pointer]:
+                - /url: mailto:sarah.davis.90@example.com
+            - cell "ACTIVE" [ref=e224]:
+              - generic [ref=e225]: ACTIVE
+            - cell "-" [ref=e226]
+            - cell "3 Hours Ago" [ref=e227]
+            - cell [ref=e228]:
+              - generic [ref=e229]:
+                - link [ref=e230] [cursor=pointer]:
+                  - /url: /admin/subscribers/194d975b-d484-4c5b-a806-d976fe29b045/edit
+                  - img [ref=e231]
+                - button [ref=e234] [cursor=pointer]:
+                  - img [ref=e235]
+          - row "Maria Anderson maria.anderson.108@example.com ACTIVE - 3 Hours Ago" [ref=e238]:
+            - cell "Maria Anderson" [ref=e239]:
+              - generic [ref=e240]: Maria Anderson
+            - cell "maria.anderson.108@example.com" [ref=e241]:
+              - link "maria.anderson.108@example.com" [ref=e243] [cursor=pointer]:
+                - /url: mailto:maria.anderson.108@example.com
+            - cell "ACTIVE" [ref=e244]:
+              - generic [ref=e245]: ACTIVE
+            - cell "-" [ref=e246]
+            - cell "3 Hours Ago" [ref=e247]
+            - cell [ref=e248]:
+              - generic [ref=e249]:
+                - link [ref=e250] [cursor=pointer]:
+                  - /url: /admin/subscribers/f98e58a8-3d72-4083-a80e-a02ea31b63bb/edit
+                  - img [ref=e251]
+                - button [ref=e254] [cursor=pointer]:
+                  - img [ref=e255]
+          - row "Maria Anderson maria.anderson.619@example.com ACTIVE - 3 Hours Ago" [ref=e258]:
+            - cell "Maria Anderson" [ref=e259]:
+              - generic [ref=e260]: Maria Anderson
+            - cell "maria.anderson.619@example.com" [ref=e261]:
+              - link "maria.anderson.619@example.com" [ref=e263] [cursor=pointer]:
+                - /url: mailto:maria.anderson.619@example.com
+            - cell "ACTIVE" [ref=e264]:
+              - generic [ref=e265]: ACTIVE
+            - cell "-" [ref=e266]
+            - cell "3 Hours Ago" [ref=e267]
+            - cell [ref=e268]:
+              - generic [ref=e269]:
+                - link [ref=e270] [cursor=pointer]:
+                  - /url: /admin/subscribers/f9ed1a7f-99dd-4908-892a-bfee46fbcb58/edit
+                  - img [ref=e271]
+                - button [ref=e274] [cursor=pointer]:
+                  - img [ref=e275]
+          - row "Jennifer Lee jennifer.lee.959@example.com ACTIVE - 3 Hours Ago" [ref=e278]:
+            - cell "Jennifer Lee" [ref=e279]:
+              - generic [ref=e280]: Jennifer Lee
+            - cell "jennifer.lee.959@example.com" [ref=e281]:
+              - link "jennifer.lee.959@example.com" [ref=e283] [cursor=pointer]:
+                - /url: mailto:jennifer.lee.959@example.com
+            - cell "ACTIVE" [ref=e284]:
+              - generic [ref=e285]: ACTIVE
+            - cell "-" [ref=e286]
+            - cell "3 Hours Ago" [ref=e287]
+            - cell [ref=e288]:
+              - generic [ref=e289]:
+                - link [ref=e290] [cursor=pointer]:
+                  - /url: /admin/subscribers/e388dded-3818-4fe5-bede-05f04411482a/edit
+                  - img [ref=e291]
+                - button [ref=e294] [cursor=pointer]:
+                  - img [ref=e295]
+          - row "Linda Clark linda.clark.478@example.com ACTIVE - 3 Hours Ago" [ref=e298]:
+            - cell "Linda Clark" [ref=e299]:
+              - generic [ref=e300]: Linda Clark
+            - cell "linda.clark.478@example.com" [ref=e301]:
+              - link "linda.clark.478@example.com" [ref=e303] [cursor=pointer]:
+                - /url: mailto:linda.clark.478@example.com
+            - cell "ACTIVE" [ref=e304]:
+              - generic [ref=e305]: ACTIVE
+            - cell "-" [ref=e306]
+            - cell "3 Hours Ago" [ref=e307]
+            - cell [ref=e308]:
+              - generic [ref=e309]:
+                - link [ref=e310] [cursor=pointer]:
+                  - /url: /admin/subscribers/34db48c7-10b1-4061-a2c8-3ae3233cee33/edit
+                  - img [ref=e311]
+                - button [ref=e314] [cursor=pointer]:
+                  - img [ref=e315]
+          - row "Emma Wilson emma.wilson.648@example.com ACTIVE - 3 Hours Ago" [ref=e318]:
+            - cell "Emma Wilson" [ref=e319]:
+              - generic [ref=e320]: Emma Wilson
+            - cell "emma.wilson.648@example.com" [ref=e321]:
+              - link "emma.wilson.648@example.com" [ref=e323] [cursor=pointer]:
+                - /url: mailto:emma.wilson.648@example.com
+            - cell "ACTIVE" [ref=e324]:
+              - generic [ref=e325]: ACTIVE
+            - cell "-" [ref=e326]
+            - cell "3 Hours Ago" [ref=e327]
+            - cell [ref=e328]:
+              - generic [ref=e329]:
+                - link [ref=e330] [cursor=pointer]:
+                  - /url: /admin/subscribers/768eb3df-8072-4a7c-a91c-a452fbb75215/edit
+                  - img [ref=e331]
+                - button [ref=e334] [cursor=pointer]:
+                  - img [ref=e335]
+          - row "Maria Anderson maria.anderson.381@example.com ACTIVE - 3 Hours Ago" [ref=e338]:
+            - cell "Maria Anderson" [ref=e339]:
+              - generic [ref=e340]: Maria Anderson
+            - cell "maria.anderson.381@example.com" [ref=e341]:
+              - link "maria.anderson.381@example.com" [ref=e343] [cursor=pointer]:
+                - /url: mailto:maria.anderson.381@example.com
+            - cell "ACTIVE" [ref=e344]:
+              - generic [ref=e345]: ACTIVE
+            - cell "-" [ref=e346]
+            - cell "3 Hours Ago" [ref=e347]
+            - cell [ref=e348]:
+              - generic [ref=e349]:
+                - link [ref=e350] [cursor=pointer]:
+                  - /url: /admin/subscribers/08611b9f-f281-4081-9c8d-068ee0a4a2df/edit
+                  - img [ref=e351]
+                - button [ref=e354] [cursor=pointer]:
+                  - img [ref=e355]
+      - generic [ref=e359]:
+        - link [ref=e360]:
+          - /url: "#"
+          - img [ref=e361]
+        - link "1" [ref=e363] [cursor=pointer]:
+          - /url: /admin/subscribers?page=1
+        - link "2" [ref=e364] [cursor=pointer]:
+          - /url: /admin/subscribers?page=2
+        - link [ref=e365] [cursor=pointer]:
+          - /url: /admin/subscribers?page=2
+          - img [ref=e366]

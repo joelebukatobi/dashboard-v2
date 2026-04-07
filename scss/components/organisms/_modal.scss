@@ -44,8 +44,7 @@
   }
 
   &__header {
-    @apply flex items-center justify-between px-[2.4rem] py-[1.6rem];
-    @apply border-b border-grey-200 dark:border-grey-700;
+    @apply flex items-center justify-between px-[2.4rem] pt-[1.6rem];
   }
 
   &__title {
@@ -127,7 +126,7 @@
 
   // Delete/Confirm modal styling
   &--confirm {
-    @apply sm:max-w-sm w-full pointer-events-auto text-center;
+    @apply sm:max-w-sm w-full pointer-events-auto text-center border-0;
   }
 }
 
@@ -145,5 +144,31 @@
 
   .dark & {
     @apply text-grey-400;
+  }
+}
+
+// Delete modal layout (used by DeleteModal component)
+.modal__content--confirm {
+  @apply flex flex-col;
+
+  .modal__header {
+    @apply px-[1.6rem] pt-[1.6rem] text-center;
+    @apply flex flex-col items-center gap-4;
+
+    .modal__icon {
+      @apply mx-auto;
+    }
+
+    .modal__title {
+      @apply mb-0;
+    }
+
+    .modal__description {
+      @apply mt-0;
+    }
+  }
+
+  .modal__actions {
+    @apply p-[1.6rem] flex flex-row gap-3;
   }
 }

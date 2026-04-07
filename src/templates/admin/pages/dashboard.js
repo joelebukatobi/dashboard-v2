@@ -21,10 +21,14 @@ import { mainLayout } from '../layouts/main.js';
  */
 export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [], topPosts = [], range = '30d', trafficChart = '' }) {
   const {
-    totalPosts = 248,
-    totalViews = '45.2K',
-    totalComments = 1423,
-    totalSubscribers = 8942
+    totalPosts = 0,
+    totalViews = '0',
+    totalComments = 0,
+    totalSubscribers = 0,
+    postsGrowth = 0,
+    viewsGrowth = 0,
+    commentsGrowth = 0,
+    subscribersGrowth = 0
   } = stats;
 
   const content = `
@@ -46,9 +50,9 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
         <div class="quick-stat__content">
           <span class="quick-stat__label">Total Posts</span>
           <span class="quick-stat__value">${totalPosts}</span>
-          <span class="quick-stat__change quick-stat__change--up">
-            <i data-lucide="trending-up"></i>
-            12% from last month
+          <span class="quick-stat__change ${stats.postsGrowth >= 0 ? 'quick-stat__change--up' : 'quick-stat__change--down'}">
+            <i data-lucide="${stats.postsGrowth >= 0 ? 'trending-up' : 'trending-down'}"></i>
+            ${Math.abs(stats.postsGrowth)}% from last month
           </span>
         </div>
       </div>
@@ -60,9 +64,9 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
         <div class="quick-stat__content">
           <span class="quick-stat__label">Page Views</span>
           <span class="quick-stat__value">${totalViews}</span>
-          <span class="quick-stat__change quick-stat__change--up">
-            <i data-lucide="trending-up"></i>
-            8% from last month
+          <span class="quick-stat__change ${stats.viewsGrowth >= 0 ? 'quick-stat__change--up' : 'quick-stat__change--down'}">
+            <i data-lucide="${stats.viewsGrowth >= 0 ? 'trending-up' : 'trending-down'}"></i>
+            ${Math.abs(stats.viewsGrowth)}% from last month
           </span>
         </div>
       </div>
@@ -74,9 +78,9 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
         <div class="quick-stat__content">
           <span class="quick-stat__label">Comments</span>
           <span class="quick-stat__value">${totalComments}</span>
-          <span class="quick-stat__change quick-stat__change--down">
-            <i data-lucide="trending-down"></i>
-            3% from last month
+          <span class="quick-stat__change ${stats.commentsGrowth >= 0 ? 'quick-stat__change--up' : 'quick-stat__change--down'}">
+            <i data-lucide="${stats.commentsGrowth >= 0 ? 'trending-up' : 'trending-down'}"></i>
+            ${Math.abs(stats.commentsGrowth)}% from last month
           </span>
         </div>
       </div>
@@ -88,9 +92,9 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
         <div class="quick-stat__content">
           <span class="quick-stat__label">Subscribers</span>
           <span class="quick-stat__value">${totalSubscribers}</span>
-          <span class="quick-stat__change quick-stat__change--up">
-            <i data-lucide="trending-up"></i>
-            24% from last month
+          <span class="quick-stat__change ${stats.subscribersGrowth >= 0 ? 'quick-stat__change--up' : 'quick-stat__change--down'}">
+            <i data-lucide="${stats.subscribersGrowth >= 0 ? 'trending-up' : 'trending-down'}"></i>
+            ${Math.abs(stats.subscribersGrowth)}% from last month
           </span>
         </div>
       </div>
@@ -204,7 +208,6 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <div class="widget widget--recent-activity">
         <div class="widget__header">
           <h5 class="widget__title">Recent Activity</h5>
-          <h5><a href="#" class="widget__link">View all</a></h5>
         </div>
         <hr class="divider" />
         <div class="widget__body">
@@ -235,7 +238,6 @@ export function dashboardPage({ user, stats = {}, activity = [], recentPosts = [
       <div class="widget widget--flush">
         <div class="widget__header">
           <h5 class="widget__title">Top Posts</h5>
-          <h5><a href="#" class="widget__link">View all</a></h5>
         </div>
         <hr class="divider" />
         <div class="widget__body">
@@ -323,14 +325,14 @@ function getTopPosts(posts) {
   return posts.map((post, index) => `
     <div class="top-list__item">
       <div class="top-list__left">
-        <span class="top-list__rank top-list__rank--${post.categoryColor || 'primary'}">${index + 1}</span>
+         <span class="top-list__rank top-list__rank--neutral">${index + 1}</span>
         <div class="top-list__info">
           <h6 class="top-list__title">${post.title}</h6>
           <span class="top-list__url">${post.url || '/blog/' + post.slug}</span>
         </div>
       </div>
       <div class="top-list__right">
-        <span class="top-list__value">${post.views || 0}</span>
+        <span class="top-list__value">${post.views || 0} Views</span>
         <span class="top-list__change top-list__change--${post.trend === 'up' ? 'up' : 'down'}">
           <i data-lucide="${post.trend === 'up' ? 'trending-up' : 'trending-down'}"></i>
           ${post.change || 0}%

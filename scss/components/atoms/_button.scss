@@ -85,6 +85,17 @@
     @apply focus:ring-2 focus:ring-red-500 focus:ring-offset-2;
   }
 
+  // Ghost Danger (for delete actions - full red text, white text + red bg on hover)
+  &--ghost.btn--danger {
+    @apply bg-transparent text-red-600;
+    @apply hover:text-white hover:bg-red-600;
+
+    .dark & {
+      @apply text-red-400;
+      @apply hover:text-white hover:bg-red-600;
+    }
+  }
+
   // Warning (amber/suspend)
   &--warning {
     @apply text-amber-600 border-amber-300;

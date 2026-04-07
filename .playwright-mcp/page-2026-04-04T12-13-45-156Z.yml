@@ -1,0 +1,131 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]:
+      - link "BlogCMS" [ref=e5] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e7]
+        - generic [ref=e10]: BlogCMS
+      - button "Toggle sidebar" [ref=e11] [cursor=pointer]:
+        - img [ref=e12]
+    - navigation [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: Main Menu
+        - list [ref=e17]:
+          - listitem [ref=e18]:
+            - link "Dashboard" [ref=e19] [cursor=pointer]:
+              - /url: /admin
+              - img [ref=e21]
+              - generic [ref=e26]: Dashboard
+          - listitem [ref=e27]:
+            - link "Posts" [ref=e28] [cursor=pointer]:
+              - /url: /admin/posts
+              - img [ref=e30]
+              - generic [ref=e33]: Posts
+          - listitem [ref=e34]:
+            - link "Categories" [ref=e35] [cursor=pointer]:
+              - /url: /admin/categories
+              - img [ref=e37]
+              - generic [ref=e39]: Categories
+          - listitem [ref=e40]:
+            - link "Tags" [ref=e41] [cursor=pointer]:
+              - /url: /admin/tags
+              - img [ref=e43]
+              - generic [ref=e47]: Tags
+      - generic [ref=e48]:
+        - generic [ref=e49]: Media
+        - list [ref=e50]:
+          - listitem [ref=e51]:
+            - link "Images" [ref=e52] [cursor=pointer]:
+              - /url: /admin/media/images
+              - img [ref=e54]
+              - generic [ref=e58]: Images
+          - listitem [ref=e59]:
+            - link "Videos" [ref=e60] [cursor=pointer]:
+              - /url: /admin/media/videos
+              - img [ref=e62]
+              - generic [ref=e65]: Videos
+      - generic [ref=e66]:
+        - generic [ref=e67]: Management
+        - list [ref=e68]:
+          - listitem [ref=e69]:
+            - link "Users" [ref=e70] [cursor=pointer]:
+              - /url: /admin/users
+              - img [ref=e72]
+              - generic [ref=e84]: Users
+          - listitem [ref=e85]:
+            - link "Subscribers" [ref=e86] [cursor=pointer]:
+              - /url: /admin/subscribers
+              - img [ref=e88]
+              - generic [ref=e91]: Subscribers
+          - listitem [ref=e92]:
+            - link "Settings" [ref=e93] [cursor=pointer]:
+              - /url: /admin/settings
+              - img [ref=e95]
+              - generic [ref=e98]: Settings
+  - main [ref=e99]:
+    - generic [ref=e100]:
+      - navigation [ref=e102]:
+        - link "Dashboard" [ref=e103] [cursor=pointer]:
+          - /url: /admin
+        - img [ref=e105]
+        - link "Users":
+          - /url: /admin/users
+      - generic [ref=e107]:
+        - generic [ref=e109]:
+          - img
+          - textbox "Search..." [ref=e110]
+        - button "Toggle theme" [ref=e111]:
+          - img [ref=e112]
+        - button "0" [ref=e119]:
+          - img [ref=e120]
+          - text: "0"
+        - button "AU Admin User" [ref=e124] [cursor=pointer]:
+          - generic [ref=e125]: AU
+          - generic [ref=e126]: Admin User
+          - img [ref=e127]
+    - generic [ref=e130]:
+      - generic [ref=e132]:
+        - heading "Users" [level=1] [ref=e133]
+        - paragraph [ref=e134]: Manage team members and permissions
+      - generic [ref=e135]:
+        - generic [ref=e136]:
+          - img
+          - textbox "Search users..." [ref=e137]
+        - generic [ref=e138]:
+          - button "Role" [ref=e140]:
+            - generic [ref=e141]: Role
+            - img [ref=e142]
+          - button "Status" [ref=e145]:
+            - generic [ref=e146]: Status
+            - img [ref=e147]
+          - link "Add User" [ref=e149] [cursor=pointer]:
+            - /url: /admin/users/new
+            - img [ref=e150]
+            - generic [ref=e153]: Add User
+      - table [ref=e156]:
+        - rowgroup [ref=e157]:
+          - row "User Role Status Date Joined Last Active Actions" [ref=e158]:
+            - columnheader "User" [ref=e159]
+            - columnheader "Role" [ref=e160]
+            - columnheader "Status" [ref=e161]
+            - columnheader "Date Joined" [ref=e162]
+            - columnheader "Last Active" [ref=e163]
+            - columnheader "Actions" [ref=e164]
+        - rowgroup [ref=e165]:
+          - row "Admin User ADMIN ACTIVE Apr 2, 2026 Just now" [ref=e166]:
+            - cell "Admin User" [ref=e167]:
+              - link "Admin User" [ref=e169] [cursor=pointer]:
+                - /url: /admin/users/9711fff0-76d0-4147-a648-82fa50ef1d05/edit
+            - cell "ADMIN" [ref=e170]:
+              - generic [ref=e171]: ADMIN
+            - cell "ACTIVE" [ref=e172]:
+              - generic [ref=e173]: ACTIVE
+            - cell "Apr 2, 2026" [ref=e174]
+            - cell "Just now" [ref=e175]
+            - cell [ref=e176]:
+              - generic [ref=e177]:
+                - link [ref=e178] [cursor=pointer]:
+                  - /url: /admin/users/9711fff0-76d0-4147-a648-82fa50ef1d05/edit
+                  - img [ref=e179]
+                - button [ref=e182] [cursor=pointer]:
+                  - img [ref=e183]

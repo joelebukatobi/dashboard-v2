@@ -61,4 +61,13 @@
       @apply bg-grey-700;
     }
   }
+
+  // Initials avatar (when no image)
+  &--initials {
+    @apply bg-blue-600 text-white font-semibold;
+
+    .dark & {
+      @apply bg-blue-500;
+    }
+  }
 }

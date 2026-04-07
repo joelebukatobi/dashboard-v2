@@ -12,7 +12,14 @@
  * @returns {string} Sidebar HTML
  */
 export function sidebar({ activeRoute = '/', user } = {}) {
-  const isActive = (route) => activeRoute.startsWith(route) ? 'sidebar__item--active' : '';
+  const isActive = (route) => {
+    // Exact match for dashboard (just /admin or /admin/)
+    if (route === '/admin') {
+      return activeRoute === '/admin' || activeRoute === '/admin/' ? 'sidebar__item--active' : '';
+    }
+    // For other routes, check if activeRoute starts with the route
+    return activeRoute.startsWith(route) ? 'sidebar__item--active' : '';
+  };
 
   return `
     <aside class="sidebar">
@@ -49,51 +56,75 @@ export function sidebar({ activeRoute = '/', user } = {}) {
               </a>
             </li>
             <li>
-              <a href="/admin/posts" class="sidebar__item ${isActive('/posts')}">
+              <a href="/admin/posts" class="sidebar__item ${isActive('/admin/posts')}">
                 <span class="sidebar__item-icon">
                   <i data-lucide="file-text"></i>
                 </span>
                 <span class="sidebar__item-text">Posts</span>
-                <span class="sidebar__item-badge">12</span>
+                <!-- <span class="sidebar__item-badge">12</span> -->
               </a>
             </li>
             <li>
-              <div class="sidebar__item sidebar__item--has-submenu ${isActive('/categories') || isActive('/tags') ? 'sidebar__item--active' : ''}">
+              <a href="/admin/categories" class="sidebar__item ${isActive('/admin/categories')}">
                 <span class="sidebar__item-icon">
-                  <i data-lucide="files"></i>
+                  <i data-lucide="folder-open"></i>
                 </span>
-                <span class="sidebar__item-text">Attributes</span>
-                <span class="sidebar__item-arrow">
-                  <i data-lucide="chevron-right"></i>
-                </span>
-              </div>
-              <ul class="sidebar__submenu ${isActive('/categories') || isActive('/tags') ? 'sidebar__submenu--open' : ''}">
-                <li>
-                  <a href="/admin/categories" class="sidebar__submenu-item ${isActive('/categories')}">Categories</a>
-                </li>
-                <li>
-                  <a href="/admin/tags" class="sidebar__submenu-item ${isActive('/tags')}">Tags</a>
-                </li>
-              </ul>
+                <span class="sidebar__item-text">Categories</span>
+              </a>
             </li>
             <li>
-              <div class="sidebar__item sidebar__item--has-submenu ${isActive('/media') ? 'sidebar__item--active' : ''}">
+              <a href="/admin/tags" class="sidebar__item ${isActive('/admin/tags')}">
+                <span class="sidebar__item-icon">
+                  <i data-lucide="tags"></i>
+                </span>
+                <span class="sidebar__item-text">Tags</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!--
+        OLD MEDIA DROPDOWN (for reference)
+        <li>
+          <div class="sidebar__item sidebar__item--has-submenu ${isActive('/admin/media') ? 'sidebar__item--active' : ''}">
+            <span class="sidebar__item-icon">
+              <i data-lucide="image"></i>
+            </span>
+            <span class="sidebar__item-text">Media</span>
+            <span class="sidebar__item-arrow">
+              <i data-lucide="chevron-right"></i>
+            </span>
+          </div>
+          <ul class="sidebar__submenu ${isActive('/admin/media') ? 'sidebar__submenu--open' : ''}">
+            <li>
+              <a href="/admin/media/images" class="sidebar__submenu-item">Images</a>
+            </li>
+            <li>
+              <a href="/admin/media/videos" class="sidebar__submenu-item">Videos</a>
+            </li>
+          </ul>
+        </li>
+        -->
+
+        <!-- Media Group -->
+        <div class="sidebar__group">
+          <div class="sidebar__group-title">Media</div>
+          <ul class="sidebar__menu">
+            <li>
+              <a href="/admin/media/images" class="sidebar__item ${isActive('/admin/media/images')}">
                 <span class="sidebar__item-icon">
                   <i data-lucide="image"></i>
                 </span>
-                <span class="sidebar__item-text">Media</span>
-                <span class="sidebar__item-arrow">
-                  <i data-lucide="chevron-right"></i>
+                <span class="sidebar__item-text">Images</span>
+              </a>
+            </li>
+            <li>
+              <a href="/admin/media/videos" class="sidebar__item ${isActive('/admin/media/videos')}">
+                <span class="sidebar__item-icon">
+                  <i data-lucide="video"></i>
                 </span>
-              </div>
-              <ul class="sidebar__submenu ${isActive('/media') ? 'sidebar__submenu--open' : ''}">
-                <li>
-                  <a href="/admin/media/images" class="sidebar__submenu-item ${isActive('/media/images')}">Images</a>
-                </li>
-                <li>
-                  <a href="/admin/media/videos" class="sidebar__submenu-item ${isActive('/media/videos')}">Videos</a>
-                </li>
-              </ul>
+                <span class="sidebar__item-text">Videos</span>
+              </a>
             </li>
           </ul>
         </div>
@@ -103,7 +134,7 @@ export function sidebar({ activeRoute = '/', user } = {}) {
           <div class="sidebar__group-title">Management</div>
           <ul class="sidebar__menu">
             <li>
-              <a href="/admin/users" class="sidebar__item ${isActive('/users')}">
+              <a href="/admin/users" class="sidebar__item ${isActive('/admin/users')}">
                 <span class="sidebar__item-icon">
                   <i data-lucide="user-cog"></i>
                 </span>
@@ -111,13 +142,23 @@ export function sidebar({ activeRoute = '/', user } = {}) {
               </a>
             </li>
             <li>
-              <a href="/admin/settings" class="sidebar__item ${isActive('/settings')}">
+              <a href="/admin/subscribers" class="sidebar__item ${isActive('/admin/subscribers')}">
+                <span class="sidebar__item-icon">
+                  <i data-lucide="mail"></i>
+                </span>
+                <span class="sidebar__item-text">Subscribers</span>
+              </a>
+            </li>
+            ${user?.role === 'ADMIN' ? `
+            <li>
+              <a href="/admin/settings" class="sidebar__item ${isActive('/admin/settings')}">
                 <span class="sidebar__item-icon">
                   <i data-lucide="settings"></i>
                 </span>
                 <span class="sidebar__item-text">Settings</span>
               </a>
             </li>
+            ` : ''}
           </ul>
         </div>
       </nav>

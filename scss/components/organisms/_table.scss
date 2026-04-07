@@ -182,4 +182,27 @@
   &__content-info {
     @apply flex items-center gap-[1.2rem];
   }
+
+  // Comments link in table
+  &__comments-link {
+    @apply inline-flex items-center gap-[0.6rem];
+    @apply text-body-sm text-grey-600;
+    @apply transition-colors duration-200;
+    @apply hover:text-blue-600;
+
+    .dark & {
+      @apply text-grey-400 hover:text-blue-400;
+    }
+
+    svg,
+    i {
+      @apply w-[1.6rem] h-[1.6rem];
+    }
+  }
+
+  // All icons in table have stroke-1
+  svg,
+  i {
+    @apply stroke-1;
+  }
 }

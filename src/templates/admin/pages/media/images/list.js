@@ -1,6 +1,7 @@
 // Images list page template - Exact structure from images.html
 
 import { mainLayout } from '../../../layouts/main.js';
+import { DeleteModal } from '../../../components/delete-modal.js';
 
 const listToolbarClass = 'mb-[1.6rem] flex shrink-0 flex-row items-center gap-[1.6rem]';
 const listToolbarSearchClass = 'relative min-w-0 flex-1';
@@ -39,6 +40,15 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
       });
     </script>
   ` : '';
+
+  // Initialize delete modal
+  const deleteModal = new DeleteModal({
+    entityName: 'Image',
+    entityLabel: 'name',
+    deleteUrlPath: '/admin/media/images',
+    targetSelector: '.media-grid',
+    csrfToken: user?.csrfToken || ''
+  });
 
   const content = `
     <div class="media">
@@ -134,67 +144,13 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
     </script>
   ` : ''}
 
-  <script>
-      // Delete Modal Functions
-      function openDeleteModal(button) {
-        const imageId = button.getAttribute('data-image-id');
-        const imageName = button.getAttribute('data-image-name');
-        const modal = document.getElementById('deleteModal');
-        const form = document.getElementById('deleteImageForm');
-        const nameElement = document.getElementById('deleteImageName');
-
-        // Update form action
-        form.setAttribute('hx-delete', '/admin/media/images/' + imageId);
-        if (typeof htmx !== 'undefined') {
-          htmx.process(form);
-        }
-
-        // Update name display
-        if (nameElement) {
-          nameElement.textContent = imageName;
-        }
-
-        // Show modal
-        modal.style.display = 'block';
-        document.getElementById('modalBackdrop').style.opacity = '1';
-      }
-
-      function closeDeleteModal() {
-        const modal = document.getElementById('deleteModal');
-        modal.style.display = 'none';
-        document.getElementById('modalBackdrop').style.opacity = '0';
-      }
-
-      // Close modal on backdrop click
-      document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('deleteModal');
-        if (modal) {
-          modal.addEventListener('click', function(e) {
-            if (e.target === this || e.target.id === 'modalBackdrop') {
-              closeDeleteModal();
-            }
-          });
-        }
-      });
-
-      // Close modal on escape key
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          closeDeleteModal();
-        }
-      });
-
-
-    </script>
+    ${toastScript}
   `;
-
-  // Delete Modal - Outside content for proper z-index
-  const modal = deleteModal(user);
 
   return mainLayout({
     title: 'Images',
     description: 'Manage your image library',
-    content: content + modal + toastScript,
+    content: content + deleteModal.render(),
     user,
     activeRoute: '/admin/media/images',
     breadcrumbs: [
@@ -203,64 +159,6 @@ export function imagesListPage({ user, images, pagination, stats, filters, toast
       { label: 'Images', url: '/admin/media/images' },
     ],
   });
-}
-
-/**
- * Generate delete confirmation modal
- * @param {Object} user - Current user
- * @returns {string} - HTML string
- */
-function deleteModal(user) {
-  return `
-    <!-- Delete Confirmation Modal -->
-    <div
-      id="deleteModal"
-      class="hs-overlay hidden"
-      role="dialog"
-      tabindex="-1"
-      style="display: none;"
-    >
-      <!-- Backdrop -->
-      <div class="fixed inset-0 bg-black/50 transition-opacity opacity-0" id="modalBackdrop"></div>
-
-      <!-- Modal Container -->
-      <div class="fixed inset-0 z-50 flex min-h-full items-center justify-center p-4">
-        <div class="modal__content modal__content--confirm">
-          <!-- Icon -->
-          <div class="pt-8 pb-4">
-            <div class="modal__icon modal__icon--danger mx-auto">
-              <i data-lucide="alert-triangle" class="size-6"></i>
-            </div>
-          </div>
-
-          <!-- Body -->
-          <div class="px-6" style="padding-bottom: 16px;">
-            <h3 class="modal__title">Are you sure you want to delete?</h3>
-            <p class="modal__description">
-              Are you sure you want to delete "<span id="deleteImageName"></span>"?
-            </p>
-          </div>
-
-          <!-- Buttons -->
-          <form
-            id="deleteImageForm"
-            hx-delete=""
-            hx-target=".media-grid"
-            hx-swap="innerHTML"
-            class="px-6 pb-6 flex flex-col gap-3"
-          >
-            <input type="hidden" name="_csrf" value="${user?.csrfToken || ''}" />
-            <button type="submit" class="btn btn--danger btn--full">
-              Delete Image
-            </button>
-            <button type="button" class="btn btn--outline btn--full" onclick="closeDeleteModal()">
-              Cancel
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  `;
 }
 
 /**

@@ -1,7 +1,8 @@
 // src/services/posts.service.js
-import { db, posts, categories, tags, postTags, users, mediaItems } from '../db/index.js';
-import { eq, and, desc, asc, like, sql } from 'drizzle-orm';
+import { db, posts, categories, tags, postTags, users, mediaItems, comments } from '../db/index.js';
+import { eq, and, desc, asc, like, sql, gte, lt } from 'drizzle-orm';
 import { activityService } from './activity.service.js';
+import { commentsService } from './comments.service.js';
 
 /**
  * Posts Service
@@ -52,8 +53,8 @@ class PostsService {
     if (whereConditions.length > 0) {
       countQuery.where(and(...whereConditions));
     }
-    const [{ count }] = await countQuery;
-    const total = Number(count);
+    const [{ count: totalCount }] = await countQuery;
+    const total = Number(totalCount);
 
     // Get posts with relations
     let query = db
@@ -69,7 +70,6 @@ class PostsService {
           id: categories.id,
           title: categories.title,
           slug: categories.slug,
-          colorClass: categories.colorClass,
         },
       })
       .from(posts)
@@ -92,11 +92,16 @@ class PostsService {
 
     const results = await query;
 
+    // Get comment counts for these posts
+    const postIds = results.map(r => r.post.id);
+    const commentCounts = await commentsService.getCommentCountsForPosts(postIds);
+
     // Format results
     const formattedPosts = results.map(r => ({
       ...r.post,
       author: r.author,
       category: r.category,
+      commentsCount: commentCounts[r.post.id] || 0,
     }));
 
     return {
@@ -126,7 +131,6 @@ class PostsService {
           id: categories.id,
           title: categories.title,
           slug: categories.slug,
-          colorClass: categories.colorClass,
         },
       })
       .from(posts)
@@ -515,6 +519,74 @@ class PostsService {
   }
 
   /**
+   * Get posts count with date filtering
+   * @param {Object} options - Filter options
+   * @param {Date} options.startDate - Start date
+   * @param {Date} options.endDate - End date
+   * @param {string} [options.status] - Post status filter
+   * @returns {Promise<number>} - Count of posts
+   */
+  async getPostsCountByDate({ startDate, endDate, status }) {
+    let query = db
+      .select({ count: sql`count(*)` })
+      .from(posts)
+      .where(
+        and(
+          gte(posts.createdAt, startDate),
+          lt(posts.createdAt, endDate)
+        )
+      );
+
+    if (status) {
+      query = query.where(eq(posts.status, status));
+    }
+
+    const [result] = await query;
+    return Number(result.count);
+  }
+
+  /**
+   * Get posts growth percentage (current period vs previous period)
+   * @param {number} [days=30] - Number of days per period
+   * @returns {Promise<Object>} - Growth data
+   */
+  async getPostsGrowth(days = 30) {
+    const now = new Date();
+    
+    // Current period
+    const currentStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+    const currentCount = await this.getPostsCountByDate({
+      startDate: currentStart,
+      endDate: now,
+      status: 'PUBLISHED'
+    });
+
+    // Previous period
+    const previousStart = new Date(now.getTime() - 2 * days * 24 * 60 * 60 * 1000);
+    const previousCount = await this.getPostsCountByDate({
+      startDate: previousStart,
+      endDate: currentStart,
+      status: 'PUBLISHED'
+    });
+
+    let trend;
+    if (previousCount > 0) {
+      trend = ((currentCount - previousCount) / previousCount) * 100;
+    } else if (currentCount > 0) {
+      // If previous was 0 but we have current, it's 100% growth (or more)
+      trend = 100;
+    } else {
+      trend = 0;
+    }
+
+    return {
+      current: currentCount,
+      previous: previousCount,
+      trend: Math.round(trend * 10) / 10 // Round to 1 decimal
+    };
+  }
+
+  /**
    * Get top posts by view count
    * @param {number} [limit=5] - Number of posts
    * @returns {Promise<Array>} - Top posts
@@ -532,7 +604,6 @@ class PostsService {
           id: categories.id,
           title: categories.title,
           slug: categories.slug,
-          colorClass: categories.colorClass,
         },
       })
       .from(posts)
