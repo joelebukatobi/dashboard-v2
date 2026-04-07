@@ -137,6 +137,7 @@ export default async function app(fastify, opts) {
   await fastify.register(import('./routes/api/posts.routes.js'), { prefix: '/api/v1/posts' });
   await fastify.register(import('./routes/api/categories.routes.js'), { prefix: '/api/v1/categories' });
   await fastify.register(import('./routes/api/tags.routes.js'), { prefix: '/api/v1/tags' });
+  await fastify.register(import('./routes/api/comments.routes.js'), { prefix: '/api/v1' });
 
   // 404 handler
   fastify.setNotFoundHandler(async (request, reply) => {
