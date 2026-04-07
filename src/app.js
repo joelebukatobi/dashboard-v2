@@ -55,10 +55,13 @@ export default async function app(fastify, opts) {
       files: 1,
     }
   });
-  await fastify.register(fastifyCors, {
-    origin: process.env.NODE_ENV === 'development' ? ['http://localhost:3000', 'http://127.0.0.1:3000'] : false,
-    credentials: true,
-  });
+  // CORS - disabled in development, configured for production
+  if (!isDevelopment) {
+    await fastify.register(fastifyCors, {
+      origin: true,
+      credentials: true,
+    });
+  }
 
   await fastify.register(fastifyJwt, {
     secret: process.env.JWT_SECRET || 'dev-secret-change-in-production',
@@ -68,10 +71,13 @@ export default async function app(fastify, opts) {
     },
   });
 
-  await fastify.register(fastifyRateLimit, {
-    max: isDevelopment ? 1000 : 100,
-    timeWindow: '1 minute',
-  });
+  // Rate limiting - disabled in development, enabled in production
+  if (!isDevelopment) {
+    await fastify.register(fastifyRateLimit, {
+      max: 100,
+      timeWindow: '1 minute',
+    });
+  }
 
   // Register fastify-html for templating
   await fastify.register(fastifyHtml);
@@ -126,6 +132,11 @@ export default async function app(fastify, opts) {
     await fastify.register(import('./routes/images.routes.js'), { prefix: '/admin/media/images' });
    await fastify.register(import('./routes/videos.routes.js'), { prefix: '/admin/media/videos' });
     await fastify.register(import('./routes/settings.routes.js'), { prefix: '/admin/settings' });
+
+  // Register public API routes (v1)
+  await fastify.register(import('./routes/api/posts.routes.js'), { prefix: '/api/v1/posts' });
+  await fastify.register(import('./routes/api/categories.routes.js'), { prefix: '/api/v1/categories' });
+  await fastify.register(import('./routes/api/tags.routes.js'), { prefix: '/api/v1/tags' });
 
   // 404 handler
   fastify.setNotFoundHandler(async (request, reply) => {
