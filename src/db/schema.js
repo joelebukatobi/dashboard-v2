@@ -29,7 +29,6 @@ export const commentStatusEnum = pgEnum('comment_status', ['PENDING', 'APPROVED'
 export const mediaTypeEnum = pgEnum('media_type', ['IMAGE', 'VIDEO']);
 export const settingGroupEnum = pgEnum('setting_group', ['GENERAL', 'SECURITY', 'CONTENT', 'EMAIL', 'SOCIAL']);
 export const settingTypeEnum = pgEnum('setting_type', ['STRING', 'NUMBER', 'BOOLEAN', 'JSON']);
-export const notificationTypeEnum = pgEnum('notification_type', ['COMMENT', 'SUBSCRIBER', 'TRAFFIC_SPIKE', 'POST_PUBLISHED', 'USER_INVITED', 'SYSTEM']);
 export const activityTypeEnum = pgEnum('activity_type', [
   'POST_CREATED', 'POST_UPDATED', 'POST_PUBLISHED', 'POST_DELETED',
   'CATEGORY_CREATED', 'CATEGORY_UPDATED', 'CATEGORY_DELETED',
@@ -37,7 +36,8 @@ export const activityTypeEnum = pgEnum('activity_type', [
   'USER_CREATED', 'USER_UPDATED', 'USER_DELETED', 'USER_INVITED', 'USER_SUSPENDED', 'USER_ACTIVATED',
   'IMAGE_UPLOADED', 'IMAGE_UPDATED', 'IMAGE_DELETED',
   'VIDEO_UPLOADED', 'VIDEO_UPDATED', 'VIDEO_DELETED',
-  'LOGIN', 'LOGOUT', 'SETTINGS_UPDATED'
+  'LOGIN', 'LOGOUT', 'SETTINGS_UPDATED',
+  'COMMENT_CREATED', 'SUBSCRIBER_CREATED'
 ]);
 export const subscriberStatusEnum = pgEnum('subscriber_status', ['ACTIVE', 'PENDING', 'UNSUBSCRIBED', 'BOUNCED']);
 
@@ -66,7 +66,6 @@ export const users = pgTable('users', {
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   sessions: many(sessions),
-  notifications: many(notifications),
   activities: many(activities),
 }));
 
@@ -114,7 +113,6 @@ export const categories = pgTable('categories', {
   title: varchar('title', { length: 100 }).notNull(),
   slug: varchar('slug', { length: 100 }).notNull().unique(),
   description: text('description'),
-  colorClass: varchar('color_class', { length: 50 }).default('badge--primary').notNull(),
   postCount: integer('post_count').default(0).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -215,19 +213,27 @@ export const postTagsRelations = relations(postTags, ({ one }) => ({
 export const comments = pgTable('comments', {
   id: uuid('id').primaryKey().defaultRandom(),
   postId: uuid('post_id').notNull().references(() => posts.id, { onDelete: 'cascade' }),
-  authorName: varchar('author_name', { length: 100 }).notNull(),
-  authorEmail: varchar('author_email', { length: 255 }).notNull(),
+  parentId: uuid('parent_id').references(() => comments.id, { onDelete: 'cascade' }),
+  authorName: varchar('author_name', { length: 100 }),
+  authorEmail: varchar('author_email', { length: 255 }),
   content: text('content').notNull(),
-  status: commentStatusEnum('status').default('PENDING').notNull(),
+  status: commentStatusEnum('status').default('APPROVED').notNull(),
+  isEdited: boolean('is_edited').default(false).notNull(),
+  editedAt: timestamp('edited_at'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
-export const commentsRelations = relations(comments, ({ one }) => ({
+export const commentsRelations = relations(comments, ({ one, many }) => ({
   post: one(posts, {
     fields: [comments.postId],
     references: [posts.id],
   }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+  }),
+  replies: many(comments),
 }));
 
 // ============================================
@@ -269,29 +275,6 @@ export const settings = pgTable('settings', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
-
-// ============================================
-// NOTIFICATIONS
-// ============================================
-
-export const notifications = pgTable('notifications', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  type: notificationTypeEnum('type').notNull(),
-  title: varchar('title', { length: 255 }).notNull(),
-  message: text('message').notNull(),
-  data: jsonb('data'),
-  read: boolean('read').default(false).notNull(),
-  readAt: timestamp('read_at'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-});
-
-export const notificationsRelations = relations(notifications, ({ one }) => ({
-  user: one(users, {
-    fields: [notifications.userId],
-    references: [users.id],
-  }),
-}));
 
 // ============================================
 // ACTIVITIES
