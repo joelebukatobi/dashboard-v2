@@ -1,10 +1,12 @@
 // src/templates/admin/partials/header.js
-// Header component with search, notifications, and user menu
+// Header component with user menu
+
+import { getInitials } from '../utils/helpers.js';
 
 /**
  * Header Partial
- * Displays top navigation bar with mobile menu toggle, search, theme toggle,
- * notifications, and user dropdown
+ * Displays top navigation bar with mobile menu toggle, theme toggle,
+ * and user dropdown
  *
  * @param {Object} options
  * @param {Object} options.user - Current user data
@@ -18,7 +20,7 @@ export function header({ user, breadcrumbs = [] }) {
   const displayName = user
     ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email.split('@')[0]
     : 'User';
-  const avatarUrl = user?.avatarUrl || 'https://i.pravatar.cc/150?img=68';
+  const avatarUrl = user?.avatarUrl;
 
   // Generate breadcrumb HTML with chevrons
   const breadcrumbHtml =
@@ -47,36 +49,19 @@ export function header({ user, breadcrumbs = [] }) {
       </div>
 
       <div class="header__right">
-        <!-- Mobile Search Toggle -->
-        <button class="header__search-toggle" id="mobileSearchToggle" title="Search">
-          <i data-lucide="search"></i>
-        </button>
-
-        <!-- Desktop Search -->
-        <div class="form__group form__group--search !m-0 hidden lg:block">
-          <div class="form__wrapper">
-            <i data-lucide="search" class="input__icon input__icon--left"></i>
-            <input
-              type="text"
-              class="input input--icon-left"
-              placeholder="Search..."
-            />
-          </div>
-        </div>
-
         <!-- Theme Toggle -->
         <button class="header__action" id="themeToggle" title="Toggle theme">
           <i data-lucide="sun" class="theme-icon-light"></i>
           <i data-lucide="moon" class="theme-icon-dark"></i>
         </button>
 
-        <!-- Notifications -->
-        <div class="hs-dropdown [--placement:bottom-right]">
+        <!-- Notifications - Commented out for now
+        <div class="hs-dropdown [--placement:bottom-right]" id="notifications-dropdown" data-user-id="${user?.id || ''}">
           <button
             id="hs-dropdown-notifications"
             type="button"
             class="hs-dropdown-toggle header__action header__action--badge"
-            data-count="3"
+            data-count="0"
           >
             <i data-lucide="bell"></i>
           </button>
@@ -86,50 +71,25 @@ export function header({ user, breadcrumbs = [] }) {
             aria-labelledby="hs-dropdown-notifications"
           >
             <div class="notifications__header">
-              <h4 class="notifications__title">Notifications</h4>
-              <a href="#" class="notifications__action">Mark all as read</a>
+              <a href="#" class="notifications__action" onclick="markAllNotificationsRead(event)">Mark all as read</a>
+              <button class="notifications__reload" onclick="fetchNotifications(); return false;" title="Refresh notifications">
+                <i data-lucide="refresh-cw"></i>
+              </button>
             </div>
-            <div class="notifications__list">
-              <a href="#" class="notifications__item notifications__item--unread">
-                <div class="notifications__icon notifications__icon--comment">
-                  <i data-lucide="message-circle"></i>
-                </div>
-                <div class="notifications__content">
-                  <p class="notifications__text"><strong>New comment</strong> on your post</p>
-                  <p class="notifications__time">2 minutes ago</p>
-                </div>
-              </a>
-              <a href="#" class="notifications__item notifications__item--unread">
-                <div class="notifications__icon notifications__icon--user">
-                  <i data-lucide="user-plus"></i>
-                </div>
-                <div class="notifications__content">
-                  <p class="notifications__text"><strong>New subscriber</strong> joined</p>
-                  <p class="notifications__time">1 hour ago</p>
-                </div>
-              </a>
-              <a href="#" class="notifications__item notifications__item--unread">
-                <div class="notifications__icon notifications__icon--alert">
-                  <i data-lucide="trending-up"></i>
-                </div>
-                <div class="notifications__content">
-                  <p class="notifications__text"><strong>Traffic spike</strong> detected</p>
-                  <p class="notifications__time">3 hours ago</p>
-                </div>
-              </a>
-            </div>
-            <div class="notifications__footer">
-              <a href="#" class="notifications__view-all">View all notifications</a>
+            <div class="notifications__list" id="notifications-list">
+              <div class="notifications__empty">Loading...</div>
             </div>
           </div>
         </div>
+        -->
 
         <!-- User Menu -->
         <div class="hs-dropdown [--placement:bottom-right]">
           <button id="hs-dropdown-user" type="button" class="hs-dropdown-toggle header__user-btn">
-            <div class="avatar avatar--sm">
-              <img src="${avatarUrl}" alt="${displayName}" />
-            </div>
+            ${avatarUrl
+              ? `<img src="${avatarUrl}" alt="${displayName}" class="avatar avatar--sm" />`
+              : `<div class="avatar avatar--sm avatar--initials">${getInitials(user?.firstName, user?.lastName)}</div>`
+            }
             <span class="header__user-name">${displayName}</span>
             <i data-lucide="chevron-down" class="dropdown__chevron"></i>
           </button>
@@ -142,14 +102,16 @@ export function header({ user, breadcrumbs = [] }) {
               <p class="dropdown__header-name">${displayName}</p>
               <p class="dropdown__header-email">${user?.email || ''}</p>
             </div>
-            <a class="dropdown__item" href="#">
+            <a class="dropdown__item" href="/admin/users/${user?.id}/edit">
               <i data-lucide="user"></i>
               My Profile
             </a>
+            ${user?.role === 'ADMIN' ? `
             <a class="dropdown__item" href="/admin/settings">
               <i data-lucide="settings"></i>
-              Account Settings
+              Settings
             </a>
+            ` : ''}
             <div class="dropdown__divider"></div>
             <a class="dropdown__item dropdown__item--danger" href="#" onclick="handleLogout()">
               <i data-lucide="log-out"></i>
@@ -159,19 +121,5 @@ export function header({ user, breadcrumbs = [] }) {
         </div>
       </div>
     </header>
-
-    <!-- Mobile Search Bar -->
-    <div class="mobile-search" id="mobileSearch">
-      <div class="form__group form__group--search form__group--search-mobile !m-0 w-full max-w-full">
-        <div class="form__wrapper w-full">
-          <i data-lucide="search" class="input__icon input__icon--left"></i>
-          <input
-            type="text"
-            class="input input--icon-left w-full"
-            placeholder="Search posts, pages, users..."
-          />
-        </div>
-      </div>
-    </div>
   `;
 }
