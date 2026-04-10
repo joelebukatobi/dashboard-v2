@@ -48,7 +48,7 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
     />
 
     <!-- Compiled CSS -->
-    <link rel="stylesheet" href="/dist/css/main.css" />
+    <link rel="stylesheet" href="/dist/css/admin.css" />
 
     <!-- Lucide Icons -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -56,20 +56,23 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   </head>
-  <body class="app ${routeClass}">
-    <!-- Layout wrapper -->
-    <div class="layout ${routeClass}">
-      <!-- Sidebar -->
-      ${sidebar({ activeRoute, user })}
+  <body class="${routeClass}">
+    <!-- Admin Namespace Wrapper -->
+    <div class="admin">
+      <!-- Layout wrapper -->
+      <div class="layout ${routeClass}">
+        <!-- Sidebar -->
+        ${sidebar({ activeRoute, user })}
 
-      <!-- Main Content Area -->
-      <main class="main">
-        <!-- Header -->
-        ${header({ user, breadcrumbs })}
+        <!-- Main Content Area -->
+        <main class="main">
+          <!-- Header -->
+          ${header({ user, breadcrumbs })}
 
-        <!-- Main Content -->
-        ${content}
-      </main>
+          <!-- Main Content -->
+          ${content}
+        </main>
+      </div>
     </div>
 
     <!-- Mobile Sidebar Overlay -->

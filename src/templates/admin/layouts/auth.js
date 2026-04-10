@@ -34,7 +34,7 @@ export function authLayout({ title = 'Sign In', description = 'Sign in to your a
     />
 
     <!-- Compiled CSS -->
-    <link rel="stylesheet" href="/dist/css/main.css" />
+    <link rel="stylesheet" href="/dist/css/admin.css" />
 
     <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -43,14 +43,17 @@ export function authLayout({ title = 'Sign In', description = 'Sign in to your a
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
   </head>
   <body>
-    <!-- Login Layout - Split screen -->
-    <div class="login">
-      <!-- Left side - Branding panel (hidden on mobile) -->
-      <div class="login__branding"></div>
+    <!-- Admin Namespace Wrapper -->
+    <div class="admin">
+      <!-- Login Layout - Split screen -->
+      <div class="login">
+        <!-- Left side - Branding panel (hidden on mobile) -->
+        <div class="login__branding"></div>
 
-      <!-- Right side - Form panel (contains modals) -->
-      <div class="login__form-panel" id="login-form-panel">
-        ${body}
+        <!-- Right side - Form panel (contains modals) -->
+        <div class="login__form-panel" id="login-form-panel">
+          ${body}
+        </div>
       </div>
     </div>
 
