@@ -1,0 +1,91 @@
+// ============================================================================
+// App Home Page
+// ============================================================================
+
+.app-home {
+  @apply mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center px-[1.6rem] pb-[4rem] pt-[8rem] text-center;
+
+  &__badge {
+    @apply mb-[1.2rem] inline-flex items-center rounded-full border border-grey-300 bg-grey-100 px-[1rem] py-[0.5rem] text-body-xs font-semibold uppercase tracking-wider text-grey-700;
+
+    .dark & {
+      @apply border-grey-700 bg-grey-800 text-grey-200;
+    }
+  }
+
+  &__title {
+    @apply max-w-4xl text-[4rem] font-bold leading-[1.1];
+  }
+
+  &__subtitle {
+    @apply mt-[1.4rem] max-w-3xl text-body-lg text-grey-600;
+
+    code {
+      @apply rounded bg-grey-100 px-[0.5rem] py-[0.2rem] text-body-sm;
+
+      .dark & {
+        @apply bg-grey-800;
+      }
+    }
+
+    .dark & {
+      @apply text-grey-300;
+    }
+  }
+
+  &__actions {
+    @apply mt-[2.2rem] flex flex-wrap items-center justify-center gap-[1rem];
+  }
+
+  &__btn {
+    @apply inline-flex items-center rounded-[0.6rem] px-[1.2rem] py-[0.85rem] text-body-sm font-semibold transition-all;
+
+    &--primary {
+      @apply bg-grey-900 text-white hover:bg-black;
+
+      .dark & {
+        @apply bg-white text-grey-900 hover:bg-grey-100;
+      }
+    }
+
+    &--secondary {
+      @apply border border-grey-300 bg-white text-grey-900 hover:bg-grey-100;
+
+      .dark & {
+        @apply border-grey-700 bg-grey-900 text-grey-100 hover:bg-grey-800;
+      }
+    }
+  }
+
+  &__grid {
+    @apply mt-[3.2rem] grid w-full grid-cols-1 gap-[1rem] md:grid-cols-2;
+  }
+
+  &__card {
+    @apply rounded-[0.8rem] border border-grey-200 bg-white p-[1.4rem] text-left transition-all hover:border-grey-400 hover:shadow-sm;
+
+    .dark & {
+      @apply border-grey-700 bg-grey-900 hover:border-grey-500;
+    }
+  }
+
+  &__card-title {
+    @apply text-body-lg font-semibold;
+  }
+
+  &__card-text {
+    @apply mt-[0.6rem] text-body-sm text-grey-600;
+
+    .dark & {
+      @apply text-grey-300;
+    }
+  }
+
+  &__footer {
+    @apply mt-[2.4rem] text-body-xs text-grey-500;
+
+    .dark & {
+      @apply text-grey-400;
+    }
+  }
+}
