@@ -76,6 +76,9 @@ cookies.txt
 # Session exports from AI assistants
 session*.json
 
+# Local docs (keep off GitHub)
+docs/
+
 # Generated media uploads/cache
 public/uploads/images/image-*
 public/uploads/images/thumbs/
