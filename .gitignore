@@ -70,6 +70,7 @@ cookies.txt
 # Local agent workspace files
 .serena/
 .opencode/
+.playwright-mcp/
 .tmp/
 
 # Session exports from AI assistants
@@ -78,3 +79,5 @@ session*.json
 # Generated media uploads/cache
 public/uploads/images/image-*
 public/uploads/images/thumbs/
+public/uploads/posts/post-*
+public/uploads/videos/thumbs/thumb-*
