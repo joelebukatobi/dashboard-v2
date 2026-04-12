@@ -4,10 +4,10 @@
 // ============================================================================
 
 .layout {
-  @apply h-full bg-white dark:bg-grey-900;
+  @apply h-screen bg-white dark:bg-grey-900;
 
   & .main {
-    @apply relative h-full flex flex-col transition-all duration-300;
+    @apply relative h-screen flex flex-col transition-all duration-300;
 
     // Ensure direct children (page wrappers like .posts, .users) fill the space
     // Excludes modals/overlays so they don't participate in flex sizing
@@ -52,11 +52,6 @@
     
     // Account for fixed page-footer (pagination) so last table row isn't hidden
     @apply pb-[6.4rem];
-
-    // Reduce padding for admin/dashboard route
-    .route-admin & {
-      @apply pb-[2.4rem];
-    }
 
     // Height: fit between fixed header (5.6rem) and footer (6.4rem)
     // Mobile only - desktop uses flex-1 naturally
@@ -139,51 +134,4 @@
   &__stack {
     @apply flex flex-col gap-[2.4rem]; // Matches space-y-6
   }
-
-  // Grid layouts
-  & .dashboard-grid {
-    @apply grid gap-[1.6rem] sm:gap-[2.4rem] mt-[1.6rem] sm:mt-[2.4rem];
-
-    &:first-child {
-      @apply mt-0;
-    }
-
-    &--stats {
-      @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
-    }
-
-    &--charts {
-      @apply grid-cols-1 lg:grid-cols-2;
-    }
-
-    &--mixed {
-      @apply grid-cols-1 lg:grid-cols-3;
-
-      &-main {
-        @apply lg:col-span-2;
-      }
-    }
-
-    // Main content area (2/3 width on large screens)
-    &--main {
-      @apply grid-cols-1 lg:grid-cols-3 items-start;
-
-      > * {
-        // height: 37.6rem; // 376px fixed height for both widgets
-      }
-
-      > :first-child {
-        @media (min-width: 1024px) {
-          @apply col-span-2;
-        }
-      }
-    }
-
-    // Equal width columns
-    &--equal {
-      @apply grid-cols-1 lg:grid-cols-2;
-    }
-  }
-
-
 }
