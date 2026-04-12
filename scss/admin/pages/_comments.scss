@@ -56,10 +56,14 @@
   }
 
   &__edited {
-    @apply text-body-xs text-grey-400 italic;
+    @apply hidden text-body-xs text-grey-400 italic;
 
     .dark & {
       @apply text-grey-500;
+    }
+
+    &--visible {
+      @apply inline;
     }
   }
 

@@ -203,9 +203,11 @@ export function videosEditPage({ user, video, posts }) {
         const modal = document.getElementById('deleteModal');
         const backdrop = document.getElementById('modalBackdrop');
         if (!modal) return;
-        modal.style.display = 'block';
+        modal.classList.remove('hidden');
         if (backdrop) {
-          backdrop.style.opacity = '1';
+          requestAnimationFrame(() => {
+            backdrop.classList.remove('opacity-0');
+          });
         }
       }
 
@@ -213,10 +215,12 @@ export function videosEditPage({ user, video, posts }) {
         const modal = document.getElementById('deleteModal');
         const backdrop = document.getElementById('modalBackdrop');
         if (!modal) return;
-        modal.style.display = 'none';
         if (backdrop) {
-          backdrop.style.opacity = '0';
+          backdrop.classList.add('opacity-0');
         }
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 200);
       }
 
       document.addEventListener('DOMContentLoaded', function() {

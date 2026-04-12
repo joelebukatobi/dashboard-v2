@@ -80,7 +80,7 @@ export function postCommentsPage({ user, post, comments, pagination, toast }) {
       function toggleReplyForm(commentId) {
         const form = document.getElementById('reply-form-' + commentId);
         if (form) {
-          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+          form.classList.toggle('hidden');
         }
       }
 
@@ -88,7 +88,7 @@ export function postCommentsPage({ user, post, comments, pagination, toast }) {
       function toggleEditForm(commentId) {
         const form = document.getElementById('edit-form-' + commentId);
         if (form) {
-          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+          form.classList.toggle('hidden');
         }
       }
 
@@ -119,14 +119,18 @@ export function postCommentsPage({ user, post, comments, pagination, toast }) {
         }
 
         // Show modal
-        modal.style.display = 'block';
-        document.getElementById('commentModalBackdrop').style.opacity = '1';
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          document.getElementById('commentModalBackdrop').classList.remove('opacity-0');
+        });
       }
       
       function closeDeleteModal() {
         const modal = document.getElementById('deleteCommentModal');
-        modal.style.display = 'none';
-        document.getElementById('commentModalBackdrop').style.opacity = '0';
+        document.getElementById('commentModalBackdrop').classList.add('opacity-0');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 200);
       }
       
       // Close modal on backdrop click
@@ -247,7 +251,7 @@ function renderComment(comment, currentUser, depth = 0) {
               <span class="comment__author">${escapeHtml(comment.authorName || 'Anonymous')}</span>
               ${comment.authorEmail ? `<span class="comment__email">${escapeHtml(comment.authorEmail)}</span>` : ''}
               <span class="comment__time">${formatRelativeTime(comment.createdAt)}</span>
-              ${comment.isEdited ? '<span class="comment__edited">(edited)</span>' : ''}
+              <span class="comment__edited ${comment.isEdited ? 'comment__edited--visible' : ''}">(edited)</span>
             </div>
             <div class="comment__actions">
               <button 
@@ -286,7 +290,7 @@ function renderComment(comment, currentUser, depth = 0) {
               hx-put="/admin/posts/${comment.postId}/comments/${comment.id}"
               hx-target="#comment-body-${comment.id}"
               hx-swap="innerHTML"
-              hx-on::after-request="if(event.detail.successful) { toggleEditForm('${comment.id}'); document.getElementById('comment-${comment.id}').querySelector('.comment__edited').style.display = 'inline'; }"
+              hx-on::after-request="if(event.detail.successful) { toggleEditForm('${comment.id}'); document.getElementById('comment-${comment.id}').querySelector('.comment__edited')?.classList.add('comment__edited--visible'); }"
             >
               <textarea 
                 class="input" 
