@@ -172,3 +172,32 @@
     @apply pointer-events-auto;
   }
 }
+
+.page-header-toast {
+  @apply absolute left-0 border rounded-md shadow-sm;
+  @apply transform transition-all duration-700 ease-out;
+  @apply opacity-100;
+
+  &--success {
+    @apply bg-green-50 border-green-200 text-green-800;
+  }
+
+  &--error {
+    @apply bg-red-50 border-red-200 text-red-800;
+  }
+
+  // Start at left edge
+  &--enter {
+    @apply translate-x-0 opacity-100;
+  }
+
+  // Animate to right edge of container
+  &--active {
+    @apply left-auto right-0 translate-x-0 opacity-100;
+  }
+
+  // Fade out in place
+  &--exit {
+    @apply opacity-0;
+  }
+}

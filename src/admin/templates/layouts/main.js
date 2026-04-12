@@ -314,29 +314,22 @@ export function mainLayout({ title = 'Dashboard', description = 'BlogCMS Dashboa
                   : '<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>';
                 
                 if (isPageHeaderToast) {
-                  // Page header toast: slide from left (after title) to right end
-                  toast.className = 'border rounded-md shadow-sm transform transition-all duration-700 ease-out ' + bgClass;
-                  toast.style.position = 'absolute';
-                  toast.style.left = '0';
-                  toast.style.transform = 'translateX(0)';
-                  toast.style.opacity = '1';
+                  // Page header toast: class-based animation (no inline styles)
+                  toast.className = 'page-header-toast page-header-toast--enter ' + (isSuccess ? 'page-header-toast--success' : 'page-header-toast--error');
                   toast.innerHTML = '<div class="flex items-center gap-3 px-4 py-3 whitespace-nowrap">' + iconSvg + '<span class="text-sm font-medium">' + toastInfo.message + '</span></div>';
                   
                   toastContainer.appendChild(toast);
-                  
-                  // Get the container width to calculate how far to slide
-                  const containerWidth = toastContainer.offsetWidth;
-                  const toastWidth = toast.offsetWidth;
-                  const slideDistance = containerWidth - toastWidth;
-                  
-                  // Animate from left to right end
+
+                  // Animate in
                   requestAnimationFrame(function() {
-                    toast.style.transform = 'translateX(' + slideDistance + 'px)';
+                    toast.classList.remove('page-header-toast--enter');
+                    toast.classList.add('page-header-toast--active');
                   });
                   
                   // Fade out and remove after 3 seconds
                   setTimeout(function() {
-                    toast.style.opacity = '0';
+                    toast.classList.remove('page-header-toast--active');
+                    toast.classList.add('page-header-toast--exit');
                     setTimeout(function() { toast.remove(); }, 300);
                   }, 3000);
                 } else {
