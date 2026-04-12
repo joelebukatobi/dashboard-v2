@@ -139,6 +139,9 @@ export default async function app(fastify, opts) {
   await fastify.register(import('./admin/routes/api/tags.routes.js'), { prefix: '/api/v1/tags' });
   await fastify.register(import('./admin/routes/api/comments.routes.js'), { prefix: '/api/v1' });
 
+  // Register public app routes
+  await fastify.register(import('./app/routes/home.routes.js'));
+
   // 404 handler
   fastify.setNotFoundHandler(async (request, reply) => {
     reply.code(404);
