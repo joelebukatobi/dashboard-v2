@@ -7,7 +7,7 @@
     "start": "node src/server.js",
     "dev": "concurrently \"npm run dev:server\" \"npm run watch:css\"",
     "dev:server": "nodemon src/server.js",
-    "build:css": "sass scss/main.scss .build/components.css --no-source-map && postcss css/index.css -o dist/css/main.css && npm run copy:assets",
+    "build:css": "sass scss/admin/main.scss .build/admin.css --no-source-map && postcss css/index.css -o dist/css/admin.css && npm run copy:assets",
     "copy:assets": "cp favicon.svg dist/favicon.svg",
     "watch:css": "chokidar 'scss/**/*.scss' -c 'npm run build:css' --initial",
     "build:js": "esbuild src/client/main.js --bundle --minify --outfile=dist/js/main.js",
@@ -15,11 +15,13 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:seed": "node scripts/seed.js",
+    "db:seed:fresh": "node scripts/seed.js --fresh",
+    "db:reset": "npm run db:migrate && npm run db:seed:fresh",
     "db:studio": "drizzle-kit studio",
     "test": "vitest",
     "test:e2e": "playwright test",
-    "simulate": "node scripts/simulate-analytics.js",
-    "simulate:start": "node scripts/scheduler.js"
+    "simulate:day": "node scripts/simulate-day.js",
+    "simulate:days": "node scripts/simulate-day.js --days=90 --backdate"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",

@@ -1,1 +1,0 @@
-ALTER TABLE "categories" ADD COLUMN "color_class" varchar(50) DEFAULT 'badge--primary' NOT NULL;

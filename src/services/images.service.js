@@ -2,7 +2,7 @@
 // Images service for managing media library
 
 import { db, mediaItems, posts } from '../db/index.js';
-import { eq, like, desc, asc, sql } from 'drizzle-orm';
+import { eq, like, desc, asc, sql, and } from 'drizzle-orm';
 import { promises as fs } from 'fs';
 import path from 'path';
 import sharp from 'sharp';
@@ -46,19 +46,22 @@ class ImagesService {
     // Build query conditions
     const conditions = [];
 
+    // Filter by type = IMAGE
+    conditions.push(eq(mediaItems.type, 'IMAGE'));
+
     if (search) {
       conditions.push(
         sql`(${like(mediaItems.originalName, `%${search}%`)} OR ${like(mediaItems.title, `%${search}%`)})`
       );
     }
 
-    // Filter by type = IMAGE
-    conditions.push(eq(mediaItems.type, 'IMAGE'));
+    // Combine conditions with AND
+    const whereClause = conditions.length > 1 ? and(...conditions) : conditions[0];
 
     // Get total count
     let countQuery = db.select({ count: sql`count(*)` }).from(mediaItems);
     if (conditions.length > 0) {
-      countQuery = countQuery.where(...conditions);
+      countQuery = countQuery.where(whereClause);
     }
     const [{ count }] = await countQuery;
     const total = Number(count);
@@ -67,7 +70,7 @@ class ImagesService {
     let query = db.select().from(mediaItems);
     
     if (conditions.length > 0) {
-      query = query.where(...conditions);
+      query = query.where(whereClause);
     }
 
     // Apply sorting and pagination

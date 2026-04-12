@@ -1,26 +1,61 @@
 // scripts/seed.js
-// Load environment variables FIRST before any other imports
+// Master seed script - combines all seeders into one
+// Usage: node scripts/seed.js [--fresh] [--core] [--images] [--videos]
+
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { readdirSync, statSync, existsSync, mkdirSync, copyFileSync } from 'fs';
+import sharp from 'sharp';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Configure dotenv BEFORE importing anything that uses env vars
+// Load environment variables
 config({ path: join(__dirname, '..', '.env.development') });
 
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const isFresh = args.includes('--fresh');
+const isCoreOnly = args.includes('--core');
+const includeImages = args.includes('--images') || !isCoreOnly;
+const includeVideos = args.includes('--videos') || !isCoreOnly;
+
+// Stats tracking
+const stats = {
+  users: 0,
+  categories: 0,
+  tags: 0,
+  settings: 0,
+  posts: 0,
+  images: 0,
+  videos: 0,
+  comments: 0,
+  subscribers: 0,
+  activities: 0,
+};
+
 async function seed() {
-  console.log('🌱 Seeding database...\n');
-  
-  // Dynamic imports after env is loaded (prevents connection issues)
-  const { db, users, categories, tags, settings, posts, activities } = await import('../src/db/index.js');
-  const { eq } = await import('drizzle-orm');
+  console.log('🌱 Starting database seed...\n');
+  const startTime = Date.now();
+
+  // Dynamic imports after env is loaded
+  const { db, users, categories, tags, settings, posts, postTags, comments, mediaItems, subscribers, activities } = await import('../src/db/index.js');
+  const { eq, sql } = await import('drizzle-orm');
   const bcrypt = await import('bcrypt');
 
   try {
-    // Create admin user
-    console.log('Creating admin user...');
+    // Fresh start - clear all data
+    if (isFresh) {
+      console.log('🗑️  Clearing existing data...');
+      await db.execute(sql`TRUNCATE TABLE activities, analytics_events, comments, daily_page_views, media_items, post_tags, posts, settings, subscribers, tags, categories, sessions, password_resets, oauth_accounts, users CASCADE`);
+      console.log('✅ Data cleared\n');
+    }
+
+    // ============================================
+    // 1. USERS
+    // ============================================
+    console.log('👤 Creating users...');
     const adminPassword = await bcrypt.hash('Admin@123', 10);
     const [adminUser] = await db.insert(users).values({
       firstName: 'Admin',
@@ -30,43 +65,36 @@ async function seed() {
       role: 'ADMIN',
       status: 'ACTIVE',
     }).onConflictDoNothing().returning();
-    
-    // Get admin user ID (either newly created or existing)
-    let adminId;
-    if (adminUser) {
-      adminId = adminUser.id;
-    } else {
-      const existingAdmin = await db.select().from(users).where(eq(users.email, 'admin@example.com')).limit(1);
-      adminId = existingAdmin[0]?.id;
-    }
-    console.log('✅ Admin user created\n');
 
-    // Create default categories with auto-assigned colors
-    console.log('Creating default categories...');
-    const categoryColors = [
-      'badge--primary',
-      'badge--purple',
-      'badge--info',
-      'badge--warning',
-      'badge--success',
-      'badge--danger',
-      'badge--pink',
-      'badge--neutral'
+    const adminId = adminUser?.id || (await db.select().from(users).where(eq(users.email, 'admin@example.com')).limit(1))[0]?.id;
+    stats.users = 1;
+    console.log('✅ Admin user created: admin@example.com / Admin@123\n');
+
+    // ============================================
+    // 2. CATEGORIES
+    // ============================================
+    console.log('📁 Creating categories...');
+    const categoryData = [
+      { title: 'Development', slug: 'development', description: 'Software development articles' },
+      { title: 'Design', slug: 'design', description: 'UI/UX and graphic design' },
+      { title: 'CSS', slug: 'css', description: 'CSS tutorials and tips' },
+      { title: 'JavaScript', slug: 'javascript', description: 'JavaScript and Node.js' },
+      { title: 'Tutorials', slug: 'tutorials', description: 'Step-by-step guides' },
+      { title: 'News', slug: 'news', description: 'Latest updates and announcements' },
     ];
-    
-    await db.insert(categories).values([
-      { title: 'Development', slug: 'development', description: 'Software development articles', status: 'PUBLISHED', colorClass: categoryColors[0] },
-      { title: 'Design', slug: 'design', description: 'UI/UX and graphic design', status: 'PUBLISHED', colorClass: categoryColors[1] },
-      { title: 'CSS', slug: 'css', description: 'CSS tutorials and tips', status: 'PUBLISHED', colorClass: categoryColors[2] },
-      { title: 'JavaScript', slug: 'javascript', description: 'JavaScript and Node.js', status: 'PUBLISHED', colorClass: categoryColors[3] },
-      { title: 'Tutorials', slug: 'tutorials', description: 'Step-by-step guides', status: 'PUBLISHED', colorClass: categoryColors[4] },
-      { title: 'News', slug: 'news', description: 'Latest updates and announcements', status: 'PUBLISHED', colorClass: categoryColors[5] },
-    ]).onConflictDoNothing();
-    console.log('✅ Default categories created\n');
+    await db.insert(categories).values(categoryData).onConflictDoNothing();
+    stats.categories = categoryData.length;
+    console.log(`✅ ${categoryData.length} categories created\n`);
 
-    // Create default tags
-    console.log('Creating default tags...');
-    await db.insert(tags).values([
+    // Get category IDs
+    const allCategories = await db.select().from(categories);
+    const getCategoryId = (slug) => allCategories.find(c => c.slug === slug)?.id;
+
+    // ============================================
+    // 3. TAGS
+    // ============================================
+    console.log('🏷️  Creating tags...');
+    const tagData = [
       { name: 'Tutorial', slug: 'tutorial', description: 'How-to guides' },
       { name: 'Best Practices', slug: 'best-practices', description: 'Recommended approaches' },
       { name: 'Tips & Tricks', slug: 'tips-tricks', description: 'Quick helpful tips' },
@@ -75,12 +103,20 @@ async function seed() {
       { name: 'Performance', slug: 'performance', description: 'Performance optimization' },
       { name: 'Security', slug: 'security', description: 'Security topics' },
       { name: 'Tools', slug: 'tools', description: 'Development tools' },
-    ]).onConflictDoNothing();
-    console.log('✅ Default tags created\n');
+    ];
+    await db.insert(tags).values(tagData).onConflictDoNothing();
+    stats.tags = tagData.length;
+    console.log(`✅ ${tagData.length} tags created\n`);
 
-    // Create default settings
-    console.log('Creating default settings...');
-    await db.insert(settings).values([
+    // Get tag IDs
+    const allTags = await db.select().from(tags);
+    const getTagIds = () => allTags.map(t => t.id);
+
+    // ============================================
+    // 4. SETTINGS
+    // ============================================
+    console.log('⚙️  Creating settings...');
+    const settingsData = [
       { key: 'siteName', value: 'My Blog', group: 'GENERAL', type: 'STRING' },
       { key: 'siteTagline', value: 'A modern blog built with Fastify', group: 'GENERAL', type: 'STRING' },
       { key: 'siteUrl', value: 'http://localhost:3000', group: 'GENERAL', type: 'STRING' },
@@ -93,301 +129,353 @@ async function seed() {
       { key: 'require2FA', value: 'false', group: 'SECURITY', type: 'BOOLEAN' },
       { key: 'passwordMinLength', value: '8', group: 'SECURITY', type: 'NUMBER' },
       { key: 'sessionTimeout', value: '60', group: 'SECURITY', type: 'NUMBER' },
-    ]).onConflictDoNothing();
-    console.log('✅ Default settings created\n');
+    ];
+    await db.insert(settings).values(settingsData).onConflictDoNothing();
+    stats.settings = settingsData.length;
+    console.log(`✅ ${settingsData.length} settings created\n`);
 
-    // Fetch category IDs (UUIDs) after they're created
-    console.log('Fetching category IDs...');
-    const allCategories = await db.select({ id: categories.id, slug: categories.slug }).from(categories);
-    const getCategoryId = (slug) => allCategories.find(c => c.slug === slug)?.id;
+    // ============================================
+    // 5. POSTS
+    // ============================================
+    console.log('📝 Creating posts...');
     
-    const jsCategoryId = getCategoryId('javascript');
-    const cssCategoryId = getCategoryId('css');
-    const devCategoryId = getCategoryId('development');
-    const designCategoryId = getCategoryId('design');
-    
-    // Create demo posts with dates spanning 1 year back and view counts 100-500
-    console.log('Creating demo posts with historical data (100-500 views)...');
-    
-    // Helper to generate random view count between 50-150
-    // Older posts get higher view counts (realistic pattern)
-    const getViewCount = (monthsAgo) => {
-      const base = 50;
-      const range = 100;
-      const ageBonus = (12 - monthsAgo) * 8; // Older posts get more views
-      const random = Math.floor(Math.random() * range);
-      return Math.min(150, Math.max(50, base + ageBonus + random));
-    };
-    
-    // Helper to get date X months ago
     const getDateMonthsAgo = (months) => {
       const date = new Date();
       date.setMonth(date.getMonth() - months);
       return date;
     };
+
+    const postsData = [
+      { title: 'Getting Started with React Hooks', slug: 'getting-started-with-react-hooks', content: '<p>React Hooks have revolutionized how we write React components...</p>', excerpt: 'Learn how to use React Hooks', categorySlug: 'javascript', monthsAgo: 0 },
+      { title: 'CSS Grid Layout: A Complete Guide', slug: 'css-grid-layout-complete-guide', content: '<p>CSS Grid Layout is a two-dimensional layout system...</p>', excerpt: 'Master CSS Grid Layout', categorySlug: 'css', monthsAgo: 1 },
+      { title: 'Building Scalable APIs with Fastify', slug: 'building-scalable-apis-fastify', content: '<p>Fastify is a high-performance web framework...</p>', excerpt: 'Learn Fastify', categorySlug: 'development', monthsAgo: 1 },
+      { title: 'Advanced TypeScript Patterns', slug: 'advanced-typescript-patterns', content: '<p>TypeScript provides powerful type system features...</p>', excerpt: 'Advanced TypeScript', categorySlug: 'javascript', monthsAgo: 2 },
+      { title: 'UI Design Principles for Developers', slug: 'ui-design-principles-developers', content: '<p>Good UI design is not just for designers...</p>', excerpt: 'UI Design Principles', categorySlug: 'design', monthsAgo: 2 },
+      { title: 'Mastering Flexbox for Modern Layouts', slug: 'mastering-flexbox-modern-layouts', content: '<p>Flexbox is a powerful layout system...</p>', excerpt: 'Master Flexbox', categorySlug: 'css', monthsAgo: 3 },
+      { title: 'Docker for Beginners', slug: 'docker-beginners-containerization-basics', content: '<p>Docker has revolutionized how we deploy applications...</p>', excerpt: 'Get started with Docker', categorySlug: 'development', monthsAgo: 3 },
+      { title: 'Introduction to PostgreSQL', slug: 'introduction-to-postgresql', content: '<p>PostgreSQL is a powerful, open-source relational database...</p>', excerpt: 'Learn PostgreSQL', categorySlug: 'development', monthsAgo: 4 },
+      { title: 'Web Security Best Practices', slug: 'web-security-best-practices', content: '<p>Security should never be an afterthought...</p>', excerpt: 'Security best practices', categorySlug: 'development', monthsAgo: 4 },
+      { title: 'Async/Await in JavaScript', slug: 'async-await-javascript', content: '<p>Async/await has made asynchronous programming...</p>', excerpt: 'Async/await guide', categorySlug: 'javascript', monthsAgo: 5 },
+      { title: 'Responsive Design Patterns', slug: 'responsive-design-patterns', content: '<p>Creating websites that work well on all devices...</p>', excerpt: 'Responsive design', categorySlug: 'design', monthsAgo: 5 },
+      { title: 'Git Workflow Strategies', slug: 'git-workflow-strategies', content: '<p>Choosing the right Git workflow...</p>', excerpt: 'Git workflows', categorySlug: 'development', monthsAgo: 6 },
+      { title: 'Node.js Performance Optimization', slug: 'nodejs-performance-optimization', content: '<p>Performance optimization is crucial...</p>', excerpt: 'Node.js optimization', categorySlug: 'development', monthsAgo: 7 },
+      { title: 'Color Theory for Web Designers', slug: 'color-theory-web-designers', content: '<p>Understanding color theory...</p>', excerpt: 'Color theory basics', categorySlug: 'design', monthsAgo: 8 },
+      { title: 'Modern CSS Features', slug: 'modern-css-features', content: '<p>CSS has evolved significantly...</p>', excerpt: 'Modern CSS', categorySlug: 'css', monthsAgo: 8 },
+      { title: 'React Server Components', slug: 'react-server-components', content: '<p>React Server Components are changing...</p>', excerpt: 'Server Components', categorySlug: 'javascript', monthsAgo: 9 },
+      { title: 'Database Indexing Strategies', slug: 'database-indexing-strategies', content: '<p>Proper indexing is crucial...</p>', excerpt: 'Database indexing', categorySlug: 'development', monthsAgo: 10 },
+      { title: 'Accessibility in Web Design', slug: 'accessibility-web-design', content: '<p>Web accessibility is essential...</p>', excerpt: 'Web accessibility', categorySlug: 'design', monthsAgo: 10 },
+      { title: 'JavaScript ES2024 Features', slug: 'javascript-es2024-features', content: '<p>ES2024 brings exciting new features...</p>', excerpt: 'ES2024 features', categorySlug: 'javascript', monthsAgo: 11 },
+      { title: 'Building RESTful APIs', slug: 'building-restful-apis', content: '<p>RESTful API design principles...</p>', excerpt: 'RESTful APIs', categorySlug: 'development', monthsAgo: 11 },
+    ];
+
+    const tagIds = getTagIds();
     
-    // Create 20 posts distributed over the past 12 months
-    const demoPosts = [
-      {
-        title: 'Getting Started with React Hooks',
-        slug: 'getting-started-with-react-hooks',
-        content: '<p>React Hooks have revolutionized how we write React components. In this comprehensive guide, we will explore the most commonly used hooks and how to leverage them in your applications.</p><h2>What are Hooks?</h2><p>Hooks are functions that let you use state and other React features in functional components. They were introduced in React 16.8 and have since become the standard way to write React components.</p><h2>useState and useEffect</h2><p>The useState hook allows you to add state to functional components. The useEffect hook lets you perform side effects. Together, they provide powerful capabilities for functional components.</p><p>By mastering these hooks, you will be able to write cleaner, more maintainable React code.</p>',
-        excerpt: 'Learn how to use React Hooks to write cleaner, more maintainable components.',
+    for (const postData of postsData) {
+      const createdAt = getDateMonthsAgo(postData.monthsAgo);
+      const viewCount = Math.floor(Math.random() * 400) + 100; // 100-500 views
+      
+      const [post] = await db.insert(posts).values({
+        title: postData.title,
+        slug: postData.slug,
+        content: postData.content,
+        excerpt: postData.excerpt,
+        authorId: adminId,
+        categoryId: getCategoryId(postData.categorySlug),
         status: 'PUBLISHED',
-        categorySlug: 'javascript',
-        monthsAgo: 0,
-      },
-      {
-        title: 'CSS Grid Layout: A Complete Guide',
-        slug: 'css-grid-layout-complete-guide',
-        content: '<p>CSS Grid Layout is a two-dimensional layout system for the web. It lets you lay out items in rows and columns, and has many features that make building complex layouts straightforward.</p><h2>Basic Grid Setup</h2><p>To create a grid container, you simply set the display property to grid and define your columns and rows.</p><h2>Grid Template Areas</h2><p>One of the most powerful features of CSS Grid is the ability to name grid areas and place items by name.</p><h2>Responsive Grids</h2><p>CSS Grid makes responsive design incredibly easy. You can use the minmax() function and auto-fit keyword to create grids that adapt to any screen size.</p>',
-        excerpt: 'Master CSS Grid Layout with this comprehensive guide covering everything from basics to advanced techniques.',
-        status: 'PUBLISHED',
-        categorySlug: 'css',
-        monthsAgo: 1,
-      },
-      {
-        title: 'Building Scalable APIs with Fastify',
-        slug: 'building-scalable-apis-fastify',
-        content: '<p>Fastify is a high-performance web framework for Node.js. It is designed to be developer-friendly while maintaining excellent performance characteristics.</p><h2>Why Fastify?</h2><p>Fastify offers several advantages over other Node.js frameworks including exceptional performance, schema-based validation, plugin architecture, and better developer experience.</p><h2>Getting Started</h2><p>Creating a basic Fastify server is simple. You can set up routes, add plugins, and organize your code in a modular way.</p><h2>Route Prefixing</h2><p>Fastify makes it easy to organize your routes with prefixes, creating a modular architecture that scales well as your application grows.</p>',
-        excerpt: 'Learn how to build high-performance APIs using Fastify with this comprehensive guide.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 1,
-      },
-      {
-        title: 'Advanced TypeScript Patterns',
-        slug: 'advanced-typescript-patterns',
-        content: '<p>TypeScript provides powerful type system features that can significantly improve code quality and developer productivity when used correctly.</p><h2>Conditional Types</h2><p>Conditional types allow you to create types that depend on other types, enabling powerful type-level programming.</p><h2>Template Literal Types</h2><p>Template literal types enable you to create types from string literals, opening up new possibilities for type-safe string manipulation.</p><h2>Type Guards</h2><p>Type guards help TypeScript understand type narrowing, allowing you to write more precise and safe code.</p>',
-        excerpt: 'Explore advanced TypeScript patterns to write more maintainable and type-safe code.',
-        status: 'PUBLISHED',
-        categorySlug: 'javascript',
-        monthsAgo: 2,
-      },
-      {
-        title: 'UI Design Principles for Developers',
-        slug: 'ui-design-principles-developers',
-        content: '<p>Good UI design is not just for designers. As a developer, understanding basic design principles can help you create better user experiences.</p><h2>Hierarchy</h2><p>Visual hierarchy guides users through your interface. Use size, color, and spacing to establish importance.</p><h2>Consistency</h2><p>Maintain consistency in colors, typography, spacing, layout, and interaction patterns throughout your application.</p><h2>White Space</h2><p>Do not be afraid of empty space. White space helps content breathe and improves readability significantly.</p><p>By following these principles, you can create interfaces that are both functional and aesthetically pleasing.</p>',
-        excerpt: 'Learn essential UI design principles that every developer should know.',
-        status: 'PUBLISHED',
-        categorySlug: 'design',
-        monthsAgo: 2,
-      },
-      {
-        title: 'Mastering Flexbox for Modern Layouts',
-        slug: 'mastering-flexbox-modern-layouts',
-        content: '<p>Flexbox is a powerful layout system that simplifies the creation of flexible and responsive layouts. It is especially useful for one-dimensional layouts.</p><h2>Understanding Flex Container</h2><p>A flex container expands items to fill available free space or shrinks them to prevent overflow. This makes it perfect for component-level layouts.</p><h2>Common Use Cases</h2><p>Flexbox excels at centering elements, creating navigation bars, card layouts, and form alignments. Once you understand the basics, you will use it everywhere.</p>',
-        excerpt: 'Master Flexbox to create flexible and responsive one-dimensional layouts with ease.',
-        status: 'PUBLISHED',
-        categorySlug: 'css',
-        monthsAgo: 3,
-      },
-      {
-        title: 'Docker for Beginners: Containerization Basics',
-        slug: 'docker-beginners-containerization-basics',
-        content: '<p>Docker has revolutionized how we deploy applications. Understanding containerization is essential for modern development workflows.</p><h2>What is Containerization?</h2><p>Containers package your application with all its dependencies, ensuring consistency across different environments.</p><h2>Docker Basics</h2><p>Learn to write Dockerfiles, build images, and run containers. Docker makes it easy to share your development environment with your team.</p>',
-        excerpt: 'Get started with Docker and learn the fundamentals of containerization.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 3,
-      },
-      {
-        title: 'Introduction to PostgreSQL',
-        slug: 'introduction-to-postgresql',
-        content: '<p>PostgreSQL is a powerful, open-source relational database system. It has a strong reputation for reliability, feature robustness, and performance.</p><h2>Why PostgreSQL?</h2><p>PostgreSQL offers advanced features like JSON support, full-text search, and complex queries that make it suitable for modern applications.</p><h2>Getting Started</h2><p>Learn the basics of creating databases, tables, and performing CRUD operations. PostgreSQL is a great choice for any application.</p>',
-        excerpt: 'Learn the fundamentals of PostgreSQL, a powerful open-source relational database.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 4,
-      },
-      {
-        title: 'Web Security Best Practices',
-        slug: 'web-security-best-practices',
-        content: '<p>Security should never be an afterthought. Implementing security best practices from the start can save you from major headaches later.</p><h2>Common Vulnerabilities</h2><p>Learn about XSS, CSRF, SQL injection, and other common attacks. Understanding these threats is the first step to preventing them.</p><h2>Security Headers</h2><p>HTTP security headers like CSP, HSTS, and X-Frame-Options add an extra layer of protection to your applications.</p>',
-        excerpt: 'Protect your web applications by implementing essential security best practices.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 4,
-      },
-      {
-        title: 'Async/Await in JavaScript',
-        slug: 'async-await-javascript',
-        content: '<p>Async/await has made asynchronous programming in JavaScript much more readable and maintainable. It builds on top of Promises to provide syntactic sugar.</p><h2>Understanding Promises</h2><p>Before diving into async/await, it is important to understand Promises. They form the foundation of modern asynchronous JavaScript.</p><h2>Error Handling</h2><p>Proper error handling with try/catch blocks makes async code much easier to debug and maintain compared to traditional callbacks.</p>',
-        excerpt: 'Simplify asynchronous JavaScript code with async/await syntax.',
-        status: 'PUBLISHED',
-        categorySlug: 'javascript',
-        monthsAgo: 5,
-      },
-      {
-        title: 'Responsive Design Patterns',
-        slug: 'responsive-design-patterns',
-        content: '<p>Creating websites that work well on all devices is essential. Responsive design ensures your content looks great from mobile phones to desktop monitors.</p><h2>Mobile-First Approach</h2><p>Starting with mobile styles and progressively enhancing for larger screens creates a solid foundation for responsive designs.</p><h2>Media Queries</h2><p>Media queries allow you to apply different styles based on device characteristics. Learn when and how to use them effectively.</p>',
-        excerpt: 'Learn responsive design patterns to create websites that work on any device.',
-        status: 'PUBLISHED',
-        categorySlug: 'design',
-        monthsAgo: 5,
-      },
-      {
-        title: 'Git Workflow Strategies',
-        slug: 'git-workflow-strategies',
-        content: '<p>Choosing the right Git workflow can improve team collaboration and code quality. Different projects require different approaches.</p><h2>Git Flow</h2><p>Git Flow is a robust workflow with dedicated branches for features, releases, and hotfixes. It works well for scheduled release cycles.</p><h2>GitHub Flow</h2><p>For continuous deployment, GitHub Flow offers a simpler alternative with just main and feature branches.</p>',
-        excerpt: 'Explore different Git workflows to find the best strategy for your team.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 6,
-      },
-      {
-        title: 'Node.js Performance Optimization',
-        slug: 'nodejs-performance-optimization',
-        content: '<p>Performance optimization is crucial for Node.js applications. Learn techniques to make your apps faster and more efficient.</p><h2>Profiling and Monitoring</h2><p>Before optimizing, you need to identify bottlenecks. Tools like Clinic.js and Node.js built-in profiler can help.</p><h2>Caching Strategies</h2><p>Implementing proper caching can dramatically improve response times. Learn about Redis, in-memory caching, and CDN strategies.</p>',
-        excerpt: 'Optimize your Node.js applications for better performance and scalability.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 7,
-      },
-      {
-        title: 'Color Theory for Web Designers',
-        slug: 'color-theory-web-designers',
-        content: '<p>Color plays a vital role in web design. Understanding color theory helps create visually appealing and effective interfaces.</p><h2>Color Harmonies</h2><p>Learn about complementary, analogous, and triadic color schemes. These fundamental concepts help create balanced color palettes.</p><h2>Accessibility Considerations</h2><p>Ensure your color choices meet WCAG contrast requirements. Good color contrast is essential for users with visual impairments.</p>',
-        excerpt: 'Master color theory to create beautiful and accessible web designs.',
-        status: 'PUBLISHED',
-        categorySlug: 'design',
-        monthsAgo: 8,
-      },
-      {
-        title: 'REST API Design Guidelines',
-        slug: 'rest-api-design-guidelines',
-        content: '<p>Designing good APIs requires careful planning. Well-designed APIs are intuitive, consistent, and easy to use.</p><h2>Resource Naming</h2><p>Use nouns for resources and plural forms consistently. Good naming makes your API self-documenting.</p><h2>HTTP Methods</h2><p>Follow REST conventions for HTTP methods. GET for retrieval, POST for creation, PUT/PATCH for updates, DELETE for removal.</p>',
-        excerpt: 'Learn best practices for designing clean and intuitive REST APIs.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 9,
-      },
-      {
-        title: 'Understanding JavaScript Closures',
-        slug: 'understanding-javascript-closures',
-        content: '<p>Closures are a fundamental concept in JavaScript that every developer should understand. They enable powerful programming patterns.</p><h2>What is a Closure?</h2><p>A closure is the combination of a function bundled together with references to its surrounding state. Closures give you access to an outer function scope from an inner function.</p><h2>Practical Uses</h2><p>Closures are used in data privacy, partial applications, and maintaining state in asynchronous operations.</p>',
-        excerpt: 'Master JavaScript closures and understand how they work under the hood.',
-        status: 'PUBLISHED',
-        categorySlug: 'javascript',
-        monthsAgo: 10,
-      },
-      {
-        title: 'Modern CSS Features',
-        slug: 'modern-css-features',
-        content: '<p>CSS has evolved significantly in recent years. New features make styling more powerful and easier to maintain.</p><h2>CSS Custom Properties</h2><p>Also known as CSS variables, custom properties allow you to define reusable values and create dynamic themes.</p><h2>CSS Subgrid</h2><p>Subgrid enables nested grids to participate in the parent grid layout, solving complex alignment challenges.</p>',
-        excerpt: 'Explore modern CSS features that make styling more powerful and maintainable.',
-        status: 'PUBLISHED',
-        categorySlug: 'css',
-        monthsAgo: 11,
-      },
-      {
-        title: 'Database Design Principles',
-        slug: 'database-design-principles',
-        content: '<p>Good database design is crucial for application performance and maintainability. Learn the fundamentals of effective database schema design.</p><h2>Normalization</h2><p>Understand the different normal forms and when to apply them. Balance normalization with practical performance needs.</p><h2>Indexing Strategies</h2><p>Learn how and when to create indexes. Proper indexing can dramatically improve query performance.</p>',
-        excerpt: 'Learn fundamental database design principles for better application performance.',
-        status: 'PUBLISHED',
-        categorySlug: 'development',
-        monthsAgo: 11,
-      },
-      {
-        title: 'Frontend Testing Strategies',
-        slug: 'frontend-testing-strategies',
-        content: '<p>Testing is essential for maintaining code quality and preventing regressions. Learn strategies for testing frontend applications effectively.</p><h2>Unit Testing</h2><p>Write focused tests for individual components and functions. Unit tests provide fast feedback and help catch bugs early.</p><h2>Integration Testing</h2><p>Test how components work together. Integration tests ensure your application works as a cohesive whole.</p>',
-        excerpt: 'Learn effective strategies for testing frontend applications.',
-        status: 'PUBLISHED',
-        categorySlug: 'javascript',
-        monthsAgo: 12,
-      },
-      {
-        title: 'Web Accessibility Guide',
-        slug: 'web-accessibility-guide',
-        content: '<p>Web accessibility ensures everyone can use your website, regardless of their abilities. It is both a moral imperative and often a legal requirement.</p><h2>Semantic HTML</h2><p>Use the right HTML elements for the right purpose. Semantic HTML provides meaning to screen readers and other assistive technologies.</p><h2>Keyboard Navigation</h2><p>Ensure all functionality is accessible via keyboard. Many users rely on keyboard navigation exclusively.</p>',
-        excerpt: 'Create accessible websites that everyone can use with this comprehensive guide.',
-        status: 'PUBLISHED',
-        categorySlug: 'design',
-        monthsAgo: 12,
-      },
+        viewCount: viewCount,
+        commentCount: 0,
+        publishedAt: createdAt,
+        createdAt: createdAt,
+        updatedAt: createdAt,
+      }).onConflictDoNothing().returning();
+
+      if (post) {
+        // Add random tags (2-4 tags per post)
+        const numTags = Math.floor(Math.random() * 3) + 2;
+        const shuffledTags = tagIds.sort(() => 0.5 - Math.random()).slice(0, numTags);
+        
+        for (const tagId of shuffledTags) {
+          await db.insert(postTags).values({
+            postId: post.id,
+            tagId: tagId,
+          }).onConflictDoNothing();
+        }
+        
+        stats.posts++;
+      }
+    }
+    console.log(`✅ ${stats.posts} posts created\n`);
+
+    // ============================================
+    // 6. IMAGES (from files in public/uploads/images)
+    // ============================================
+    if (includeImages) {
+      console.log('🖼️  Seeding images from files...');
+      const imagesDir = join(__dirname, '..', 'public', 'uploads', 'images');
+      const thumbsDir = join(imagesDir, 'thumbs');
+      
+      try {
+        // Ensure thumbs directory exists
+        if (!existsSync(thumbsDir)) {
+          mkdirSync(thumbsDir, { recursive: true });
+        }
+        
+        const files = readdirSync(imagesDir).filter(f => 
+          /\.(jpg|jpeg|png|gif|webp)$/i.test(f) && 
+          !f.includes('thumbs')
+        );
+        
+        const imageTitles = [
+          'Mountain Landscape', 'Sunset Beach', 'Forest Path', 'City Skyline',
+          'Ocean View', 'Desert Dunes', 'Tech Setup', 'Coffee Break',
+          'Workspace', 'Nature Trail', 'Urban Architecture', 'Abstract Art'
+        ];
+        
+        const imageTags = ['Nature', 'Travel', 'Urban', 'Technology', 'Lifestyle', 'Art'];
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const filePath = join(imagesDir, file);
+          const fileStats = statSync(filePath);
+          const thumbPath = join(thumbsDir, file);
+          
+          // Generate thumbnail
+          let width = 1920, height = 1080;
+          try {
+            // Get image dimensions
+            const metadata = await sharp(filePath).metadata();
+            width = metadata.width || 1920;
+            height = metadata.height || 1080;
+            
+            // Create thumbnail (400x300, fit cover)
+            await sharp(filePath)
+              .resize(400, 300, { fit: 'cover' })
+              .jpeg({ quality: 80 })
+              .toFile(thumbPath);
+          } catch (err) {
+            console.log(`  ⚠️  Failed to generate thumbnail for ${file}: ${err.message}`);
+          }
+          
+          await db.insert(mediaItems).values({
+            type: 'IMAGE',
+            filename: file,
+            originalName: file,
+            mimeType: 'image/jpeg',
+            size: fileStats.size,
+            width: width,
+            height: height,
+            title: imageTitles[i % imageTitles.length],
+            tag: imageTags[i % imageTitles.length],
+            path: `/public/uploads/images/${file}`,
+            thumbnailPath: `/public/uploads/images/thumbs/${file}`,
+            uploadedBy: adminId,
+            createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+          }).onConflictDoNothing();
+          
+          stats.images++;
+        }
+        console.log(`✅ ${stats.images} images created from files\n`);
+      } catch (err) {
+        console.log('⚠️  No images directory found or error reading images:', err.message, '\n');
+      }
+    }
+
+    // ============================================
+    // 7. VIDEOS (from files in public/uploads/videos)
+    // ============================================
+    if (includeVideos) {
+      console.log('🎥 Seeding videos from files...');
+      const videosDir = join(__dirname, '..', 'public', 'uploads', 'videos');
+      const thumbsDir = join(videosDir, 'thumbs');
+      
+      try {
+        // Check if existing thumbnails directory exists
+        const existingThumbsDir = join(videosDir, 'thumbs');
+        const hasExistingThumbs = existsSync(existingThumbsDir);
+        
+        const files = readdirSync(videosDir).filter(f => 
+          /\.(mp4|webm|mov|avi)$/i.test(f)
+        );
+        
+        const videoTitles = [
+          'Tutorial: Getting Started', 'Product Demo', 'Conference Talk',
+          'Behind the Scenes', 'Quick Tips', 'Full Course'
+        ];
+        
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const filePath = join(videosDir, file);
+          const fileStats = statSync(filePath);
+          const videoId = file.match(/-(\d+)-/)?.[1] || i;
+          const thumbFilename = `thumb-${file.replace(/\.[^/.]+$/, '.jpg')}`;
+          const thumbPath = join(thumbsDir, thumbFilename);
+          
+          // Try to find or copy existing thumbnail
+          let thumbnailPath = null;
+          if (hasExistingThumbs) {
+            // Look for existing thumbnail with matching pattern
+            const existingThumbs = readdirSync(existingThumbsDir).filter(f => f.endsWith('.jpg'));
+            const matchingThumb = existingThumbs.find(t => t.includes(videoId));
+            
+            if (matchingThumb) {
+              const existingThumbPath = join(existingThumbsDir, matchingThumb);
+              // Copy to expected location
+              try {
+                copyFileSync(existingThumbPath, thumbPath);
+                thumbnailPath = `/public/uploads/videos/thumbs/${thumbFilename}`;
+              } catch (err) {
+                console.log(`  ⚠️  Failed to copy thumbnail for ${file}`);
+              }
+            }
+          }
+          
+          // If no thumbnail, use first available one
+          if (!thumbnailPath && hasExistingThumbs) {
+            const existingThumbs = readdirSync(existingThumbsDir).filter(f => f.endsWith('.jpg'));
+            if (existingThumbs.length > 0) {
+              thumbnailPath = `/public/uploads/videos/thumbs/${existingThumbs[i % existingThumbs.length]}`;
+            }
+          }
+          
+          await db.insert(mediaItems).values({
+            type: 'VIDEO',
+            filename: file,
+            originalName: file,
+            mimeType: 'video/mp4',
+            size: fileStats.size,
+            duration: Math.floor(Math.random() * 600) + 60, // 1-10 minutes
+            title: videoTitles[i % videoTitles.length],
+            path: `/public/uploads/videos/${file}`,
+            thumbnailPath: thumbnailPath,
+            uploadedBy: adminId,
+            createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+          }).onConflictDoNothing();
+          
+          stats.videos++;
+        }
+        console.log(`✅ ${stats.videos} videos created from files\n`);
+      } catch (err) {
+        console.log('⚠️  No videos directory found or error reading videos:', err.message, '\n');
+      }
+    }
+
+    // ============================================
+    // 8. COMMENTS
+    // ============================================
+    console.log('💬 Creating comments...');
+    const allPosts = await db.select({ id: posts.id }).from(posts);
+    const commentTexts = [
+      'Great article! Really helped me understand this topic.',
+      'Thanks for sharing this. Very informative.',
+      'This is exactly what I was looking for.',
+      'Could you elaborate more on the advanced topics?',
+      'Well written and easy to follow.',
+      'I learned a lot from this. Thanks!',
+      'Nice explanation of the concepts.',
+      'This clarified many doubts I had.',
     ];
     
-    // Convert to database format with proper dates and view counts
-    const postsData = demoPosts.map(post => {
-      const categoryId = allCategories.find(c => c.slug === post.categorySlug)?.id || devCategoryId;
-      return {
-        title: post.title,
-        slug: post.slug,
-        content: post.content,
-        excerpt: post.excerpt,
-        status: post.status,
-        authorId: adminId,
-        categoryId: categoryId,
-        viewCount: getViewCount(post.monthsAgo),
-        publishedAt: getDateMonthsAgo(post.monthsAgo),
-      };
-    });
-    
-    await db.insert(posts).values(postsData).onConflictDoNothing();
-    console.log(`✅ ${postsData.length} demo posts created with historical data\n`);
-
-    // Create demo activities for posts
-    console.log('Creating demo activities...');
-    const { activities } = await import('../src/db/index.js');
-    const allPosts = await db.select({ id: posts.id, title: posts.title, createdAt: posts.createdAt }).from(posts);
-    
-    // Create activities for each post
-    const activityTypes = ['POST_CREATED', 'POST_PUBLISHED'];
-    const activityData = [];
-    
-    allPosts.forEach((post, index) => {
-      // Add POST_CREATED activity
-      activityData.push({
-        userId: adminId,
-        type: 'POST_CREATED',
-        description: `Created post "${post.title}"`,
-        entityType: 'post',
-        entityId: post.id,
-        createdAt: post.createdAt,
-      });
+    for (const post of allPosts.slice(0, 10)) { // Add comments to first 10 posts
+      const numComments = Math.floor(Math.random() * 4) + 1; // 1-4 comments per post
       
-      // Add POST_PUBLISHED activity for published posts (not drafts)
-      if (index % 4 !== 3) { // Make some posts as drafts
-        activityData.push({
-          userId: adminId,
-          type: 'POST_PUBLISHED',
-          description: `Published post "${post.title}"`,
-          entityType: 'post',
-          entityId: post.id,
-          createdAt: new Date(new Date(post.createdAt).getTime() + 3600000), // 1 hour after creation
+      for (let i = 0; i < numComments; i++) {
+        await db.insert(comments).values({
+          postId: post.id,
+          authorName: `User ${i + 1}`,
+          authorEmail: `user${i + 1}@example.com`,
+          content: commentTexts[Math.floor(Math.random() * commentTexts.length)],
+          status: 'APPROVED',
+          createdAt: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000), // Last 60 days
         });
+        stats.comments++;
       }
-    });
-    
-    // Add login activity
-    activityData.push({
-      userId: adminId,
-      type: 'LOGIN',
-      description: 'User logged in',
-      entityType: 'user',
-      entityId: adminId,
-      createdAt: new Date(),
-    });
-    
-    await db.insert(activities).values(activityData).onConflictDoNothing();
-    console.log(`✅ ${activityData.length} demo activities created\n`);
+      
+      // Update post comment count
+      await db.update(posts).set({ 
+        commentCount: numComments 
+      }).where(eq(posts.id, post.id));
+    }
+    console.log(`✅ ${stats.comments} comments created\n`);
 
-    console.log('🎉 Database seeding completed!');
-    console.log('\nDefault admin credentials:');
-    console.log('  Email: admin@example.com');
-    console.log('  Password: Admin@123');
-    console.log('\nDemo posts created: 15');
-    console.log(`Demo activities created: ${activityData.length}`);
+    // ============================================
+    // 9. SUBSCRIBERS
+    // ============================================
+    console.log('📧 Creating subscribers...');
+    const subscriberEmails = [
+      'john@example.com', 'jane@example.com', 'bob@example.com',
+      'alice@example.com', 'charlie@example.com', 'diana@example.com',
+      'eve@example.com', 'frank@example.com', 'grace@example.com',
+      'henry@example.com'
+    ];
+    
+    for (const email of subscriberEmails) {
+      await db.insert(subscribers).values({
+        email: email,
+        firstName: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+        status: Math.random() > 0.2 ? 'ACTIVE' : 'PENDING',
+        subscribedAt: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
+      }).onConflictDoNothing();
+      stats.subscribers++;
+    }
+    console.log(`✅ ${stats.subscribers} subscribers created\n`);
+
+    // ============================================
+    // 10. ACTIVITIES
+    // ============================================
+    console.log('📊 Creating activities...');
+    const activityTypes = [
+      'POST_CREATED', 'POST_PUBLISHED', 'POST_UPDATED',
+      'CATEGORY_CREATED', 'TAG_CREATED',
+      'IMAGE_UPLOADED', 'VIDEO_UPLOADED',
+      'LOGIN', 'SETTINGS_UPDATED'
+    ];
+    
+    const activityDescriptions = [
+      'Created a new post', 'Published post', 'Updated post content',
+      'Added new category', 'Created new tag',
+      'Uploaded image', 'Uploaded video',
+      'Logged in', 'Updated site settings'
+    ];
+    
+    for (let i = 0; i < 36; i++) {
+      const typeIndex = Math.floor(Math.random() * activityTypes.length);
+      await db.insert(activities).values({
+        userId: adminId,
+        type: activityTypes[typeIndex],
+        description: activityDescriptions[typeIndex],
+        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+      });
+      stats.activities++;
+    }
+    console.log(`✅ ${stats.activities} activities created\n`);
+
+    // Summary
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log('\n' + '='.repeat(50));
+    console.log('✨ SEED COMPLETED SUCCESSFULLY!');
+    console.log('='.repeat(50));
+    console.log(`\n📊 Summary:`);
+    console.log(`  👤 Users: ${stats.users}`);
+    console.log(`  📁 Categories: ${stats.categories}`);
+    console.log(`  🏷️  Tags: ${stats.tags}`);
+    console.log(`  ⚙️  Settings: ${stats.settings}`);
+    console.log(`  📝 Posts: ${stats.posts}`);
+    console.log(`  🖼️  Images: ${stats.images}`);
+    console.log(`  🎥 Videos: ${stats.videos}`);
+    console.log(`  💬 Comments: ${stats.comments}`);
+    console.log(`  📧 Subscribers: ${stats.subscribers}`);
+    console.log(`  📈 Activities: ${stats.activities}`);
+    console.log(`\n⏱️  Duration: ${duration}s`);
+    console.log('\n🔑 Login credentials:');
+    console.log('   Email: admin@example.com');
+    console.log('   Password: Admin@123');
+    console.log('='.repeat(50) + '\n');
 
   } catch (error) {
-    console.error('❌ Seeding failed:', error);
+    console.error('\n❌ SEED FAILED:');
+    console.error(error);
     process.exit(1);
   }
-
-  process.exit(0);
 }
 
 seed();
