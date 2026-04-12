@@ -179,6 +179,26 @@ export function postEditPage({ categories, tags, post, user }) {
         </div>
       </div>
     </div>
+
+    <div id="editorMediaModal" class="hs-overlay editor-media-modal hidden" role="dialog" tabindex="-1" aria-hidden="true">
+      <div class="editor-media-modal__backdrop" onclick="closeMediaModal()"></div>
+      <div class="editor-media-modal__panel">
+        <div class="mb-[1.2rem] flex items-center justify-between">
+          <h3 id="mediaModalTitle" class="text-body-lg font-semibold">Insert Media</h3>
+          <button type="button" class="btn btn--ghost" onclick="closeMediaModal()">Close</button>
+        </div>
+
+        <div class="mb-[1.2rem] flex items-center gap-[0.8rem]">
+          <input id="mediaSearchInput" class="input" type="text" placeholder="Search media..." />
+          <button type="button" class="btn btn--outline-primary" onclick="searchMedia()">Search</button>
+          <button type="button" class="btn btn--primary" onclick="triggerMediaUpload()">Upload</button>
+          <input id="mediaUploadInput" type="file" hidden />
+        </div>
+
+        <div id="mediaPickerStatus" class="mb-[0.8rem] text-body-sm text-grey-500"></div>
+        <div id="mediaPickerGrid" class="editor-media-modal__grid"></div>
+      </div>
+    </div>
     </div>
 
     <!-- CKEditor 5 Styles -->
@@ -191,9 +211,51 @@ export function postEditPage({ categories, tags, post, user }) {
       const { ClassicEditor, Essentials, Bold, Italic, Underline, Strikethrough, Heading,
               List, Link, SourceEditing, Paragraph, BlockQuote, Image, ImageToolbar,
               ImageCaption, ImageStyle, ImageResize, ImageUpload, SimpleUploadAdapter,
-              Alignment, SpecialCharacters, MediaEmbed, Code } = CKEDITOR;
+              Alignment, SpecialCharacters, MediaEmbed, Code, Plugin, ButtonView } = CKEDITOR;
+
+      const PluginBase = Plugin || class {};
+      const ButtonViewBase = ButtonView || null;
+
+      class InsertImagePickerPlugin extends PluginBase {
+        init() {
+          if (!ButtonViewBase) return;
+          const editor = this.editor;
+          editor.ui.componentFactory.add('insertImagePicker', (locale) => {
+            const view = new ButtonViewBase(locale);
+            view.set({
+              label: 'Insert image',
+              tooltip: 'Insert image',
+              withText: false,
+              icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13Zm2 .5v9.086l3.293-3.293a1 1 0 0 1 1.414 0L14 15l1.293-1.293a1 1 0 0 1 1.414 0L18 15V6H6Zm4 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>'
+            });
+            view.on('execute', () => openMediaModal('image'));
+            return view;
+          });
+        }
+      }
+
+      class InsertVideoPickerPlugin extends PluginBase {
+        init() {
+          if (!ButtonViewBase) return;
+          const editor = this.editor;
+          editor.ui.componentFactory.add('insertVideoPicker', (locale) => {
+            const view = new ButtonViewBase(locale);
+            view.set({
+              label: 'Insert video',
+              tooltip: 'Insert video',
+              withText: false,
+              icon: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h7A2.5 2.5 0 0 1 16 7.5v1.879l2.553-1.532A1 1 0 0 1 20 8.704v6.592a1 1 0 0 1-1.447.857L16 14.621V16.5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 16.5v-9Z"/></svg>'
+            });
+            view.on('execute', () => openMediaModal('video'));
+            return view;
+          });
+        }
+      }
 
       let editor;
+      let currentMediaType = 'image';
+
+      const customMediaButtonsEnabled = !!ButtonViewBase;
 
       // Initialize CKEditor 5
       ClassicEditor
@@ -201,7 +263,8 @@ export function postEditPage({ categories, tags, post, user }) {
           plugins: [Essentials, Bold, Italic, Underline, Strikethrough, Heading,
                     List, Link, SourceEditing, Paragraph, BlockQuote, Image, ImageToolbar,
                     ImageCaption, ImageStyle, ImageResize, ImageUpload, SimpleUploadAdapter,
-                    Alignment, SpecialCharacters, MediaEmbed, Code],
+                    Alignment, SpecialCharacters, MediaEmbed, Code,
+                    ...(customMediaButtonsEnabled ? [InsertImagePickerPlugin, InsertVideoPickerPlugin] : [])],
           toolbar: {
             items: [
               'heading',
@@ -214,7 +277,8 @@ export function postEditPage({ categories, tags, post, user }) {
               '|',
               'code',
               '|',
-              'link', 'imageUpload', 'mediaEmbed',
+              'link',
+              ...(customMediaButtonsEnabled ? ['insertImagePicker', 'insertVideoPicker'] : ['imageUpload', 'mediaEmbed']),
               '|',
               'specialCharacters',
               '|',
@@ -234,6 +298,19 @@ export function postEditPage({ categories, tags, post, user }) {
           },
           simpleUpload: {
             uploadUrl: '/admin/posts/upload-image'
+          },
+          mediaEmbed: {
+            previewsInData: true,
+            providers: [
+              {
+                name: 'localVideo',
+                url: new RegExp('^/public/uploads/videos/(.+)$'),
+                html: match => {
+                  const videoPath = '/public/uploads/videos/' + match[1];
+                  return '<div class="editor-video"><video class="editor-video__media" controls preload="metadata"><source src="' + videoPath + '"></video></div>';
+                }
+              }
+            ]
           },
           image: {
             toolbar: [
@@ -273,6 +350,124 @@ export function postEditPage({ categories, tags, post, user }) {
         // Submit using HTMX trigger
         htmx.trigger('#editPostForm', 'submit');
       }
+
+      function openMediaModal(type) {
+        currentMediaType = type;
+        document.getElementById('mediaModalTitle').textContent = type === 'video' ? 'Insert Video' : 'Insert Image';
+        document.getElementById('mediaUploadInput').accept = type === 'video' ? 'video/*' : 'image/*';
+
+        const modal = document.getElementById('editorMediaModal');
+        if (modal && modal.parentElement !== document.body) {
+          document.body.appendChild(modal);
+        }
+        modal.classList.remove('hidden');
+        loadMediaItems();
+      }
+
+      function closeMediaModal() {
+        document.getElementById('editorMediaModal').classList.add('hidden');
+        document.getElementById('mediaSearchInput').value = '';
+      }
+
+      async function searchMedia() {
+        await loadMediaItems(document.getElementById('mediaSearchInput').value);
+      }
+
+      async function loadMediaItems(search = '') {
+        const statusEl = document.getElementById('mediaPickerStatus');
+        const gridEl = document.getElementById('mediaPickerGrid');
+        statusEl.textContent = 'Loading media...';
+        gridEl.innerHTML = '';
+
+        const endpoint = currentMediaType === 'video' ? '/admin/posts/media/videos' : '/admin/posts/media/images';
+
+        try {
+          const response = await fetch(endpoint + '?limit=24&search=' + encodeURIComponent(search));
+          const data = await response.json();
+          const items = data.items || [];
+
+          if (!items.length) {
+            statusEl.textContent = 'No media found.';
+            return;
+          }
+
+          statusEl.textContent = 'Select an item to insert.';
+
+          gridEl.innerHTML = items.map((item) => {
+            const preview = item.thumbnailUrl || item.url;
+            const title = item.title || 'Untitled';
+            return '<button type="button" class="rounded-[0.8rem] border border-grey-200 p-[0.8rem] text-left hover:border-amber-400" onclick="insertMedia(' + "'" + item.id + "'" + ')"><div class="mb-[0.6rem] aspect-video overflow-hidden rounded-[0.6rem] bg-grey-100">' + (currentMediaType === 'video'
+                    ? '<img src="' + preview + '" alt="' + title.replace(/"/g, '&quot;') + '" class="h-full w-full object-cover" />'
+                    : '<img src="' + preview + '" alt="' + title.replace(/"/g, '&quot;') + '" class="h-full w-full object-cover" />') +
+                '</div><p class="line-clamp-2 text-body-sm text-grey-700">' + title + '</p></button>';
+          }).join('');
+
+          window.__editorMediaItems = items;
+        } catch (error) {
+          statusEl.textContent = 'Failed to load media.';
+        }
+      }
+
+      function insertMedia(id) {
+        if (!editor || !window.__editorMediaItems) return;
+        const item = window.__editorMediaItems.find((mediaItem) => mediaItem.id === id);
+        if (!item) return;
+
+        if (currentMediaType === 'video') {
+          editor.execute('mediaEmbed', { url: item.url });
+        } else {
+          editor.execute('insertImage', {
+            source: item.url,
+            alt: item.altText || item.title || ''
+          });
+        }
+
+        closeMediaModal();
+      }
+
+      function triggerMediaUpload() {
+        document.getElementById('mediaUploadInput').click();
+      }
+
+      document.getElementById('mediaUploadInput')?.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const statusEl = document.getElementById('mediaPickerStatus');
+        statusEl.textContent = currentMediaType === 'video' ? 'Uploading and processing video...' : 'Uploading image...';
+
+        const formData = new FormData();
+        formData.append(currentMediaType === 'video' ? 'video' : 'image', file);
+
+        const endpoint = currentMediaType === 'video' ? '/admin/posts/upload-video' : '/admin/posts/upload-image';
+
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error('Upload failed');
+          }
+
+          const item = await response.json();
+          if (currentMediaType === 'video') {
+            editor.execute('mediaEmbed', { url: item.url });
+          } else {
+            editor.execute('insertImage', {
+              source: item.url,
+              alt: item.title || '',
+            });
+          }
+
+          statusEl.textContent = 'Inserted into editor.';
+          await loadMediaItems();
+          e.target.value = '';
+        } catch (error) {
+          statusEl.textContent = 'Upload failed. Please try again.';
+        }
+      });
 
       // Image upload handling
       const dropzone = document.getElementById('dropzone');

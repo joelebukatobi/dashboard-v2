@@ -78,6 +78,27 @@ export default async function postsRoutes(fastify) {
     handler: postsController.uploadImage.bind(postsController)
   });
 
+  // POST /admin/posts/upload-video
+  // Upload inline video for editor
+  fastify.post('/upload-video', {
+    preHandler: requireAuthRedirect('/admin/auth/login'),
+    handler: postsController.uploadVideo.bind(postsController)
+  });
+
+  // GET /admin/posts/media/images
+  // List media library images for editor picker
+  fastify.get('/media/images', {
+    preHandler: requireAuthRedirect('/admin/auth/login'),
+    handler: postsController.listEditorImages.bind(postsController)
+  });
+
+  // GET /admin/posts/media/videos
+  // List media library videos for editor picker
+  fastify.get('/media/videos', {
+    preHandler: requireAuthRedirect('/admin/auth/login'),
+    handler: postsController.listEditorVideos.bind(postsController)
+  });
+
   // POST /admin/posts/:id/view
   // Increment post view count (public endpoint for blog tracking)
   fastify.post('/:id/view', {

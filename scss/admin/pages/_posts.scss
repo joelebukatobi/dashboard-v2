@@ -32,6 +32,33 @@
   @apply min-h-[32rem];
 }
 
+.editor-media-modal {
+  @apply fixed inset-0 z-100;
+
+  &__backdrop {
+    @apply fixed inset-0 z-100 bg-black/50;
+  }
+
+  &__panel {
+    @apply fixed left-1/2 top-1/2 z-101 w-[92vw] max-w-[72rem] -translate-x-1/2 -translate-y-1/2 rounded-[1.2rem] bg-white p-[1.6rem] shadow-xl;
+
+    .dark & {
+      @apply bg-grey-800;
+    }
+  }
+
+  &__grid {
+    @apply grid max-h-[52vh] grid-cols-2 gap-[1.2rem] overflow-y-auto md:grid-cols-3;
+    padding-right: 0.8rem;
+  }
+}
+
+.editor-video {
+  &__media {
+    @apply max-w-full h-auto;
+  }
+}
+
 // Above sticky headers
 #deleteModal {
   @apply z-100;

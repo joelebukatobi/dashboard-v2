@@ -2,6 +2,8 @@
 import { postsService } from '../../services/posts.service.js';
 import { db, categories, tags } from '../../db/index.js';
 import { eq } from 'drizzle-orm';
+import { imagesService } from '../../services/images.service.js';
+import { videosService } from '../../services/videos.service.js';
 
 /**
  * Posts Controller
@@ -455,6 +457,107 @@ class PostsController {
       request.log.error(error);
       reply.code(500);
       return reply.send({ error: 'Failed to upload image' });
+    }
+  }
+
+  /**
+   * POST /admin/posts/upload-video
+   * Upload inline video for editor insertion
+   */
+  async uploadVideo(request, reply) {
+    try {
+      const file = await request.file();
+
+      if (!file) {
+        reply.code(400);
+        return reply.send({ error: 'No video file provided' });
+      }
+
+      const video = await videosService.upload(
+        file,
+        {
+          title: file.filename,
+          altText: '',
+          caption: '',
+          description: '',
+        },
+        request.user.id,
+      );
+
+      return reply.send({
+        id: video.id,
+        url: video.path,
+        thumbnailUrl: video.thumbnailPath,
+        mimeType: video.mimeType,
+        title: video.title,
+        duration: video.duration,
+      });
+    } catch (error) {
+      request.log.error(error);
+      reply.code(400);
+      return reply.send({ error: error.message || 'Failed to upload video' });
+    }
+  }
+
+  /**
+   * GET /admin/posts/media/images
+   * List images for editor media picker
+   */
+  async listEditorImages(request, reply) {
+    try {
+      const { search = '', page = 1, limit = 12 } = request.query;
+      const result = await imagesService.getAll({
+        search: search || undefined,
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+      });
+
+      return reply.send({
+        items: result.data.map((image) => ({
+          id: image.id,
+          url: image.path,
+          thumbnailUrl: image.thumbnailPath || image.path,
+          title: image.title || image.originalName || image.filename,
+          altText: image.altText || '',
+          mimeType: image.mimeType,
+        })),
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      request.log.error(error);
+      reply.code(500);
+      return reply.send({ error: 'Failed to fetch images' });
+    }
+  }
+
+  /**
+   * GET /admin/posts/media/videos
+   * List videos for editor media picker
+   */
+  async listEditorVideos(request, reply) {
+    try {
+      const { search = '', page = 1, limit = 12 } = request.query;
+      const result = await videosService.getAll({
+        search: search || undefined,
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+      });
+
+      return reply.send({
+        items: result.data.map((video) => ({
+          id: video.id,
+          url: video.path,
+          thumbnailUrl: video.thumbnailPath || '',
+          title: video.title || video.originalName || video.filename,
+          mimeType: video.mimeType,
+          duration: video.duration || 0,
+        })),
+        pagination: result.pagination,
+      });
+    } catch (error) {
+      request.log.error(error);
+      reply.code(500);
+      return reply.send({ error: 'Failed to fetch videos' });
     }
   }
 
